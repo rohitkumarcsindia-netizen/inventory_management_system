@@ -13,5 +13,4 @@ public interface UserRoleRepository extends JpaRepository<UserRoles, Long>
 {
     List<UserRoles> findByUser_Username(String userName);
 
-
 }
