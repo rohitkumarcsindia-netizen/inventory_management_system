@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -17,12 +16,12 @@ public class OrdersController
     private final OrderService orderService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createOrder(@RequestBody Orders orders)
+    public ResponseEntity<?> createOrder(Orders orders)
     {
-        Orders order = orderService.createOrder(orders);
-        if (order != null)
+        Orders orders1 = orderService.createOrder(orders);
+        if (orders1 != null)
         {
-            return ResponseEntity.ok(order);
+            return ResponseEntity.ok(orders1);
         }
         else
             return ResponseEntity.badRequest().body("Order not Save");

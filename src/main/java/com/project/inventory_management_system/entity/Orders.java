@@ -51,7 +51,6 @@ public class Orders
     @Column(name = "pms_remarks", columnDefinition = "TEXT")
     private String pmsRemarks;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAndOrderId> userAndOrderIdSet = new ArrayList<>();
+
 
 }

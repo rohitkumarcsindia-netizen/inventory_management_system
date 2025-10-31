@@ -22,7 +22,13 @@ public class UserController
     public ResponseEntity<?> user(@RequestBody Users user)
     {
          Users users = userService.save(user);
-         return ResponseEntity.ok(users);
+         
+         if (users != null)
+         {
+             return ResponseEntity.ok("Save User Data");
+         }
+         else
+             return ResponseEntity.badRequest().body("User Data not Save");
     }
 
 }

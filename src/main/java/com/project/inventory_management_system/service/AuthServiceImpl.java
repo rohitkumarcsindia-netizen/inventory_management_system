@@ -3,13 +3,20 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.LoginRequestDto;
 import com.project.inventory_management_system.dto.LoginResponseDto;
+import com.project.inventory_management_system.entity.Roles;
+import com.project.inventory_management_system.repository.RolesRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
+import com.project.inventory_management_system.utiliities.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
 @Service
@@ -17,36 +24,53 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService
 {
 
-    private final UsersRepository usersRepository;
     private final AuthenticationManager authenticationManager;
     private final LoginResponseDto loginResponseDto;
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
+    private RolesRepository rolesRepository;
+
 
     @Override
     public ResponseEntity<?> loginUser(LoginRequestDto loginRequestDto)
     {
-        Authentication authentications = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getUsername(), loginRequestDto.getPassword()));
-        if (authentications.isAuthenticated())
+        try
         {
-//             LoginResponseDto responseDto = new LoginResponseDto(loginResponseDto.getId(), loginResponseDto.getEmail());
-//             return ResponseEntity.ok(responseDto);
-//            return ResponseEntity.ok("Success");
-            String genToken = jwtService.generateToken(loginRequestDto.getUsername());
-            return ResponseEntity.ok(genToken);
-        }
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDto.getUsername(),
+                            loginRequestDto.getPassword()
+                    )
+            );
+            loginRequestDto.get
+            Roles role = rolesRepository.findByRoleName(roleName);
 
-//        else {
-//            //return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-//                    //.body("Invalid username or password");
-//            return "usernot found";
-//        }
 
-        else {
-            return ResponseEntity.ofNullable("Login Failed");
+            if (authentication.isAuthenticated())
+            {
+                String token = jwtUtil.generateToken(Map.of(), loginRequestDto.getUsername());
+
+                LoginResponseDto response = new LoginResponseDto();
+//                response.setUsername(loginRequestDto.getUsername());
+//                response.setToken(token);
+
+                return ResponseEntity.ok(response);
             }
-
+            else
+            {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Invalid username or password");
+            }
+        }
+        catch (BadCredentialsException e)
+        {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Incorrect username or password");
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Something went wrong: " + e.getMessage());
+        }
     }
-
 }
+
