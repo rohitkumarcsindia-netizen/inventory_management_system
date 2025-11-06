@@ -19,7 +19,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import java.io.IOException;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter
+{
     private final HandlerExceptionResolver handlerExceptionResolver;
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
@@ -70,7 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
             filterChain.doFilter(request, response);
-        } catch (Exception exception)
+        }
+        catch (Exception exception)
         {
             handlerExceptionResolver.resolveException(request, response, null, exception);
         }

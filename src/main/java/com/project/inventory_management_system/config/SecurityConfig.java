@@ -34,8 +34,8 @@ public class SecurityConfig
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         authorizeHttp -> {
-                            authorizeHttp.requestMatchers("/auth/**").permitAll();
-                            authorizeHttp.requestMatchers("/api/employers/jobs").hasRole("RECRUITER");
+                            authorizeHttp.requestMatchers("/auth/**","/user/**","/department/**","/role/**").permitAll();
+                            //authorizeHttp.requestMatchers("/order/**").hasRole("Project Team");
                             authorizeHttp.anyRequest().authenticated();
                         }
                 )

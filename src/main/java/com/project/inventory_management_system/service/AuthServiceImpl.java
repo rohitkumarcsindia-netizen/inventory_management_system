@@ -41,26 +41,16 @@ public class AuthServiceImpl implements AuthService
                             loginRequestDto.getPassword()
                     )
             );
-            loginRequestDto.get
-            Roles role = rolesRepository.findByRoleName(roleName);
-
 
             if (authentication.isAuthenticated())
             {
                 String token = jwtUtil.generateToken(Map.of(), loginRequestDto.getUsername());
-
-                LoginResponseDto response = new LoginResponseDto();
-//                response.setUsername(loginRequestDto.getUsername());
-//                response.setToken(token);
-
-                return ResponseEntity.ok(response);
+                return ResponseEntity.ok(token);
             }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Invalid username or password");
-            }
+            return null;
+
         }
+
         catch (BadCredentialsException e)
         {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

@@ -1,14 +1,14 @@
 package com.project.inventory_management_system.controller;
 
 
+import com.project.inventory_management_system.entity.Roles;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -19,7 +19,7 @@ public class UserController
     private final UserService userService;
 
     @PostMapping("/data")
-    public ResponseEntity<?> user(@RequestBody Users user)
+    public ResponseEntity<?> createUser(@RequestBody Users user)
     {
          Users users = userService.save(user);
          
@@ -29,6 +29,55 @@ public class UserController
          }
          else
              return ResponseEntity.badRequest().body("User Data not Save");
+    }
+
+    @PutMapping("/dataupdate")
+    public ResponseEntity<?> updateUser(@RequestBody Users user)
+    {
+        Users updateUser = userService.updateUserData(user);
+        if (updateUser != null)
+        {
+            return ResponseEntity.ok("User Details Updated Successfully "+updateUser);
+        }
+        else
+            return ResponseEntity.badRequest().body("User Details not Updated");
+    }
+
+    @DeleteMapping("/delete")
+    private ResponseEntity<?> deleteUser(@RequestBody Users user)
+    {
+       Users deleteUser = userService.deleteUser(user);
+        if (deleteUser != null)
+        {
+            return ResponseEntity.ok("User delete Successfully "+deleteUser);
+        }
+        else
+            return ResponseEntity.badRequest().body("User Not Delete");
+    }
+
+    @GetMapping("/findall")
+    public ResponseEntity<?> findAllUser()
+    {
+        List<Users> allUsers =  userService.findAllUsers();
+        if (allUsers != null)
+        {
+            return ResponseEntity.ok("User Details "+allUsers);
+        }
+        else
+            return ResponseEntity.badRequest().body("..........");
+
+    }
+
+    @GetMapping("/find")
+    public ResponseEntity<?> findUser(@RequestBody Users user)
+    {
+        Users findUser = userService.findUsers(user);
+        if (findUser != null)
+        {
+            return ResponseEntity.ok("User Details "+findUser);
+        }
+        else
+            return ResponseEntity.badRequest().body("User Details Not Found");
     }
 
 }
