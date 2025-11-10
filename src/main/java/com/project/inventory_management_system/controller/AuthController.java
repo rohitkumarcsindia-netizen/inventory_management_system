@@ -20,23 +20,7 @@ public class AuthController
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception
     {
-//        ResponseEntity<?> finduser = loginService.loginUser(loginRequestDto);
-//        if (finduser != null)
-//        {
-//            return ResponseEntity.ok(finduser);
-//        }
-//        else
-//        {
-//            return ResponseEntity.ok("Invalid username and password");
-//        }
-        ResponseEntity<?> finduser = loginService.loginUser(loginRequestDto);
-
-       if (finduser!=null)
-       {
-           return ResponseEntity.ok(finduser);
-       }
-
-       return ResponseEntity.badRequest().body("User not found");
+       return loginService.loginUser(loginRequestDto);
     }
 }
 

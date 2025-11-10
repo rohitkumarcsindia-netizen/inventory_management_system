@@ -1,15 +1,21 @@
 package com.project.inventory_management_system.controller;
 
+import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,16 +25,18 @@ public class OrdersController
     private final OrderService orderService;
 
     @PostMapping("/orders")
-    public ResponseEntity<?> addNewOrders(@RequestBody Orders orders, Authentication authentication)
+    public ResponseEntity<?> addNewOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)
     {
-        authentication.getName();
-        Orders saveOrder = orderService.createOrder(orders);
-        if (saveOrder != null)
-        {
-            return ResponseEntity.ok("OrderId :"+(saveOrder.getOrderId())+" Save Successfully");
-        }
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Order Not Saved: User not found.");
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+            if (userDetails == null)
+            {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+
+        return orderService.createOrder(userDetails.getUsername(), ordersDto);
+
+
     }
 
     @PutMapping("/orders/{orderId}")
@@ -56,14 +64,16 @@ public class OrdersController
     }
 
     @GetMapping("/orders")
-    public Orders findOrder()
+    public ResponseEntity<?> getAllOrders(HttpServletRequest request)
     {
-        return orderService.getOrders();
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+//        if (userDetails == null)
+//        {
+//            return ResponseEntity.status(401).body("Unauthorized");
+//        }
+
+       return orderService.getAllOrders(userDetails.getUsername());
     }
 
-    @GetMapping("/findall")
-    public List<Orders> findAllOrdres()
-    {
-        return orderService.findAllOrder();
-    }
 }

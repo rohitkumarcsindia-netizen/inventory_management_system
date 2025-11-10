@@ -2,10 +2,6 @@ package com.project.inventory_management_system.service;
 
 
 import com.project.inventory_management_system.dto.LoginRequestDto;
-import com.project.inventory_management_system.dto.LoginResponseDto;
-import com.project.inventory_management_system.entity.Roles;
-import com.project.inventory_management_system.repository.RolesRepository;
-import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.utiliities.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,9 +21,7 @@ public class AuthServiceImpl implements AuthService
 {
 
     private final AuthenticationManager authenticationManager;
-    private final LoginResponseDto loginResponseDto;
     private final JwtUtil jwtUtil;
-    private RolesRepository rolesRepository;
 
 
     @Override

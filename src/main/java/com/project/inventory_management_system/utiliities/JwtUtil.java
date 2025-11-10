@@ -13,16 +13,12 @@ import java.util.Map;
 public class JwtUtil
 {
     private static final String SECRET = "v/RIIb8O9RmiDrfG/Ax6RGDQ7jH7G+eZ1IyLK0T/Kl4=";
+
     private static final long EXPIRATION_TIME = 864_00_000; // 1 day
+
     // Create a signing key from the provided secret
     private static final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
 
-//    private String secretKey;
-//
-//    public JwtUtil()
-//    {
-//        secretKey = generateSecretKey();
-//    }
 
     public String extractUsername(String token)
     {
@@ -54,24 +50,15 @@ public class JwtUtil
         return !isTokenExpired(token) && extractUsername(token).equals(email);
     }
 
-    public String generateToken(Map<String, Object> claims, String subject) {
+    public String generateToken(Map<String, Object> claims, String subject)
+    {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2))
                 .signWith(key)
                 .compact();
     }
-//    public String generateSecretKey()
-//    {
-//        try {
-//            KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-//            SecretKey secretKey = keyGenerator.generateKey();
-//            System.out.println("Generated Secret Key: " + Base64.getEncoder().encodeToString(secretKey.getEncoded()));
-//            return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-//        } catch (NoSuchAlgorithmException e) {
-//            throw new RuntimeException("Error Generating Secret key", e);
-//        }
-//    }
+
 }
