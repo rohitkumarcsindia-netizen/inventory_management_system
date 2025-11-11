@@ -8,7 +8,6 @@ import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -103,5 +102,19 @@ public class OrderServiceImpl implements OrderService
 
         return ResponseEntity.ok(ordersDtos);
     }
+    @Override
+    public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int page, int size)
+    {
+        int offset = page * size; // calculate offset
+        List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), size, offset);
+
+        List<OrdersDto> ordersDtos = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ordersDtos;
+    }
 
 }
+
+

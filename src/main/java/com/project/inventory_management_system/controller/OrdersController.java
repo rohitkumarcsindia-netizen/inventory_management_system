@@ -3,19 +3,20 @@ package com.project.inventory_management_system.controller;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ import java.util.Map;
 public class OrdersController
 {
     private final OrderService orderService;
+    private final UsersRepository usersRepository;
 
     @PostMapping("/orders")
     public ResponseEntity<?> addNewOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)
@@ -68,12 +70,47 @@ public class OrdersController
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
 
-       return orderService.getAllOrders(userDetails.getUsername());
+        return orderService.getAllOrders(userDetails.getUsername());
     }
 
+
+@GetMapping("/limit-offset")
+public ResponseEntity<?> getOrdersWithLimitOffset(
+        HttpServletRequest request,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+    UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+    if (userDetails == null)
+    {
+        return ResponseEntity.status(401).body("Unauthorized");
+    }
+
+    Users user = usersRepository.findByUsername(userDetails.getUsername());
+    if (user == null)
+    {
+        return ResponseEntity.status(404).body("User not found");
+    }
+
+    List<OrdersDto> orders = orderService.getOrdersByUserWithLimitOffset(user, page, size);
+
+    if (orders.isEmpty())
+    {
+        return ResponseEntity.ok(Map.of("message", "No orders found"));
+    }
+
+    return ResponseEntity.ok(Map.of(
+            "page", page,
+            "size", size,
+            "ordersCount", orders.size(),
+            "orders", orders
+    ));
+
+    }
 }

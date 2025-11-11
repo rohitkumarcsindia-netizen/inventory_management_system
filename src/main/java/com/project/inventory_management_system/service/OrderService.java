@@ -3,7 +3,6 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -17,5 +16,9 @@ public interface OrderService
 
     Orders deleteOrder(Long orderId, Orders orders);
 
+
     ResponseEntity<?> getAllOrders(String username);
+
+    List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int page, int size);
+
 }
