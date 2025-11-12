@@ -27,8 +27,11 @@ public class OrderServiceImpl implements OrderService
     {
         Users user = usersRepository.findByUsername(username);
 
-        if (user != null)
+        if (user == null)
         {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
             // Set user inside DTO
             UserDto userDto = new UserDto();
             userDto.setUserId(user.getUserId());
@@ -47,8 +50,8 @@ public class OrderServiceImpl implements OrderService
             OrdersDto saveOrder =  orderMapper.toDto(saved);
 
             return ResponseEntity.ok(saveOrder);
-        }
-        return ResponseEntity.badRequest().body("User not found");
+
+
     }
 
     @Override
