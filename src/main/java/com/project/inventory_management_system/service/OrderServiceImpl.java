@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-            // Set user inside DTO
+            // Set user inside Dto
             UserDto userDto = new UserDto();
             userDto.setUserId(user.getUserId());
             userDto.setUsername(user.getUsername());
@@ -40,13 +40,13 @@ public class OrderServiceImpl implements OrderService
 
             ordersDto.setUsers(userDto);
 
-            // Convert DTO → Entity
+            // Convert Dto → Entity
             Orders orders = orderMapper.toEntity(ordersDto);
             orders.setUsers(user);
 
             Orders saved = orderRepository.save(orders);
 
-            // Return DTO
+            // Return Dto
             OrdersDto saveOrder =  orderMapper.toDto(saved);
 
             return ResponseEntity.ok(saveOrder);
