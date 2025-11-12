@@ -3,6 +3,7 @@ package com.project.inventory_management_system.controller;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ public class OrdersController
 {
     private final OrderService orderService;
     private final UsersRepository usersRepository;
+    private final OrderRepository orderRepository;
 
     @PostMapping("/orders")
     public ResponseEntity<?> addNewOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)
@@ -54,9 +56,9 @@ public class OrdersController
     }
 
     @DeleteMapping("/orders/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId, @RequestBody Orders orders)
+    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId)
     {
-        Orders deleteOrder = orderService.deleteOrder(orderId, orders);
+        Orders deleteOrder = orderService.deleteOrder(orderId);
         if (deleteOrder != null)
         {
             return ResponseEntity.ok("Order: "+(deleteOrder.getOrderId())+" delete Successfully");
@@ -73,6 +75,8 @@ public class OrdersController
     {
 
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        long countOrders = orderRepository.count();
 
         if (userDetails == null)
         {
@@ -95,7 +99,7 @@ public class OrdersController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orders.size(),
+                "ordersCount", countOrders,
                 "orders", orders
         ));
 

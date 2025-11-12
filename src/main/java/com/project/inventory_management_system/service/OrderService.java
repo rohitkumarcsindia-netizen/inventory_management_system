@@ -14,7 +14,7 @@ public interface OrderService
 
     Orders updateOreder(Long orderId,Orders orders);
 
-    Orders deleteOrder(Long orderId, Orders orders);
+    Orders deleteOrder(Long orderId);
 
     List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
 

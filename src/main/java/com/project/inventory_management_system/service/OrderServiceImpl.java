@@ -74,7 +74,7 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public Orders deleteOrder(Long orderId, Orders orders)
+    public Orders deleteOrder(Long orderId)
     {
         Optional<Orders> findOrder = orderRepository.findById(orderId);
         if (findOrder.isPresent())
