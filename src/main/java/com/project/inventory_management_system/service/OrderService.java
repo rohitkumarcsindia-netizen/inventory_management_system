@@ -16,9 +16,6 @@ public interface OrderService
 
     Orders deleteOrder(Long orderId, Orders orders);
 
-
-    ResponseEntity<?> getAllOrders(String username);
-
-    List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int page, int size);
+    List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
 
 }

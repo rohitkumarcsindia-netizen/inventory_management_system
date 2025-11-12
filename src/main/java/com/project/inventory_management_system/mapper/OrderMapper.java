@@ -13,20 +13,23 @@ public class OrderMapper {
     private final UserMapper userMapper;
 
     //Entity → DTO
-    public OrdersDto toDto(Orders orders)
+    public OrdersDto toDto(Orders order)
     {
-        if (orders == null) return null;
+        if (order == null) return null;
 
         OrdersDto dto = new OrdersDto();
-        dto.setOrderId(orders.getOrderId());
-        dto.setProject(orders.getProject());
-        dto.setInitiator(orders.getInitiator());
-        dto.setProductType(orders.getProductType());
-        dto.setProposedBuildPlanQty(orders.getProposedBuildPlanQty());
-        dto.setAktsComments(orders.getAktsComments());
-        dto.setReasonForBuildRequest(orders.getReasonForBuildRequest());
+        dto.setOrderId(order.getOrderId());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setProject(order.getProject());
+        dto.setInitiator(order.getInitiator());
+        dto.setProductType(order.getProductType());
+        dto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        dto.setAktsComments(order.getAktsComments());
+        dto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        dto.setStatus(order.getStatus());
+        dto.setPmsRemarks(order.getPmsRemarks());
 
-        dto.setUsers(userMapper.toDto(orders.getUsers())); // nested mapping
+        dto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
 
         return dto;
     }
@@ -36,19 +39,22 @@ public class OrderMapper {
     {
         if (dto == null) return null;
 
-        Orders orders = new Orders();
-        orders.setOrderId(dto.getOrderId());
-        orders.setProject(dto.getProject());
-        orders.setInitiator(dto.getInitiator());
-        orders.setProductType(dto.getProductType());
-        orders.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());
-        orders.setAktsComments(dto.getAktsComments());
-        orders.setReasonForBuildRequest(dto.getReasonForBuildRequest());
+        Orders order = new Orders();
+        order.setOrderId(dto.getOrderId());
+        order.setOrderDate(dto.getOrderDate());
+        order.setProject(dto.getProject());
+        order.setInitiator(dto.getInitiator());
+        order.setProductType(dto.getProductType());
+        order.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());
+        order.setAktsComments(dto.getAktsComments());
+        order.setReasonForBuildRequest(dto.getReasonForBuildRequest());
+        order.setStatus(dto.getStatus());
+        order.setPmsRemarks(dto.getPmsRemarks());
 
         // usersDTO → users
         Users user = userMapper.toEntity(dto.getUsers());
-        orders.setUsers(user);
+        order.setUsers(user);
 
-        return orders;
+        return order;
     }
 }

@@ -12,9 +12,8 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table (name = "Roles")
-public class Roles
-{
+@Table(name = "Roles")
+public class Roles {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
@@ -22,10 +21,4 @@ public class Roles
 
     @Column(name = "role_name")
     private String roleName;
-
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRoles> userRolesSet = new ArrayList<>();
-
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DepartmentRole> departmentRoleSet = new ArrayList<>();
 }

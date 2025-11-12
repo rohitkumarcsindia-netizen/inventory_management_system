@@ -17,6 +17,7 @@ public class OrdersDto
     private String aktsComments;
     private String reasonForBuildRequest;
     private String status;
+    private String pmsRemarks;
 
     private UserDto users;
 }

@@ -85,28 +85,9 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public ResponseEntity<?> getAllOrders(String username)
+    public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit)
     {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User Not Found");
-        }
-
-        List<Orders> orders = orderRepository.findByUsers(user);
-
-        List<OrdersDto> ordersDtos = orders.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(ordersDtos);
-    }
-    @Override
-    public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int page, int size)
-    {
-        int offset = page * size; // calculate offset
-        List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), size, offset);
+        List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), limit, offset);
 
         List<OrdersDto> ordersDtos = orders.stream()
                 .map(orderMapper::toDto)

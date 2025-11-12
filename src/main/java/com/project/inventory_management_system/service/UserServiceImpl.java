@@ -24,32 +24,49 @@ public class UserServiceImpl implements UserService
     private final PasswordEncoder passwordEncoder;
     private final DepartmentRepository departmentRepository;
 
+//    @Override
+//    public Users save(Users user)
+//    {
+//
+//        for (UserRoles userRoles : user.getUserRoles())
+//        {
+//            Roles roles = roleRepository.findByRoleName(userRoles.getRole().getRoleName());
+//
+//            userRoles.setUser(user);
+//            userRoles.setRole(roles);
+//
+//        }
+//
+//
+//
+//        for (DepartmentRole departmentRole : user.getDepartmentRole())
+//        {
+//            Department department = departmentRepository.findByDepartmentname(departmentRole.getDepartment().getDepartmentname());
+//            Roles role = roleRepository.findByRoleName(departmentRole.getRole().getRoleName());
+//
+//            departmentRole.setUser(user);
+//            departmentRole.setRole(role);
+//            departmentRole.setDepartment(department);
+//        }
+//
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        return usersRepository.save(user);
+//    }
+
+
     @Override
     public Users save(Users user)
     {
-
-        for (UserRoles userRoles : user.getUserRoles())
-        {
-            Roles roles = roleRepository.findByRoleName(userRoles.getRole().getRoleName());
-
-            userRoles.setUser(user);
-            userRoles.setRole(roles);
-
-        }
-
-
-
-        for (DepartmentRole departmentRole : user.getDepartmentRole())
-        {
-            Department department = departmentRepository.findByDepartmentname(departmentRole.getDepartment().getDepartmentname());
-            Roles role = roleRepository.findByRoleName(departmentRole.getRole().getRoleName());
-
-            departmentRole.setUser(user);
-            departmentRole.setRole(role);
-            departmentRole.setDepartment(department);
-        }
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        for (DepartmentRole dr : user.getDepartmentRole()) {
+            Department department = departmentRepository.findByDepartmentname(dr.getDepartment().getDepartmentname());
+            Roles role = roleRepository.findByRoleName(dr.getRole().getRoleName());
+            dr.setUser(user);
+            dr.setDepartment(department);
+            dr.setRole(role);
+        }
+
         return usersRepository.save(user);
     }
 
@@ -60,7 +77,7 @@ public class UserServiceImpl implements UserService
         if (findUser.isPresent())
         {
             Users existinguser = findUser.get();
-            existinguser.setUserRoles(user.getUserRoles());
+            //existinguser.setUserRoles(user.getUserRoles());
             existinguser.setEmail(user.getEmail());
             existinguser.setDepartmentRole(user.getDepartmentRole());
             existinguser.setPassword(user.getPassword());

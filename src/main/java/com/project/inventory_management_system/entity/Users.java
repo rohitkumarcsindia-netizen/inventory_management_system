@@ -27,10 +27,6 @@ public class Users
     private  String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRoles> userRoles = new ArrayList<>();
-
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DepartmentRole> departmentRole = new ArrayList<>();
 
 }

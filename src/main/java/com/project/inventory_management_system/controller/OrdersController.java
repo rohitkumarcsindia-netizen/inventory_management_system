@@ -65,9 +65,13 @@ public class OrdersController
             return ResponseEntity.badRequest().body("Order Not Deleted");
     }
 
-    @GetMapping("/orders")
-    public ResponseEntity<?> getAllOrders(HttpServletRequest request)
+    @GetMapping("/orders/page")
+    public ResponseEntity<?> getOrdersWithLimitOffset(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit)
     {
+
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
         if (userDetails == null)
@@ -75,42 +79,25 @@ public class OrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return orderService.getAllOrders(userDetails.getUsername());
+        Users user = usersRepository.findByUsername(userDetails.getUsername());
+        if (user == null)
+        {
+            return ResponseEntity.status(404).body("User not found");
+        }
+
+        List<OrdersDto> orders = orderService.getOrdersByUserWithLimitOffset(user, offset, limit);
+
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.ok(Map.of("message", "No orders found"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orders.size(),
+                "orders", orders
+        ));
+
+        }
     }
-
-
-@GetMapping("/limit-offset")
-public ResponseEntity<?> getOrdersWithLimitOffset(
-        HttpServletRequest request,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
-
-    UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-    if (userDetails == null)
-    {
-        return ResponseEntity.status(401).body("Unauthorized");
-    }
-
-    Users user = usersRepository.findByUsername(userDetails.getUsername());
-    if (user == null)
-    {
-        return ResponseEntity.status(404).body("User not found");
-    }
-
-    List<OrdersDto> orders = orderService.getOrdersByUserWithLimitOffset(user, page, size);
-
-    if (orders.isEmpty())
-    {
-        return ResponseEntity.ok(Map.of("message", "No orders found"));
-    }
-
-    return ResponseEntity.ok(Map.of(
-            "page", page,
-            "size", size,
-            "ordersCount", orders.size(),
-            "orders", orders
-    ));
-
-    }
-}

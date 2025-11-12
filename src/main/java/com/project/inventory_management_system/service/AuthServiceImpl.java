@@ -41,7 +41,10 @@ public class AuthServiceImpl implements AuthService
                 String token = jwtUtil.generateToken(Map.of(), loginRequestDto.getUsername());
                 return ResponseEntity.ok(token);
             }
-            return null;
+            else
+            {
+                return ResponseEntity.status(401).body("Invalid credentials");
+            }
 
         }
 

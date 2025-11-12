@@ -77,10 +77,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     request.setAttribute("userDetails", userDetails);
                 }
-                else
-                {
-                    throw new Exception("Invalid User");
-                }
             }
 
             filterChain.doFilter(request, response);

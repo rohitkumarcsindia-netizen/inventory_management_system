@@ -14,7 +14,7 @@ public class JwtUtil
 {
     private static final String SECRET = "v/RIIb8O9RmiDrfG/Ax6RGDQ7jH7G+eZ1IyLK0T/Kl4=";
 
-    private static final long EXPIRATION_TIME = 864_00_000; // 1 day
+    //private static final long EXPIRATION_TIME = 864_00_000; // 1 day
 
     // Create a signing key from the provided secret
     private static final SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
@@ -45,9 +45,11 @@ public class JwtUtil
         return extractExpiration(token).before(new Date());
     }
 
-    public Boolean isTokenValid(String token, String email)
+    public Boolean isTokenValid(String token, String username)
     {
-        return !isTokenExpired(token) && extractUsername(token).equals(email);
+//        return !isTokenExpired(token) && extractUsername(token).equals(email);
+        final String extractedUsername = extractUsername(token);
+        return (extractedUsername != null && extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
     public String generateToken(Map<String, Object> claims, String subject)
