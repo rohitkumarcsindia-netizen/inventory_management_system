@@ -42,18 +42,6 @@ public class OrdersController
 
     }
 
-    @PutMapping("/orders/{orderId}")
-    public ResponseEntity<?> updateOrderDetails(@PathVariable Long orderId, @RequestBody Orders orders)
-    {
-        Orders updateOrder = orderService.updateOreder(orderId, orders);
-        if (updateOrder != null)
-        {
-            return ResponseEntity.ok("OrderId: "+(updateOrder.getOrderId())+" Updated Successfully");
-        }
-        else
-            return ResponseEntity.badRequest().body("Order Record not Update");
-    }
-
     @DeleteMapping("/orders/{orderId}")
     public ResponseEntity<?> deleteOrder(@PathVariable Long orderId)
     {
@@ -103,7 +91,7 @@ public class OrdersController
         }
 
         @PutMapping("/order/update/{orderId}")
-        public ResponseEntity<?> updateOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+        public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
         {
 
             UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -115,7 +103,7 @@ public class OrdersController
 
             try
             {
-                OrdersDto orderDetailsUpdate = orderService.updateOrder(userDetails.getUsername(), orderId, ordersDto);
+                OrdersDto orderDetailsUpdate = orderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
                 return ResponseEntity.ok(orderDetailsUpdate);
             }
             catch (Exception e)

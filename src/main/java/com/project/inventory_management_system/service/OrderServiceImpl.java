@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -56,25 +57,6 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public Orders updateOreder(Long orderId,Orders orders)
-    {
-        Optional<Orders> findOrder = orderRepository.findById(orderId);
-        if (findOrder.isPresent())
-        {
-            Orders existingOrder = findOrder.get();
-            existingOrder.setProject(orders.getProject());
-            existingOrder.setInitiator(orders.getInitiator());
-            existingOrder.setAktsComments(orders.getAktsComments());
-            existingOrder.setProductType(orders.getProductType());
-            existingOrder.setProposedBuildPlanQty(orders.getProposedBuildPlanQty());
-            existingOrder.setReasonForBuildRequest(orders.getReasonForBuildRequest());
-            return orderRepository.save(existingOrder);
-        }
-        else
-            return null;
-    }
-
-    @Override
     public Orders deleteOrder(Long orderId)
     {
         Optional<Orders> findOrder = orderRepository.findById(orderId);
@@ -101,7 +83,7 @@ public class OrderServiceImpl implements OrderService
     }
 
     @Override
-    public OrdersDto updateOrder(String username, Long orderId, OrdersDto ordersDto)
+    public OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -113,24 +95,26 @@ public class OrderServiceImpl implements OrderService
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        Long findOrder = order.getUsers().getUserId();
 
-        Long finduser = user.getUserId();
-
-
-        if (order == null || findOrder != finduser)
+        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
+                order.getUsers().getUserId() != user.getUserId())
         {
             throw new RuntimeException("Order not found for this user");
         }
 
-        // Convert Dto → Entity
-        Orders orders = orderMapper.toEntity(ordersDto);
+        // 🚀 Update only fields from DTO
+        order.setOrderDate(ordersDto.getOrderDate());
+        order.setProject(ordersDto.getProject());
+        order.setProductType(ordersDto.getProductType());
+        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
+        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
+        order.setInitiator(ordersDto.getInitiator());
+        order.setStatus(ordersDto.getStatus());
+        order.setAktsComments(ordersDto.getAktsComments());
+        order.setPmsRemarks(ordersDto.getPmsRemarks());
 
-        // Set existing department
-        orders.setUsers(user);
-
-        //saved from database
-        Orders updateOrder = orderRepository.save(orders);
+        // Save updated order
+        Orders updateOrder = orderRepository.save(order);
 
         // Return Dto
         return orderMapper.toDto(updateOrder);
