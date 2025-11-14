@@ -56,19 +56,6 @@ public class OrderServiceImpl implements OrderService
 
     }
 
-    @Override
-    public Orders deleteOrder(Long orderId)
-    {
-        Optional<Orders> findOrder = orderRepository.findById(orderId);
-        if (findOrder.isPresent())
-        {
-            Orders existingOrder = findOrder.get();
-            orderRepository.deleteById(existingOrder.getOrderId());
-            return existingOrder;
-        }
-        else
-            return null;
-    }
 
     @Override
     public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit)

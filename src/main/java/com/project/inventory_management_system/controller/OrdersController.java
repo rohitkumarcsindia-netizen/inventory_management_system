@@ -42,18 +42,6 @@ public class OrdersController
 
     }
 
-    @DeleteMapping("/orders/{orderId}")
-    public ResponseEntity<?> deleteOrder(@PathVariable Long orderId)
-    {
-        Orders deleteOrder = orderService.deleteOrder(orderId);
-        if (deleteOrder != null)
-        {
-            return ResponseEntity.ok("Order: "+(deleteOrder.getOrderId())+" delete Successfully");
-        }
-        else
-            return ResponseEntity.badRequest().body("Order Not Deleted");
-    }
-
     @GetMapping("/orders/page")
     public ResponseEntity<?> getOrdersWithLimitOffset(
             HttpServletRequest request,
@@ -111,4 +99,5 @@ public class OrdersController
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
         }
+
     }

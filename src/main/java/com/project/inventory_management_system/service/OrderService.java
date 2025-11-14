@@ -13,8 +13,6 @@ public interface OrderService
     ResponseEntity<?> createOrder(String username, OrdersDto ordersDto);
 
 
-    Orders deleteOrder(Long orderId);
-
     List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
 
     OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
