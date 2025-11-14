@@ -26,7 +26,9 @@ public class Users
     @Column(name = "password",nullable = false)
     private  String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DepartmentRole> departmentRole = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
 }

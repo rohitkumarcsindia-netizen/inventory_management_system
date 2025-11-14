@@ -2,9 +2,11 @@ package com.project.inventory_management_system.service;
 
 
 
+import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.mapper.UserMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
-import com.project.inventory_management_system.repository.RolesRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,54 +22,31 @@ public class UserServiceImpl implements UserService
 {
 
     private final UsersRepository usersRepository;
-    private final RolesRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final DepartmentRepository departmentRepository;
-
-//    @Override
-//    public Users save(Users user)
-//    {
-//
-//        for (UserRoles userRoles : user.getUserRoles())
-//        {
-//            Roles roles = roleRepository.findByRoleName(userRoles.getRole().getRoleName());
-//
-//            userRoles.setUser(user);
-//            userRoles.setRole(roles);
-//
-//        }
-//
-//
-//
-//        for (DepartmentRole departmentRole : user.getDepartmentRole())
-//        {
-//            Department department = departmentRepository.findByDepartmentname(departmentRole.getDepartment().getDepartmentname());
-//            Roles role = roleRepository.findByRoleName(departmentRole.getRole().getRoleName());
-//
-//            departmentRole.setUser(user);
-//            departmentRole.setRole(role);
-//            departmentRole.setDepartment(department);
-//        }
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        return usersRepository.save(user);
-//    }
+    private final UserMapper userMapper;
 
 
     @Override
-    public Users save(Users user)
+    public UserDto createUser(UserDto userDto)
     {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        for (DepartmentRole dr : user.getDepartmentRole()) {
-            Department department = departmentRepository.findByDepartmentname(dr.getDepartment().getDepartmentname());
-            Roles role = roleRepository.findByRoleName(dr.getRole().getRoleName());
-            dr.setUser(user);
-            dr.setDepartment(department);
-            dr.setRole(role);
-        }
+        Department department = departmentRepository.findById(userDto.getDepartmentId())
+                .orElseThrow(() -> new RuntimeException("Department not found"));
 
-        return usersRepository.save(user);
+
+        // Convert Dto → Entity
+        Users users = userMapper.toEntity(userDto);
+        users.setPassword(passwordEncoder.encode(userDto.getPassword()));
+
+        // Set existing department
+        users.setDepartment(department);
+
+        //saved from database
+        Users savedUser = usersRepository.save(users);
+
+        // Return Dto
+        return userMapper.toDto(savedUser);
     }
 
     @Override
@@ -79,7 +58,7 @@ public class UserServiceImpl implements UserService
             Users existinguser = findUser.get();
             //existinguser.setUserRoles(user.getUserRoles());
             existinguser.setEmail(user.getEmail());
-            existinguser.setDepartmentRole(user.getDepartmentRole());
+//            existinguser.setDepartmentRole(user.getDepartmentRole());
             existinguser.setPassword(user.getPassword());
             existinguser.setUsername(user.getUsername());
             return existinguser;
@@ -106,9 +85,9 @@ public class UserServiceImpl implements UserService
     }
 
     @Override
-    public Users findUsers(Users user)
+    public Users findUsers(UserDto userDto)
     {
-        Optional<Users> existingRoles = usersRepository.findById(user.getUserId());
+        Optional<Users> existingRoles = usersRepository.findById(userDto.getDepartmentId());
         if (existingRoles.isPresent())
         {
             Users userDetails = existingRoles.get();

@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.repository.OrderRepository;
@@ -8,13 +9,11 @@ import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,8 +75,6 @@ public class OrdersController
 
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
-        long countOrders = orderRepository.count();
-
         if (userDetails == null)
         {
             return ResponseEntity.status(401).body("Unauthorized");
@@ -99,9 +96,31 @@ public class OrdersController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", countOrders,
+                "ordersCount", orderRepository.count(),
                 "orders", orders
         ));
 
+        }
+
+        @PutMapping("/order/update/{orderId}")
+        public ResponseEntity<?> updateOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+        {
+
+            UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+            if (userDetails == null)
+            {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+
+            try
+            {
+                OrdersDto orderDetailsUpdate = orderService.updateOrder(userDetails.getUsername(), orderId, ordersDto);
+                return ResponseEntity.ok(orderDetailsUpdate);
+            }
+            catch (Exception e)
+            {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
     }

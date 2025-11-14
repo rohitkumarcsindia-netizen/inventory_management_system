@@ -1,5 +1,6 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Users;
 import org.springframework.http.ResponseEntity;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public interface UserService
 {
-    public Users save(Users user);
+    public UserDto createUser(UserDto userDto);
 
     Users updateUserData(Users user);
 
@@ -16,5 +17,5 @@ public interface UserService
 
     List<Users> findAllUsers();
 
-    Users findUsers(Users user);
+    Users findUsers(UserDto userDto);
 }

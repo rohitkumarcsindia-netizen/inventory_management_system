@@ -1,7 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.entity.Roles;
+import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +19,17 @@ public class UserController
     private final UserService userService;
 
     @PostMapping("/data")
-    public ResponseEntity<?> createUser(@RequestBody Users user)
+    public ResponseEntity<?> createUser(@RequestBody UserDto userDto)
     {
-         Users users = userService.save(user);
-         
-         if (users != null)
-         {
-             return ResponseEntity.ok("Save User Data");
-         }
-         else
-             return ResponseEntity.badRequest().body("User Data not Save");
+        try
+        {
+            UserDto user = userService.createUser(userDto);
+            return ResponseEntity.ok(user);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PutMapping("/dataupdate")
@@ -69,7 +70,7 @@ public class UserController
     }
 
     @GetMapping("/find")
-    public ResponseEntity<?> findUser(@RequestBody Users user)
+    public ResponseEntity<?> findUser(@RequestBody UserDto user)
     {
         Users findUser = userService.findUsers(user);
         if (findUser != null)

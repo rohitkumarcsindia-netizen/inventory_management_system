@@ -41,7 +41,7 @@ public class SecurityConfig
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(
                         authorizeHttp -> {
-                            authorizeHttp.requestMatchers("/**").permitAll();
+                            authorizeHttp.requestMatchers("/**","/api/test").permitAll();
                             //authorizeHttp.requestMatchers("/order/**").hasRole("Project Team");
                             authorizeHttp.anyRequest().authenticated();
                         }

@@ -21,6 +21,7 @@ public class OrderServiceImpl implements OrderService
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
     private final OrderMapper orderMapper;
+    private final EmailService emailService;
 
     @Override
     public ResponseEntity<?> createOrder(String username, OrdersDto ordersDto)
@@ -98,6 +99,43 @@ public class OrderServiceImpl implements OrderService
 
         return ordersDtos;
     }
+
+    @Override
+    public OrdersDto updateOrder(String username, Long orderId, OrdersDto ordersDto)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            throw new RuntimeException("User not found");
+        }
+
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        Long findOrder = order.getUsers().getUserId();
+
+        Long finduser = user.getUserId();
+
+
+        if (order == null || findOrder != finduser)
+        {
+            throw new RuntimeException("Order not found for this user");
+        }
+
+        // Convert Dto → Entity
+        Orders orders = orderMapper.toEntity(ordersDto);
+
+        // Set existing department
+        orders.setUsers(user);
+
+        //saved from database
+        Orders updateOrder = orderRepository.save(orders);
+
+        // Return Dto
+        return orderMapper.toDto(updateOrder);
+    }
+
 
 }
 

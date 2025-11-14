@@ -2,6 +2,7 @@ package com.project.inventory_management_system.mapper;
 
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Users;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,6 +18,7 @@ public class UserMapper
         dto.setUserId(user.getUserId());
         dto.setUsername(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setDepartmentId(user.getDepartment().getId());
 
         return dto;
     }
@@ -27,7 +29,6 @@ public class UserMapper
         if (dto == null) return null;
 
         Users user = new Users();
-        user.setUserId(dto.getUserId());
         user.setUsername(dto.getUsername());
         user.setEmail(dto.getEmail());
 
