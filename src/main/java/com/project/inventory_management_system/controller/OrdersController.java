@@ -99,5 +99,24 @@ public class OrdersController
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
         }
+        @DeleteMapping("/order/delete/{orderId}")
+        public ResponseEntity<?> deleteOrderDetails(HttpServletRequest request, @PathVariable Long orderId)
+        {
+            UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+            if (userDetails == null)
+            {
+                return ResponseEntity.status(401).body("Unauthorized");
+            }
+            try
+            {
+                String deleteOrder = orderService.deleteOrder(userDetails.getUsername(), orderId);
+                return ResponseEntity.ok(deleteOrder);
+            }
+            catch (RuntimeException e)
+            {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+
+        }
 
     }

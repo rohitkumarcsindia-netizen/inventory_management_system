@@ -16,4 +16,6 @@ public interface OrderService
     List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
 
     OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
+
+    String deleteOrder(String username, Long orderId);
 }

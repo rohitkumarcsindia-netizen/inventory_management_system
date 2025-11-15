@@ -12,8 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -105,6 +103,30 @@ public class OrderServiceImpl implements OrderService
 
         // Return Dto
         return orderMapper.toDto(updateOrder);
+    }
+
+    @Override
+    public String deleteOrder(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+         if (user == null)
+         {
+             throw new RuntimeException("User not found");
+         }
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+
+        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
+                order.getUsers().getUserId() != user.getUserId())
+        {
+            throw new RuntimeException("Order not found for this user");
+        }
+
+        //delete order
+        orderRepository.deleteById(orderId);
+
+        return "Order deleted successfull";
     }
 
 
