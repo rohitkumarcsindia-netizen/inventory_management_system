@@ -2,6 +2,8 @@ package com.project.inventory_management_system.service;
 
 
 import com.project.inventory_management_system.dto.LoginRequestDto;
+import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.utiliities.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,13 @@ public class AuthServiceImpl implements AuthService
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final UsersRepository usersRepository;
 
 
     @Override
     public ResponseEntity<?> loginUser(LoginRequestDto loginRequestDto)
     {
+        Users user = usersRepository.findByUsername(loginRequestDto.getUsername());
         try
         {
             Authentication authentication = authenticationManager.authenticate(
@@ -39,7 +43,11 @@ public class AuthServiceImpl implements AuthService
             if (authentication.isAuthenticated())
             {
                 String token = jwtUtil.generateToken(Map.of(), loginRequestDto.getUsername());
-                return ResponseEntity.ok(token);
+//                return ResponseEntity.ok(token);
+                return ResponseEntity.ok(Map.of(
+                        "token", token,
+                        "department", user.getDepartment().getDepartmentname()
+                ));
             }
             else
             {

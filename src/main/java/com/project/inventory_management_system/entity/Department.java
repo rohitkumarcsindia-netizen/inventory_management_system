@@ -20,8 +20,8 @@ public class Department
     @Column(name = "department_name",unique = true)
     private  String departmentname;
 
-//    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<DepartmentRole> departmentRole = new ArrayList<>();
+    @Column(name = "department_email", unique = true)
+    private String departmentEmail;
 
     @OneToMany(mappedBy = "department")
     private List<Users> users;

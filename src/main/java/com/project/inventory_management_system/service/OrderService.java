@@ -18,4 +18,8 @@ public interface OrderService
     OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
 
     String deleteOrder(String username, Long orderId);
+
+    ResponseEntity<?> approveOrder(String username, Long orderId);
+
+    ResponseEntity<?> rejectOrder(String username, Long orderId);
 }

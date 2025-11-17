@@ -2,9 +2,11 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.UserDto;
+import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,16 +23,25 @@ public class OrderServiceImpl implements OrderService
     private final UsersRepository usersRepository;
     private final OrderMapper orderMapper;
     private final EmailService emailService;
+    private final DepartmentRepository departmentRepository;
 
     @Override
     public ResponseEntity<?> createOrder(String username, OrdersDto ordersDto)
     {
         Users user = usersRepository.findByUsername(username);
 
+
         if (user == null)
         {
             return ResponseEntity.badRequest().body("User not found");
         }
+
+        if (!user.getDepartment().getDepartmentname()
+                .equalsIgnoreCase("project team"))
+        {
+            return ResponseEntity.badRequest().body("This User not allowed create orders");
+        }
+
 
             // Set user inside Dto
             UserDto userDto = new UserDto();
@@ -46,11 +57,14 @@ public class OrderServiceImpl implements OrderService
 
             Orders saved = orderRepository.save(orders);
 
+            Department financeTeam = departmentRepository.findByDepartmentname("finance");
+
             //sending mail
-            emailService.sendMailOrderConfirm(saved.getOrderId());
+            emailService.sendMailOrderConfirm(user.getEmail(),
+                    financeTeam.getDepartmentEmail(), saved.getOrderId());
 
             // Return Dto
-            OrdersDto saveOrder =  orderMapper.toDto(saved);
+            OrdersDto saveOrder = orderMapper.toDto(saved);
 
 
             return ResponseEntity.ok(saveOrder);
@@ -131,6 +145,64 @@ public class OrderServiceImpl implements OrderService
         orderRepository.deleteById(orderId);
 
         return "Order deleted successfull";
+    }
+
+    // Order Approve and Reject Method
+
+    @Override
+    public ResponseEntity<?> approveOrder(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus("Approved");
+        orderRepository.save(order);
+
+        Department cloudTeam = departmentRepository.findByDepartmentname("cloud team");
+
+        emailService.sendMailOrderApprove(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+
+        return ResponseEntity.ok("Order Approved Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> rejectOrder(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can reject orders");
+        }
+
+        Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setStatus("Rejected");
+        orderRepository.save(order);
+
+        Department cloudTeam = departmentRepository.findByDepartmentname("project team");
+
+        emailService.sendMailOrderReject(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+
+        return ResponseEntity.ok("Order Reject Successfully");
     }
 
 
