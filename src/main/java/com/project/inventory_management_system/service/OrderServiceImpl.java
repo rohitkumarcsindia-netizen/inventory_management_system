@@ -46,8 +46,12 @@ public class OrderServiceImpl implements OrderService
 
             Orders saved = orderRepository.save(orders);
 
+            //sending mail
+            emailService.sendMailOrderConfirm(saved.getOrderId());
+
             // Return Dto
             OrdersDto saveOrder =  orderMapper.toDto(saved);
+
 
             return ResponseEntity.ok(saveOrder);
 

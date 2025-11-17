@@ -1,8 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.UserDto;
-import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;

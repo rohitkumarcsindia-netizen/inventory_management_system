@@ -16,7 +16,8 @@ public class EmailService
     {
         SimpleMailMessage message = new SimpleMailMessage();
         String fixedEmail = "shubhamkumar10510sk@gmail.com";
-        message.setTo(fixedEmail);
+        message.setFrom(fixedEmail);
+        message.setTo("rohitkumar.csindia@gmail.com");
         message.setSubject("Order Confirmation - Order #" + orderId);
         message.setText("Thank you for your order! Your order ID is " + orderId + ".");
 
