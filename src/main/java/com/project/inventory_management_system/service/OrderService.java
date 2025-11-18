@@ -19,7 +19,12 @@ public interface OrderService
 
     String deleteOrder(String username, Long orderId);
 
+
+    //Finance Team Method
+
     ResponseEntity<?> approveOrder(String username, Long orderId);
 
     ResponseEntity<?> rejectOrder(String username, Long orderId);
+
+    ResponseEntity<?> getPendingOrdersForFinance(String username);
 }

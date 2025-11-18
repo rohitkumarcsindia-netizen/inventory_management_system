@@ -26,4 +26,5 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
             @Param("offset") int offset
     );
 
+    List<Orders> findByStatus(String status);
 }

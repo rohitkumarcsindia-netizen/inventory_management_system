@@ -60,8 +60,13 @@ public class OrderServiceImpl implements OrderService
             Department financeTeam = departmentRepository.findByDepartmentname("finance");
 
             //sending mail
-            emailService.sendMailOrderConfirm(user.getEmail(),
+            boolean mailsent = emailService.sendMailOrderConfirm(user.getEmail(),
                     financeTeam.getDepartmentEmail(), saved.getOrderId());
+
+            if (!mailsent)
+            {
+                return ResponseEntity.status(500).body("Mail Not Sent");
+            }
 
             // Return Dto
             OrdersDto saveOrder = orderMapper.toDto(saved);
@@ -172,7 +177,12 @@ public class OrderServiceImpl implements OrderService
 
         Department cloudTeam = departmentRepository.findByDepartmentname("cloud team");
 
-        emailService.sendMailOrderApprove(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+       boolean mailsent = emailService.sendMailOrderApprove(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
 
         return ResponseEntity.ok("Order Approved Successfully");
     }
@@ -200,9 +210,41 @@ public class OrderServiceImpl implements OrderService
 
         Department cloudTeam = departmentRepository.findByDepartmentname("project team");
 
-        emailService.sendMailOrderReject(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailOrderReject(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
 
         return ResponseEntity.ok("Order Reject Successfully");
+    }
+
+
+    // finance Team getOrders Method
+
+    @Override
+    public ResponseEntity<?> getPendingOrdersForFinance(String username)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view pending orders");
+        }
+
+        List<Orders> orders = orderRepository.findByStatus("Project");
+
+        List<OrdersDto> list = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(list);
     }
 
 

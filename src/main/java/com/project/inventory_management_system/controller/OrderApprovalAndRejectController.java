@@ -7,16 +7,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/order")
-public class OrderApprovalController
+@RequestMapping("/api/orders")
+public class OrderApprovalAndRejectController
 {
     private final OrderService orderService;
+
+
+    @GetMapping("/finance/pending")
+    public ResponseEntity<?> getPendingOrdersForFinance(HttpServletRequest request)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return orderService.getPendingOrdersForFinance(userDetails.getUsername());
+    }
+
 
 
     @PutMapping("/{orderId}/approve")
@@ -31,6 +44,9 @@ public class OrderApprovalController
 
         return orderService.approveOrder(userDetails.getUsername(), orderId);
     }
+
+
+
 
     @PutMapping("/{orderId}/reject")
     public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId)
