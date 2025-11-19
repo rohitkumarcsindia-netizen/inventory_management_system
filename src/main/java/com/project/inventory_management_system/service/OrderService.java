@@ -10,8 +10,8 @@ import java.util.List;
 public interface OrderService 
 {
 
+    //Project Team Method
     ResponseEntity<?> createOrder(String username, OrdersDto ordersDto);
-
 
     List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
 
@@ -21,10 +21,13 @@ public interface OrderService
 
 
     //Finance Team Method
-
     ResponseEntity<?> approveOrder(String username, Long orderId);
 
     ResponseEntity<?> rejectOrder(String username, Long orderId);
 
     ResponseEntity<?> getPendingOrdersForFinance(String username);
+
+
+    //Cloud Team Method
+    ResponseEntity<?> getApprovedOrdersForScm(String username);
 }

@@ -51,6 +51,9 @@ public class Orders
     @Column(name = "pms_remarks", columnDefinition = "TEXT")
     private String pmsRemarks;
 
+    @Column(name = "jira_ticket")
+    private String jiraTicket;
+
 
 
 }

@@ -32,7 +32,7 @@ public class OrderApprovalAndRejectController
 
 
 
-    @PutMapping("/{orderId}/approve")
+    @PutMapping("/approve/{orderId}")
     public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -48,7 +48,7 @@ public class OrderApprovalAndRejectController
 
 
 
-    @PutMapping("/{orderId}/reject")
+    @PutMapping("/reject/{orderId}")
     public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");

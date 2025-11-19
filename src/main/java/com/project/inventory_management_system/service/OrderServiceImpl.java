@@ -54,14 +54,14 @@ public class OrderServiceImpl implements OrderService
             // Convert Dto → Entity
             Orders orders = orderMapper.toEntity(ordersDto);
             orders.setUsers(user);
+            orders.setStatus("Finance");
 
             Orders saved = orderRepository.save(orders);
 
             Department financeTeam = departmentRepository.findByDepartmentname("finance");
 
             //sending mail
-            boolean mailsent = emailService.sendMailOrderConfirm(user.getEmail(),
-                    financeTeam.getDepartmentEmail(), saved.getOrderId());
+            boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());
 
             if (!mailsent)
             {
@@ -152,8 +152,9 @@ public class OrderServiceImpl implements OrderService
         return "Order deleted successfull";
     }
 
-    // Order Approve and Reject Method
 
+
+    // Order Approve Method for Finance Team
     @Override
     public ResponseEntity<?> approveOrder(String username, Long orderId)
     {
@@ -172,12 +173,12 @@ public class OrderServiceImpl implements OrderService
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        order.setStatus("Approved");
+        order.setStatus("SCM");
         orderRepository.save(order);
 
-        Department cloudTeam = departmentRepository.findByDepartmentname("cloud team");
+        Department department = departmentRepository.findByDepartmentname("scm");
 
-       boolean mailsent = emailService.sendMailOrderApprove(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+       boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {
@@ -187,6 +188,8 @@ public class OrderServiceImpl implements OrderService
         return ResponseEntity.ok("Order Approved Successfully");
     }
 
+
+    // Order Reject Method for Finance Team
     @Override
     public ResponseEntity<?> rejectOrder(String username, Long orderId)
     {
@@ -205,12 +208,12 @@ public class OrderServiceImpl implements OrderService
         Orders order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        order.setStatus("Rejected");
+        order.setStatus("Rejected for Finance Team");
         orderRepository.save(order);
 
-        Department cloudTeam = departmentRepository.findByDepartmentname("project team");
+        Department department = departmentRepository.findByDepartmentname("project team");
 
-        boolean mailsent = emailService.sendMailOrderReject(user.getEmail(), cloudTeam.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailOrderReject(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {
@@ -222,7 +225,6 @@ public class OrderServiceImpl implements OrderService
 
 
     // finance Team getOrders Method
-
     @Override
     public ResponseEntity<?> getPendingOrdersForFinance(String username)
     {
@@ -238,7 +240,33 @@ public class OrderServiceImpl implements OrderService
             return ResponseEntity.badRequest().body("Only finance team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatus("Project");
+        List<Orders> orders = orderRepository.findByStatus("finance");
+
+        List<OrdersDto> list = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(list);
+    }
+
+
+    //SCM Team getOrders Method
+    @Override
+    public ResponseEntity<?> getApprovedOrdersForScm(String username)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
+        {
+            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+        }
+
+        List<Orders> orders = orderRepository.findByStatus("scm");
 
         List<OrdersDto> list = orders.stream()
                 .map(orderMapper::toDto)

@@ -25,7 +25,7 @@ public class EmailController
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
-         emailService.sendMailOrderConfirm(userDetails.getUsername(), department.getDepartmentEmail(), ordersDto.getOrderId());
+         emailService.sendMailOrderConfirm(department.getDepartmentEmail(), ordersDto.getOrderId());
 
 
 //        emailService.sendMailOrderConfirm(10L);
