@@ -48,7 +48,7 @@ public class ScmController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("scm"),
+                "ordersCount", orderRepository.countByStatus("SCM_PENDING"),
                 "orders", orders
         ));
     }

@@ -18,7 +18,6 @@ public class OrdersCompleteDto
     private Integer proposedBuildPlanQty;
     private String aktsComments;
     private String reasonForBuildRequest;
-    private String status;
     private String pmsRemarks;
     private String financeAction;
     private LocalDateTime financeActionTime;

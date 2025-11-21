@@ -52,7 +52,7 @@ public class CloudOrderController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("cloud team"),
+                "ordersCount", orderRepository.countByStatus("CLOUD_PENDING"),
                 "orders", orders
         ));
     }

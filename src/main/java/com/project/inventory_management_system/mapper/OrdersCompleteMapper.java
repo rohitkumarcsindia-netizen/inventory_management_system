@@ -31,7 +31,6 @@ public class OrdersCompleteMapper
             OrdersCompleteDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
             OrdersCompleteDto.setAktsComments(order.getAktsComments());
             OrdersCompleteDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-            OrdersCompleteDto.setStatus(order.getStatus());
             OrdersCompleteDto.setPmsRemarks(order.getPmsRemarks());
             OrdersCompleteDto.setFinanceAction(order.getFinanceAction());
             OrdersCompleteDto.setFinanceActionTime(order.getFinanceActionTime());
