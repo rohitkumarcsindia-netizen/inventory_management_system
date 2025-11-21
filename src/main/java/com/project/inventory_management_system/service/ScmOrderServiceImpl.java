@@ -1,9 +1,11 @@
 package com.project.inventory_management_system.service;
 
 
+import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -17,12 +19,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 
 @Service
 @RequiredArgsConstructor
-public class CreateJiraTicketServiceImpl implements CreateJiraTicketService {
+public class ScmOrderServiceImpl implements ScmOrderService
+{
 
     @Value("${jira.url}")
     private String jiraUrl;
@@ -40,6 +44,35 @@ public class CreateJiraTicketServiceImpl implements CreateJiraTicketService {
     private final UsersRepository usersRepository;
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
+    private final OrderMapper orderMapper;
+
+
+
+    @Override
+    public ResponseEntity<?> getApprovedOrdersForScm(String username, int offset, int limit)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
+        {
+            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+        }
+
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM", offset, limit);
+
+        List<OrdersDto> list = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(list);
+    }
+
+
 
     @Override
     public ResponseEntity<?> createJiraTicket(String username, Long orderId)
@@ -51,12 +84,21 @@ public class CreateJiraTicketServiceImpl implements CreateJiraTicketService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
+        {
+            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.badRequest().body("Order not found");
+        }
 
         if (!order.getStatus().equalsIgnoreCase("scm"))
         {
-            return ResponseEntity.badRequest().body("Order must be approved for finance before Jira ticket creation");
+            return ResponseEntity.badRequest().body("Finance approval required or Jira ticket already created for this order");
         }
 
         String summary = "Build Request for Order #" + orderId;

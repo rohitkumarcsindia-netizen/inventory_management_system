@@ -21,6 +21,7 @@ public class OrderMapper {
         dto.setOrderId(order.getOrderId());
         dto.setOrderDate(order.getOrderDate());
         dto.setProject(order.getProject());
+        dto.setOrderType(order.getOrderType());
         dto.setInitiator(order.getInitiator());
         dto.setProductType(order.getProductType());
         dto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
@@ -43,6 +44,7 @@ public class OrderMapper {
         order.setOrderId(dto.getOrderId());
         order.setOrderDate(dto.getOrderDate());
         order.setProject(dto.getProject());
+        order.setOrderType(dto.getOrderType());
         order.setInitiator(dto.getInitiator());
         order.setProductType(dto.getProductType());
         order.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());

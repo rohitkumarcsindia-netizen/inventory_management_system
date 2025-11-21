@@ -16,15 +16,43 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 {
     List<Orders> findByUsers(Users users);
 
+
+    //Orders find using UserId
     @Query(
             value = "SELECT * FROM orders WHERE user_id = :userId LIMIT :limit OFFSET :offset",
-            nativeQuery = true
-    )
+            nativeQuery = true)
     List<Orders> findOrdersByUserWithLimitOffset(
             @Param("userId") Long userId,
-            @Param("limit") int limit,
-            @Param("offset") int offset
-    );
+            @Param("offset") int offset,
+            @Param("limit") int limit);
 
-    List<Orders> findByStatus(String status);
+
+    // Orders find Using status
+    @Query(
+            value = "SELECT * FROM orders WHERE status = :status LIMIT :limit OFFSET :offset",
+            nativeQuery = true)
+    List<Orders> findByStatusWithLimitOffset(
+            @Param("status")String status,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
+
+
+
+    //Order find Using OrderType
+    @Query(value = "SELECT * FROM orders WHERE order_type = :orderType LIMIT :limit OFFSET :offset",
+            nativeQuery = true)
+    List<Orders> findByOrderTypeWithLimitOffset(
+            @Param("orderType") String orderType,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
+
+
+    // Order Count using userId
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE user_id = :userId", nativeQuery = true)
+    Long countByUserId(@Param("userId") long userId);
+
+
+    // Order Count using status
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
+    Long countByStatus(@Param("status") String status);
 }

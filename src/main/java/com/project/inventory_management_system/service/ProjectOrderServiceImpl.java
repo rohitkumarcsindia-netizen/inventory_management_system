@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrderServiceImpl implements OrderService
+public class ProjectOrderServiceImpl implements ProjectOrderService
 {
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
@@ -25,6 +25,7 @@ public class OrderServiceImpl implements OrderService
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
 
+    //Project Team Order Created Method
     @Override
     public ResponseEntity<?> createOrder(String username, OrdersDto ordersDto)
     {
@@ -54,7 +55,33 @@ public class OrderServiceImpl implements OrderService
             // Convert Dto → Entity
             Orders orders = orderMapper.toEntity(ordersDto);
             orders.setUsers(user);
-            orders.setStatus("Finance");
+
+            if (orders.getOrderType().equalsIgnoreCase("purchase"))
+            {
+                orders.setStatus("SCM");
+
+
+                Orders saved = orderRepository.save(orders);
+
+                Department financeTeam = departmentRepository.findByDepartmentname("scm");
+
+                //sending mail
+                boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());
+
+                if (!mailsent)
+                {
+                    return ResponseEntity.status(500).body("Mail Not Sent");
+                }
+
+                // Return Dto
+                OrdersDto saveOrder = orderMapper.toDto(saved);
+
+
+                return ResponseEntity.ok(saveOrder);
+            }
+
+
+            orders.setStatus("finance");
 
             Orders saved = orderRepository.save(orders);
 
@@ -78,10 +105,12 @@ public class OrderServiceImpl implements OrderService
     }
 
 
+
+    //Project Team Order Get Method
     @Override
     public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit)
     {
-        List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), limit, offset);
+        List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), offset, limit);
 
         List<OrdersDto> ordersDtos = orders.stream()
                 .map(orderMapper::toDto)
@@ -90,6 +119,8 @@ public class OrderServiceImpl implements OrderService
         return ordersDtos;
     }
 
+
+    //Project Team Order update Method
     @Override
     public OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
     {
@@ -121,6 +152,8 @@ public class OrderServiceImpl implements OrderService
         order.setAktsComments(ordersDto.getAktsComments());
         order.setPmsRemarks(ordersDto.getPmsRemarks());
 
+
+
         // Save updated order
         Orders updateOrder = orderRepository.save(order);
 
@@ -128,6 +161,8 @@ public class OrderServiceImpl implements OrderService
         return orderMapper.toDto(updateOrder);
     }
 
+
+    //Project Team Order delete Method
     @Override
     public String deleteOrder(String username, Long orderId)
     {
@@ -149,130 +184,7 @@ public class OrderServiceImpl implements OrderService
         //delete order
         orderRepository.deleteById(orderId);
 
-        return "Order deleted successfull";
-    }
-
-
-
-    // Order Approve Method for Finance Team
-    @Override
-    public ResponseEntity<?> approveOrder(String username, Long orderId)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
-        {
-            return ResponseEntity.badRequest().body("Only finance team can approve orders");
-        }
-
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        order.setStatus("SCM");
-        orderRepository.save(order);
-
-        Department department = departmentRepository.findByDepartmentname("scm");
-
-       boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
-
-        if (!mailsent)
-        {
-            return ResponseEntity.status(500).body("Mail Not Sent");
-        }
-
-        return ResponseEntity.ok("Order Approved Successfully");
-    }
-
-
-    // Order Reject Method for Finance Team
-    @Override
-    public ResponseEntity<?> rejectOrder(String username, Long orderId)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
-        {
-            return ResponseEntity.badRequest().body("Only finance team can reject orders");
-        }
-
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        order.setStatus("Rejected for Finance Team");
-        orderRepository.save(order);
-
-        Department department = departmentRepository.findByDepartmentname("project team");
-
-        boolean mailsent = emailService.sendMailOrderReject(department.getDepartmentEmail(), order.getOrderId());
-
-        if (!mailsent)
-        {
-            return ResponseEntity.status(500).body("Mail Not Sent");
-        }
-
-        return ResponseEntity.ok("Order Reject Successfully");
-    }
-
-
-    // finance Team getOrders Method
-    @Override
-    public ResponseEntity<?> getPendingOrdersForFinance(String username)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
-        {
-            return ResponseEntity.badRequest().body("Only finance team can view pending orders");
-        }
-
-        List<Orders> orders = orderRepository.findByStatus("finance");
-
-        List<OrdersDto> list = orders.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(list);
-    }
-
-
-    //SCM Team getOrders Method
-    @Override
-    public ResponseEntity<?> getApprovedOrdersForScm(String username)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
-        {
-            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
-        }
-
-        List<Orders> orders = orderRepository.findByStatus("scm");
-
-        List<OrdersDto> list = orders.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(list);
+        return "Order deleted successfully";
     }
 
 

@@ -3,13 +3,8 @@ package com.project.inventory_management_system.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.auditing.CurrentDateTimeProvider;
-import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -33,6 +28,9 @@ public class Orders
     @Column(name = "product_type", nullable = false, length = 100)
     private String productType;
 
+    @Column(name = "order_type", nullable = false, length = 100)
+    private String orderType;
+
     @Column(name = "proposed_build_plan_qty")
     private Integer proposedBuildPlanQty;
 
@@ -53,7 +51,5 @@ public class Orders
 
     @Column(name = "jira_ticket")
     private String jiraTicket;
-
-
 
 }

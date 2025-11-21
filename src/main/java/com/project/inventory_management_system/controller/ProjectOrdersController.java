@@ -4,7 +4,7 @@ import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
-import com.project.inventory_management_system.service.OrderService;
+import com.project.inventory_management_system.service.ProjectOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +19,9 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
-public class OrdersController
+public class ProjectOrdersController
 {
-    private final OrderService orderService;
+    private final ProjectOrderService projectOrderService;
     private final UsersRepository usersRepository;
     private final OrderRepository orderRepository;
 
@@ -35,7 +35,7 @@ public class OrdersController
                 return ResponseEntity.status(401).body("Unauthorized");
             }
 
-        return orderService.createOrder(userDetails.getUsername(), ordersDto);
+        return projectOrderService.createOrder(userDetails.getUsername(), ordersDto);
 
 
     }
@@ -60,7 +60,7 @@ public class OrdersController
             return ResponseEntity.status(404).body("User not found");
         }
 
-        List<OrdersDto> orders = orderService.getOrdersByUserWithLimitOffset(user, offset, limit);
+        List<OrdersDto> orders = projectOrderService.getOrdersByUserWithLimitOffset(user, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -70,7 +70,7 @@ public class OrdersController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.count(),
+                "ordersCount", orderRepository.countByUserId(user.getUserId()),
                 "orders", orders
         ));
 
@@ -89,7 +89,7 @@ public class OrdersController
 
             try
             {
-                OrdersDto orderDetailsUpdate = orderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
+                OrdersDto orderDetailsUpdate = projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
                 return ResponseEntity.ok(orderDetailsUpdate);
             }
             catch (Exception e)
@@ -107,7 +107,7 @@ public class OrdersController
             }
             try
             {
-                String deleteOrder = orderService.deleteOrder(userDetails.getUsername(), orderId);
+                String deleteOrder = projectOrderService.deleteOrder(userDetails.getUsername(), orderId);
                 return ResponseEntity.ok(deleteOrder);
             }
             catch (RuntimeException e)

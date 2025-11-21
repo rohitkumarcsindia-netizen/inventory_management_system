@@ -13,6 +13,7 @@ public class OrdersDto
     private String project;
     private String initiator;
     private String productType;
+    private String orderType;
     private Integer proposedBuildPlanQty;
     private String aktsComments;
     private String reasonForBuildRequest;
