@@ -52,4 +52,11 @@ public class Orders
     @Column(name = "jira_ticket")
     private String jiraTicket;
 
+    @Column(name = "finance_action")
+    private String financeAction;
+
+    @Column(name = "finance_action_time")
+    private LocalDateTime financeActionTime;
+
+
 }

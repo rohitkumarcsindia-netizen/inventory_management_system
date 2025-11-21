@@ -1,10 +1,12 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.OrdersCompleteDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -22,6 +25,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
     private final UsersRepository usersRepository;
     private final DepartmentRepository departmentRepository;
     private final OrderRepository orderRepository;
+    private final OrdersCompleteMapper ordersCompleteMapper;
     private final OrderMapper orderMapper;
     private final EmailService emailService;
 
@@ -36,12 +40,12 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.badRequest().body("Only finance team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("finance", offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("FINANCE_PENDING", offset, limit);
 
         List<OrdersDto> list = orders.stream()
                 .map(orderMapper::toDto)
@@ -60,15 +64,15 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.badRequest().body("Only finance team can view complete orders");
         }
 
-        List<Orders> orders = orderRepository.findByOrderTypeWithLimitOffset("Free of Cost", offset, limit);
+        List<Orders> orders = orderRepository.findByFinanceActionIsNotNull(offset, limit);
 
-        List<OrdersDto> list = orders.stream()
-                .map(orderMapper::toDto)
+        List<OrdersCompleteDto> list = orders.stream()
+                .map(ordersCompleteMapper::toDto)
                 .toList();
 
         return ResponseEntity.ok(list);
@@ -86,15 +90,20 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.badRequest().body("Only finance team can approve orders");
         }
 
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.badRequest().body("Order not found");
+        }
 
-        order.setStatus("SCM");
+        order.setStatus("SCM_PENDING");
+        order.setFinanceAction("APPROVED");
+        order.setFinanceActionTime(LocalDateTime.now());
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("scm");
@@ -121,18 +130,23 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("finance"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.badRequest().body("Only finance team can reject orders");
         }
 
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.badRequest().body("Order not found");
+        }
 
-        order.setStatus("Rejected from Finance Team");
+        order.setStatus("FINANCE_REJECTED");
+        order.setFinanceAction("REJECTED");
+        order.setFinanceActionTime(LocalDateTime.now());
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("project team");
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailOrderReject(department.getDepartmentEmail(), order.getOrderId());
 

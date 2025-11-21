@@ -58,12 +58,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM", offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM_PENDING", offset, limit);
 
         List<OrdersDto> list = orders.stream()
                 .map(orderMapper::toDto)
@@ -84,7 +84,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("scm"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
         }
@@ -96,7 +96,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("scm"))
+        if (!order.getStatus().equalsIgnoreCase("SCM_PENDING"))
         {
             return ResponseEntity.badRequest().body("Finance approval required or Jira ticket already created for this order");
         }
@@ -145,10 +145,10 @@ public class ScmOrderServiceImpl implements ScmOrderService
             String ticketKey = (String) response.get("key");
 
             order.setJiraTicket(ticketKey);
-            order.setStatus("cloud team");
+            order.setStatus("CLOUD_PENDING");
             orderRepository.save(order);
 
-            Department department = departmentRepository.findByDepartmentname("cloud team");
+            Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
 
             boolean mailsent = emailService.sendMailCreateJiraTicket(department.getDepartmentEmail(), order.getOrderId());
 

@@ -58,12 +58,12 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
             if (orders.getOrderType().equalsIgnoreCase("purchase"))
             {
-                orders.setStatus("SCM");
+                orders.setStatus("SCM_PENDING");
 
 
                 Orders saved = orderRepository.save(orders);
 
-                Department financeTeam = departmentRepository.findByDepartmentname("scm");
+                Department financeTeam = departmentRepository.findByDepartmentname("SCM");
 
                 //sending mail
                 boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());
@@ -81,11 +81,11 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             }
 
 
-            orders.setStatus("finance");
+            orders.setStatus("FINANCE_PENDING");
 
             Orders saved = orderRepository.save(orders);
 
-            Department financeTeam = departmentRepository.findByDepartmentname("finance");
+            Department financeTeam = departmentRepository.findByDepartmentname("FINANCE");
 
             //sending mail
             boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());

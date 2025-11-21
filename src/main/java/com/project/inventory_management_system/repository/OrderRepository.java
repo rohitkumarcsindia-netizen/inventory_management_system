@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     //Orders find using UserId
     @Query(
-            value = "SELECT * FROM orders WHERE user_id = :userId LIMIT :limit OFFSET :offset",
+            value = "SELECT * FROM orders WHERE user_id = :userId ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
             nativeQuery = true)
     List<Orders> findOrdersByUserWithLimitOffset(
             @Param("userId") Long userId,
@@ -29,8 +29,9 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     // Orders find Using status
     @Query(
-            value = "SELECT * FROM orders WHERE status = :status LIMIT :limit OFFSET :offset",
-            nativeQuery = true)
+            value = "SELECT * FROM orders WHERE status = :status ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
+            nativeQuery = true
+    )
     List<Orders> findByStatusWithLimitOffset(
             @Param("status")String status,
             @Param("offset") int offset,
@@ -39,7 +40,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
 
     //Order find Using OrderType
-    @Query(value = "SELECT * FROM orders WHERE order_type = :orderType LIMIT :limit OFFSET :offset",
+    @Query(value = "SELECT * FROM orders WHERE order_type = :orderType ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
             nativeQuery = true)
     List<Orders> findByOrderTypeWithLimitOffset(
             @Param("orderType") String orderType,
@@ -55,4 +56,15 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     // Order Count using status
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
     Long countByStatus(@Param("status") String status);
+
+
+    @Query(
+            value = "SELECT * FROM orders WHERE finance_action IS NOT NULL ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
+            nativeQuery = true
+    )
+    List<Orders> findByFinanceActionIsNotNull(int offset, int limit);
+
+
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE finance_action IS NOT NULL", nativeQuery = true)
+    Long countByFinanceAction();
 }

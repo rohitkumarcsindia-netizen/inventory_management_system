@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 
+import com.project.inventory_management_system.dto.OrdersCompleteDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
@@ -50,7 +51,7 @@ public class FinanceOrderController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("Finance"),
+                "ordersCount", orderRepository.countByStatus("FINANCE_PENDING"),
                 "orders", orders
         ));
     }
@@ -73,7 +74,7 @@ public class FinanceOrderController
         ResponseEntity<?> serviceResponse =
                 financeOrderService.getCompleteOrdersForFinance(userDetails.getUsername(), offset, limit);
 
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
+        List<OrdersCompleteDto> orders = (List<OrdersCompleteDto>) serviceResponse.getBody();
 
         if (orders.isEmpty())
         {
@@ -83,7 +84,7 @@ public class FinanceOrderController
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.count(),
+                "ordersCount", orderRepository.countByFinanceAction(),
                 "orders", orders
         ));
     }
