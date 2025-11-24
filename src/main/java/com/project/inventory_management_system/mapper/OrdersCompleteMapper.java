@@ -38,6 +38,26 @@ public class OrdersCompleteMapper
             OrdersCompleteDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
 
         }
+
+        // Scm Orders Action History
+        if (order.getScmAction() != null)
+        {
+            OrdersCompleteDto.setOrderId(order.getOrderId());
+            OrdersCompleteDto.setOrderDate(order.getOrderDate());
+            OrdersCompleteDto.setProject(order.getProject());
+            OrdersCompleteDto.setOrderType(order.getOrderType());
+            OrdersCompleteDto.setInitiator(order.getInitiator());
+            OrdersCompleteDto.setProductType(order.getProductType());
+            OrdersCompleteDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+            OrdersCompleteDto.setAktsComments(order.getAktsComments());
+            OrdersCompleteDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+            OrdersCompleteDto.setPmsRemarks(order.getPmsRemarks());
+            OrdersCompleteDto.setScmAction(order.getScmAction());
+            OrdersCompleteDto.setScmActionTime(order.getScmActionTime());
+
+            OrdersCompleteDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
+
+        }
         return OrdersCompleteDto;
     }
 }

@@ -1,11 +1,13 @@
 package com.project.inventory_management_system.service;
 
 
+import com.project.inventory_management_system.dto.OrdersCompleteDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -18,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +48,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final OrderMapper orderMapper;
+    private final OrdersCompleteMapper ordersCompleteMapper;
 
 
 
@@ -146,6 +150,8 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
             order.setJiraTicket(ticketKey);
             order.setStatus("CLOUD_PENDING");
+            order.setScmAction("JIRA_CREATED");
+            order.setScmActionTime(LocalDateTime.now());
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
@@ -163,5 +169,29 @@ public class ScmOrderServiceImpl implements ScmOrderService
         {
             return ResponseEntity.status(500).body("Failed: " + e.getMessage());
         }
+    }
+
+    @Override
+    public ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view complete orders");
+        }
+
+        List<Orders> orders = orderRepository.findByScmActionIsNotNull(offset, limit);
+
+        List<OrdersCompleteDto> list = orders.stream()
+                .map(ordersCompleteMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(list);
     }
 }

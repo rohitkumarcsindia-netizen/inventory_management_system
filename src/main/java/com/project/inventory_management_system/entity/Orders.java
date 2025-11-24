@@ -58,5 +58,11 @@ public class Orders
     @Column(name = "finance_action_time")
     private LocalDateTime financeActionTime;
 
+    @Column(name = "scm_action")
+    private String scmAction;
+
+    @Column(name = "scm_action_time")
+    private LocalDateTime scmActionTime;
+
 
 }

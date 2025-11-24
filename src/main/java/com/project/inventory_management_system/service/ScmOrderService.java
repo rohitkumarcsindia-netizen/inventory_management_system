@@ -10,4 +10,6 @@ public interface ScmOrderService
     ResponseEntity<?> getApprovedOrdersForScm(String username, int offset, int limit);
 
     ResponseEntity<?> createJiraTicket(String username, Long orderId);
+
+    ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit);
 }

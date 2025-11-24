@@ -58,6 +58,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Long countByStatus(@Param("status") String status);
 
 
+    //Order find Using Finance Action
     @Query(
             value = "SELECT * FROM orders WHERE finance_action IS NOT NULL ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
             nativeQuery = true
@@ -65,6 +66,19 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     List<Orders> findByFinanceActionIsNotNull(int offset, int limit);
 
 
+    // Order Count using Finance Action
     @Query(value = "SELECT COUNT(*) FROM orders WHERE finance_action IS NOT NULL", nativeQuery = true)
     Long countByFinanceAction();
+
+
+    // Order Count using Scm Action
+    @Query(
+            value = "SELECT * FROM orders WHERE scm_action IS NOT NULL ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
+            nativeQuery = true
+    )
+    List<Orders> findByScmActionIsNotNull(int offset, int limit);
+
+    // Order Count using Scm Action
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE finance_action IS NOT NULL", nativeQuery = true)
+    Long countByScmAction();
 }
