@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +39,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         if (!user.getDepartment().getDepartmentname()
-                .equalsIgnoreCase("project team"))
+                .equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.badRequest().body("This User not allowed create orders");
         }
@@ -56,9 +57,9 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             Orders orders = orderMapper.toEntity(ordersDto);
             orders.setUsers(user);
 
-            if (orders.getOrderType().equalsIgnoreCase("purchase"))
+            if (orders.getOrderType().equalsIgnoreCase("PURCHASE"))
             {
-                orders.setStatus("SCM_PENDING");
+                orders.setStatus("SCM PENDING");
 
 
                 Orders saved = orderRepository.save(orders);
@@ -81,7 +82,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             }
 
 
-            orders.setStatus("FINANCE_PENDING");
+            orders.setStatus("FINANCE PENDING");
 
             Orders saved = orderRepository.save(orders);
 
@@ -108,15 +109,32 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
     //Project Team Order Get Method
     @Override
-    public List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit)
+    public ResponseEntity<?> getOrdersByUserWithLimitOffset(String username, int offset, int limit)
     {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+        }
+
         List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), offset, limit);
 
-        List<OrdersDto> ordersDtos = orders.stream()
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = orders.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ordersDtos;
+        return ResponseEntity.ok(ordersDtoList);
     }
 
 

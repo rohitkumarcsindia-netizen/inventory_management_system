@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -49,20 +50,13 @@ public class Orders
     @Column(name = "pms_remarks", columnDefinition = "TEXT")
     private String pmsRemarks;
 
-    @Column(name = "jira_ticket")
-    private String jiraTicket;
+    @OneToMany(mappedBy = "order")
+    private List<FinanceApproval> financeApprovalList;
 
-    @Column(name = "finance_action")
-    private String financeAction;
+    @OneToMany(mappedBy = "order")
+    private List<CloudApproval> cloudApprovalList;
 
-    @Column(name = "finance_action_time")
-    private LocalDateTime financeActionTime;
-
-    @Column(name = "scm_action")
-    private String scmAction;
-
-    @Column(name = "scm_action_time")
-    private LocalDateTime scmActionTime;
-
+    @OneToMany(mappedBy = "order")
+    private List<ScmApproval> scmApprovalList;
 
 }

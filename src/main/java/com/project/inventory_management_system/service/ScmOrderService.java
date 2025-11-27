@@ -1,15 +1,21 @@
 package com.project.inventory_management_system.service;
 
 
+import com.project.inventory_management_system.entity.ScmApproval;
 import org.springframework.http.ResponseEntity;
 
 public interface ScmOrderService
 {
 
     //SCM Team Method
-    ResponseEntity<?> getApprovedOrdersForScm(String username, int offset, int limit);
+    ResponseEntity<?> getPendingOrdersForScm(String username, int offset, int limit);
 
-    ResponseEntity<?> createJiraTicket(String username, Long orderId);
 
     ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit);
+
+    ResponseEntity<?> fillJiraTicketDetail(String username, Long orderId, ScmApproval jiraDetails);
+
+    ResponseEntity<?> prodbackGenerateAndJiraTicketClosure(String username, Long orderId, ScmApproval jiraDetails);
+
+    ResponseEntity<?> getScmRecheckOrderPending(String username, int offset, int limit);
 }

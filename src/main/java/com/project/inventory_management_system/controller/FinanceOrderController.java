@@ -1,8 +1,8 @@
 package com.project.inventory_management_system.controller;
 
-
-import com.project.inventory_management_system.dto.OrdersCompleteDto;
+import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.repository.FinanceApprovalRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +22,7 @@ public class FinanceOrderController
 {
     private final FinanceOrderService financeOrderService;
     private final OrderRepository orderRepository;
+    private final FinanceApprovalRepository financeApprovalRepository;
 
 
     @GetMapping("/finance/pending")
@@ -40,18 +41,19 @@ public class FinanceOrderController
         ResponseEntity<?> serviceResponse =
                 financeOrderService.getPendingOrdersForFinance(userDetails.getUsername(), offset, limit);
 
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
+        Object body = serviceResponse.getBody();
 
-
-        if (orders.isEmpty())
+        if (body instanceof String)
         {
-            return ResponseEntity.ok(Map.of("message", "No orders found"));
+            return ResponseEntity.badRequest().body(body);
         }
+
+        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
 
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("FINANCE_PENDING"),
+                "ordersCount", orderRepository.countByStatus("FINANCE PENDING"),
                 "orders", orders
         ));
     }
@@ -74,17 +76,19 @@ public class FinanceOrderController
         ResponseEntity<?> serviceResponse =
                 financeOrderService.getCompleteOrdersForFinance(userDetails.getUsername(), offset, limit);
 
-        List<OrdersCompleteDto> orders = (List<OrdersCompleteDto>) serviceResponse.getBody();
+        Object body = serviceResponse.getBody();
 
-        if (orders.isEmpty())
+        if (body instanceof String)
         {
-            return ResponseEntity.ok(Map.of("message", "No orders found"));
+            return ResponseEntity.badRequest().body(body);
         }
+
+        List<FinanceOrdersHistoryDto> orders = (List<FinanceOrdersHistoryDto>) serviceResponse.getBody();
 
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByFinanceAction(),
+                "ordersCount", financeApprovalRepository.countByAction(),
                 "orders", orders
         ));
     }
@@ -92,7 +96,7 @@ public class FinanceOrderController
 
 
     @PutMapping("/approve/{orderId}")
-    public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId)
+    public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody String reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -101,14 +105,14 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return financeOrderService.approveOrder(userDetails.getUsername(), orderId);
+        return financeOrderService.approveOrder(userDetails.getUsername(), orderId, reason);
     }
 
 
 
 
     @PutMapping("/reject/{orderId}")
-    public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId)
+    public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody String reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -117,7 +121,7 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return financeOrderService.rejectOrder(userDetails.getUsername(), orderId);
+        return financeOrderService.rejectOrder(userDetails.getUsername(), orderId, reason);
     }
 
 }

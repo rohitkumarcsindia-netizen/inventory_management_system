@@ -1,8 +1,10 @@
 package com.project.inventory_management_system.mapper;
 
 
-import com.project.inventory_management_system.dto.OrdersCompleteDto;
-import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
+import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
+import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
+import com.project.inventory_management_system.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,52 +14,110 @@ public class OrdersCompleteMapper
 {
     private final UserMapper userMapper;
 
-    //Entity → DTO
-    public OrdersCompleteDto toDto(Orders order)
+    // Entity → DTO Finance Orders Action History
+    public FinanceOrdersHistoryDto financeOrdersHistoryDto(Orders order, FinanceApproval financeApproval)
     {
         if (order == null) return null;
 
-        OrdersCompleteDto OrdersCompleteDto = new OrdersCompleteDto();
+        FinanceOrdersHistoryDto financeOrdersHistoryDto = new FinanceOrdersHistoryDto();
 
-        // Finance Orders Action History
-        if (order.getFinanceAction() != null)
+        financeOrdersHistoryDto.setOrderId(order.getOrderId());
+        financeOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        financeOrdersHistoryDto.setProject(order.getProject());
+        financeOrdersHistoryDto.setOrderType(order.getOrderType());
+        financeOrdersHistoryDto.setInitiator(order.getInitiator());
+        financeOrdersHistoryDto.setProductType(order.getProductType());
+        financeOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        financeOrdersHistoryDto.setAktsComments(order.getAktsComments());
+        financeOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        financeOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+
+        financeOrdersHistoryDto.setFinanceAction(financeApproval.getFinanceAction());
+        financeOrdersHistoryDto.setFinanceActionTime(financeApproval.getFinanceActionTime());
+        financeOrdersHistoryDto.setFinanceReason(financeApproval.getFinanceReason());
+
+        Users approvedUser = financeApproval.getFinanceApprovedBy();
+        if (approvedUser != null)
         {
-            OrdersCompleteDto.setOrderId(order.getOrderId());
-            OrdersCompleteDto.setOrderDate(order.getOrderDate());
-            OrdersCompleteDto.setProject(order.getProject());
-            OrdersCompleteDto.setOrderType(order.getOrderType());
-            OrdersCompleteDto.setInitiator(order.getInitiator());
-            OrdersCompleteDto.setProductType(order.getProductType());
-            OrdersCompleteDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-            OrdersCompleteDto.setAktsComments(order.getAktsComments());
-            OrdersCompleteDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-            OrdersCompleteDto.setPmsRemarks(order.getPmsRemarks());
-            OrdersCompleteDto.setFinanceAction(order.getFinanceAction());
-            OrdersCompleteDto.setFinanceActionTime(order.getFinanceActionTime());
-
-            OrdersCompleteDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
-
+            financeOrdersHistoryDto.setFinanceApprovedBy(approvedUser.getUserId());
         }
 
-        // Scm Orders Action History
-        if (order.getScmAction() != null)
-        {
-            OrdersCompleteDto.setOrderId(order.getOrderId());
-            OrdersCompleteDto.setOrderDate(order.getOrderDate());
-            OrdersCompleteDto.setProject(order.getProject());
-            OrdersCompleteDto.setOrderType(order.getOrderType());
-            OrdersCompleteDto.setInitiator(order.getInitiator());
-            OrdersCompleteDto.setProductType(order.getProductType());
-            OrdersCompleteDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-            OrdersCompleteDto.setAktsComments(order.getAktsComments());
-            OrdersCompleteDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-            OrdersCompleteDto.setPmsRemarks(order.getPmsRemarks());
-            OrdersCompleteDto.setScmAction(order.getScmAction());
-            OrdersCompleteDto.setScmActionTime(order.getScmActionTime());
+        financeOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
 
-            OrdersCompleteDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
-
-        }
-        return OrdersCompleteDto;
+        return financeOrdersHistoryDto;
     }
+
+    // Entity → DTO Scm Orders Action History
+    public ScmOrdersHistoryDto scmOrdersHistoryDto(Orders order, ScmApproval jiraDetails)
+    {
+
+        if (order == null) return null;
+
+        ScmOrdersHistoryDto scmOrdersHistoryDto = new ScmOrdersHistoryDto();
+
+        scmOrdersHistoryDto.setOrderId(order.getOrderId());
+        scmOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        scmOrdersHistoryDto.setProject(order.getProject());
+        scmOrdersHistoryDto.setOrderType(order.getOrderType());
+        scmOrdersHistoryDto.setInitiator(order.getInitiator());
+        scmOrdersHistoryDto.setProductType(order.getProductType());
+        scmOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        scmOrdersHistoryDto.setAktsComments(order.getAktsComments());
+        scmOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        scmOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+        scmOrdersHistoryDto.setJiraTicketNumber(jiraDetails.getJiraTicketNumber());
+        scmOrdersHistoryDto.setJiraSummary(jiraDetails.getJiraSummary());
+
+        scmOrdersHistoryDto.setScmAction(jiraDetails.getScmAction());
+        scmOrdersHistoryDto.setScmActionTime(jiraDetails.getActionTime());
+        scmOrdersHistoryDto.setJiraStatus(jiraDetails.getJiraStatus());
+
+        Users approvedUser = jiraDetails.getApprovedBy();
+        if (approvedUser != null)
+        {
+            scmOrdersHistoryDto.setApprovedBy(approvedUser.getUserId());
+        }
+
+        scmOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
+
+        return scmOrdersHistoryDto;
+    }
+
+    //Entity → DTO Cloud Orders Action History
+    public CloudOrdersHistoryDto cloudOrdersHistoryDto(Orders order, CloudApproval jiraDetails)
+    {
+        CloudOrdersHistoryDto cloudOrdersHistoryDto = new CloudOrdersHistoryDto();
+
+        cloudOrdersHistoryDto.setOrderId(order.getOrderId());
+        cloudOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        cloudOrdersHistoryDto.setProject(order.getProject());
+        cloudOrdersHistoryDto.setOrderType(order.getOrderType());
+        cloudOrdersHistoryDto.setInitiator(order.getInitiator());
+        cloudOrdersHistoryDto.setProductType(order.getProductType());
+        cloudOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        cloudOrdersHistoryDto.setAktsComments(order.getAktsComments());
+        cloudOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        cloudOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+
+        cloudOrdersHistoryDto.setJiraDescription(jiraDetails.getJiraDescription());
+        cloudOrdersHistoryDto.setPriority(jiraDetails.getPriority());
+        cloudOrdersHistoryDto.setCloudComments(jiraDetails.getCloudComments());
+
+        cloudOrdersHistoryDto.setCloudAction(jiraDetails.getCloudAction());
+        cloudOrdersHistoryDto.setCloudActionTime(jiraDetails.getActionTime());
+
+        Users approvedUser = jiraDetails.getUpdatedBy();
+        if (approvedUser != null)
+        {
+            cloudOrdersHistoryDto.setUpdatedBy(approvedUser.getUserId());
+        }
+
+        cloudOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+
+        return cloudOrdersHistoryDto;
+    }
+
 }

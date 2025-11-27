@@ -1,16 +1,16 @@
 package com.project.inventory_management_system.dto;
 
-
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.project.inventory_management_system.entity.Users;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class OrdersCompleteDto
+public class ScmOrdersHistoryDto
 {
-
     private Long orderId;
     private java.time.LocalDate orderDate;
     private String project;
@@ -21,11 +21,14 @@ public class OrdersCompleteDto
     private String aktsComments;
     private String reasonForBuildRequest;
     private String pmsRemarks;
-    private String financeAction;
-    private LocalDateTime financeActionTime;
 
     private String scmAction;
     private LocalDateTime scmActionTime;
+
+    private String jiraTicketNumber;
+    private String jiraSummary;
+    private String jiraStatus;
+    private Long approvedBy;
 
     private UserDto users;
 }

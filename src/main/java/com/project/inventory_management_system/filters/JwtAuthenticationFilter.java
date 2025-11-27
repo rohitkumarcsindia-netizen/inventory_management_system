@@ -55,7 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if (userEmail != null && authentication == null) {
+            if (userEmail != null && authentication == null)
+            {
 
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
@@ -82,13 +83,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         }
-        catch (Exception exception)
+//        catch (Exception exception)
+//        {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write("Invalid or malformed token");
+//            return; // Important Fixing
+//
+////            handlerExceptionResolver.resolveException(request, response, null, exception);
+//        }
+        catch (io.jsonwebtoken.ExpiredJwtException e)
         {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or malformed token");
-            return; // Important Fixing
-
-//            handlerExceptionResolver.resolveException(request, response, null, exception);
+            response.getWriter().write("Token expired");
+        }
+        catch (io.jsonwebtoken.JwtException e)
+        {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid token");
+        }
+        catch (Exception exception)
+        {
+            // for other exceptions don't return token error
+            filterChain.doFilter(request, response);
         }
     }
 }

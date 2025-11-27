@@ -12,7 +12,7 @@ public interface ProjectOrderService
     //Project Team Method
     ResponseEntity<?> createOrder(String username, OrdersDto ordersDto);
 
-    List<OrdersDto> getOrdersByUserWithLimitOffset(Users user, int offset, int limit);
+    ResponseEntity<?> getOrdersByUserWithLimitOffset(String username, int offset, int limit);
 
     OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
 

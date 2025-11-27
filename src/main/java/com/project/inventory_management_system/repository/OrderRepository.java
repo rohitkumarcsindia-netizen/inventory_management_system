@@ -39,46 +39,13 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
 
 
-    //Order find Using OrderType
-    @Query(value = "SELECT * FROM orders WHERE order_type = :orderType ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
-            nativeQuery = true)
-    List<Orders> findByOrderTypeWithLimitOffset(
-            @Param("orderType") String orderType,
-            @Param("offset") int offset,
-            @Param("limit") int limit);
-
-
     // Order Count using userId
     @Query(value = "SELECT COUNT(*) FROM orders WHERE user_id = :userId", nativeQuery = true)
     Long countByUserId(@Param("userId") long userId);
-
 
     // Order Count using status
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
     Long countByStatus(@Param("status") String status);
 
 
-    //Order find Using Finance Action
-    @Query(
-            value = "SELECT * FROM orders WHERE finance_action IS NOT NULL ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
-            nativeQuery = true
-    )
-    List<Orders> findByFinanceActionIsNotNull(int offset, int limit);
-
-
-    // Order Count using Finance Action
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE finance_action IS NOT NULL", nativeQuery = true)
-    Long countByFinanceAction();
-
-
-    // Order Count using Scm Action
-    @Query(
-            value = "SELECT * FROM orders WHERE scm_action IS NOT NULL ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
-            nativeQuery = true
-    )
-    List<Orders> findByScmActionIsNotNull(int offset, int limit);
-
-    // Order Count using Scm Action
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE finance_action IS NOT NULL", nativeQuery = true)
-    Long countByScmAction();
 }

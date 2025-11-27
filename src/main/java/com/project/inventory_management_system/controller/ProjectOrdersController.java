@@ -49,29 +49,28 @@ public class ProjectOrdersController
 
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
+
         if (userDetails == null)
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersByUserWithLimitOffset(userDetails.getUsername(), offset, limit);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.badRequest().body(body);
+        }
+
         Users user = usersRepository.findByUsername(userDetails.getUsername());
-        if (user == null)
-        {
-            return ResponseEntity.status(404).body("User not found");
-        }
-
-        List<OrdersDto> orders = projectOrderService.getOrdersByUserWithLimitOffset(user, offset, limit);
-
-        if (orders.isEmpty())
-        {
-            return ResponseEntity.ok(Map.of("message", "No orders found"));
-        }
 
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
                 "ordersCount", orderRepository.countByUserId(user.getUserId()),
-                "orders", orders
+                "orders", serviceResponse
         ));
 
         }
