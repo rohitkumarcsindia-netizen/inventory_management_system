@@ -66,11 +66,13 @@ public class ProjectOrdersController
 
         Users user = usersRepository.findByUsername(userDetails.getUsername());
 
+        List<OrdersDto> orders = (List<OrdersDto>) body;
+
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
                 "ordersCount", orderRepository.countByUserId(user.getUserId()),
-                "orders", serviceResponse
+                "orders", orders
         ));
 
         }
