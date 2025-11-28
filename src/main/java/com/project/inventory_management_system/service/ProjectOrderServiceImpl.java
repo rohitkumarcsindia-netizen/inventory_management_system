@@ -13,8 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +60,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
             if (orders.getOrderType().equalsIgnoreCase("PURCHASE"))
             {
+                orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
                 orders.setStatus("SCM PENDING");
 
 
@@ -82,6 +84,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             }
 
 
+            orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
             orders.setStatus("FINANCE PENDING");
 
             Orders saved = orderRepository.save(orders);
@@ -160,14 +163,14 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         // 🚀 Update only fields from DTO
-        order.setOrderDate(ordersDto.getOrderDate());
+        order.setCreateAt(ordersDto.getCreateAt());
+        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
         order.setProject(ordersDto.getProject());
         order.setProductType(ordersDto.getProductType());
         order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
         order.setInitiator(ordersDto.getInitiator());
         order.setStatus(ordersDto.getStatus());
-        order.setAktsComments(ordersDto.getAktsComments());
         order.setPmsRemarks(ordersDto.getPmsRemarks());
 
 

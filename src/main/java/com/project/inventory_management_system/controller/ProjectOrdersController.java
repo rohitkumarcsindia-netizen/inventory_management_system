@@ -61,7 +61,7 @@ public class ProjectOrdersController
 
         if (body instanceof String)
         {
-            return ResponseEntity.badRequest().body(body);
+            return ResponseEntity.ok(body);
         }
 
         Users user = usersRepository.findByUsername(userDetails.getUsername());

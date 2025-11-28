@@ -20,8 +20,11 @@ public class Orders
     @JoinColumn(name = "user_id")
     private Users users;
 
-    @Column(name = "order_date")
-    private java.time.LocalDate orderDate;
+    @Column(name = "create_at")
+    private LocalDateTime createAt;
+
+    @Column(name = "expected_order_date")
+    private java.time.LocalDate expectedOrderDate;
 
     @Column(name = "project", nullable = false, length = 100)
     private String project;
@@ -43,9 +46,6 @@ public class Orders
 
     @Column(name = "status", length = 50)
     private String status;
-
-    @Column(name = "akts_comments", columnDefinition = "TEXT")
-    private String aktsComments;
 
     @Column(name = "pms_remarks", columnDefinition = "TEXT")
     private String pmsRemarks;

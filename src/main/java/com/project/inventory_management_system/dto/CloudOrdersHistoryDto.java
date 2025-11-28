@@ -12,7 +12,8 @@ import java.time.LocalDateTime;
 public class CloudOrdersHistoryDto
 {
     private Long orderId;
-    private java.time.LocalDate orderDate;
+    private LocalDateTime createAt;
+    private java.time.LocalDate expectedOrderDate;
     private String project;
     private String initiator;
     private String productType;

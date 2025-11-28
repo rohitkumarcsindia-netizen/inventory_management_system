@@ -2,13 +2,15 @@ package com.project.inventory_management_system.mapper;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.ScmApproval;
 import com.project.inventory_management_system.entity.Users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class OrderMapper {
+public class OrderMapper
+{
 
     private final UserMapper userMapper;
 
@@ -19,13 +21,13 @@ public class OrderMapper {
 
         OrdersDto dto = new OrdersDto();
         dto.setOrderId(order.getOrderId());
-        dto.setOrderDate(order.getOrderDate());
+        dto.setCreateAt(order.getCreateAt());
+        dto.setExpectedOrderDate(order.getExpectedOrderDate());
         dto.setProject(order.getProject());
         dto.setOrderType(order.getOrderType());
         dto.setInitiator(order.getInitiator());
         dto.setProductType(order.getProductType());
         dto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        dto.setAktsComments(order.getAktsComments());
         dto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         dto.setStatus(order.getStatus());
         dto.setPmsRemarks(order.getPmsRemarks());
@@ -42,13 +44,13 @@ public class OrderMapper {
 
         Orders order = new Orders();
         order.setOrderId(dto.getOrderId());
-        order.setOrderDate(dto.getOrderDate());
+        order.setCreateAt(dto.getCreateAt());
+        order.setExpectedOrderDate(dto.getExpectedOrderDate());
         order.setProject(dto.getProject());
         order.setOrderType(dto.getOrderType());
         order.setInitiator(dto.getUsers().getUsername());
         order.setProductType(dto.getProductType());
         order.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());
-        order.setAktsComments(dto.getAktsComments());
         order.setReasonForBuildRequest(dto.getReasonForBuildRequest());
         order.setStatus(dto.getStatus());
         order.setPmsRemarks(dto.getPmsRemarks());

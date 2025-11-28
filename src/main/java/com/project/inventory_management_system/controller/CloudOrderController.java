@@ -45,7 +45,7 @@ public class CloudOrderController
 
         if (body instanceof String)
         {
-            return ResponseEntity.badRequest().body(body);
+            return ResponseEntity.ok(body);
         }
 
         List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
@@ -93,7 +93,7 @@ public class CloudOrderController
 
         if (body instanceof String)
         {
-            return ResponseEntity.badRequest().body(body);
+            return ResponseEntity.ok(body);
         }
 
         return ResponseEntity.ok(Map.of(

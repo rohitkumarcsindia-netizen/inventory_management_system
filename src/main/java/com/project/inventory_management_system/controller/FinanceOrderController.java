@@ -80,7 +80,7 @@ public class FinanceOrderController
 
         if (body instanceof String)
         {
-            return ResponseEntity.badRequest().body(body);
+            return ResponseEntity.ok(body);
         }
 
         List<FinanceOrdersHistoryDto> orders = (List<FinanceOrdersHistoryDto>) serviceResponse.getBody();

@@ -22,13 +22,13 @@ public class OrdersCompleteMapper
         FinanceOrdersHistoryDto financeOrdersHistoryDto = new FinanceOrdersHistoryDto();
 
         financeOrdersHistoryDto.setOrderId(order.getOrderId());
-        financeOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        financeOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        financeOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
         financeOrdersHistoryDto.setProject(order.getProject());
         financeOrdersHistoryDto.setOrderType(order.getOrderType());
         financeOrdersHistoryDto.setInitiator(order.getInitiator());
         financeOrdersHistoryDto.setProductType(order.getProductType());
         financeOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        financeOrdersHistoryDto.setAktsComments(order.getAktsComments());
         financeOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         financeOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
@@ -57,13 +57,13 @@ public class OrdersCompleteMapper
         ScmOrdersHistoryDto scmOrdersHistoryDto = new ScmOrdersHistoryDto();
 
         scmOrdersHistoryDto.setOrderId(order.getOrderId());
-        scmOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        scmOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        scmOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
         scmOrdersHistoryDto.setProject(order.getProject());
         scmOrdersHistoryDto.setOrderType(order.getOrderType());
         scmOrdersHistoryDto.setInitiator(order.getInitiator());
         scmOrdersHistoryDto.setProductType(order.getProductType());
         scmOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        scmOrdersHistoryDto.setAktsComments(order.getAktsComments());
         scmOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         scmOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
@@ -91,13 +91,13 @@ public class OrdersCompleteMapper
         CloudOrdersHistoryDto cloudOrdersHistoryDto = new CloudOrdersHistoryDto();
 
         cloudOrdersHistoryDto.setOrderId(order.getOrderId());
-        cloudOrdersHistoryDto.setOrderDate(order.getOrderDate());
+        cloudOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        cloudOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
         cloudOrdersHistoryDto.setProject(order.getProject());
         cloudOrdersHistoryDto.setOrderType(order.getOrderType());
         cloudOrdersHistoryDto.setInitiator(order.getInitiator());
         cloudOrdersHistoryDto.setProductType(order.getProductType());
         cloudOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        cloudOrdersHistoryDto.setAktsComments(order.getAktsComments());
         cloudOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         cloudOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
