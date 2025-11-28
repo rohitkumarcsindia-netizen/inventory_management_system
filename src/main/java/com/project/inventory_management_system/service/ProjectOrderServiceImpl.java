@@ -69,9 +69,11 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                 Department financeTeam = departmentRepository.findByDepartmentname("SCM");
 
                 //sending mail
-                boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());
+                boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
 
-                if (!mailsent)
+                boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
+
+                if (!mailSent && !mailSentPM)
                 {
                     return ResponseEntity.status(500).body("Mail Not Sent");
                 }
@@ -92,9 +94,11 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             Department financeTeam = departmentRepository.findByDepartmentname("FINANCE");
 
             //sending mail
-            boolean mailsent = emailService.sendMailOrderConfirm(financeTeam.getDepartmentEmail(), saved.getOrderId());
+            boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
 
-            if (!mailsent)
+            boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
+
+            if (!mailSent && !mailSentPM)
             {
                 return ResponseEntity.status(500).body("Mail Not Sent");
             }

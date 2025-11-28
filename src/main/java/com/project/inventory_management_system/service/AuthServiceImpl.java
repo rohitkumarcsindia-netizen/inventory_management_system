@@ -31,6 +31,12 @@ public class AuthServiceImpl implements AuthService
     public ResponseEntity<?> loginUser(LoginRequestDto loginRequestDto)
     {
         Users user = usersRepository.findByUsername(loginRequestDto.getUsername());
+
+        if (user == null || !user.getUsername().equals(loginRequestDto.getUsername()))    // <-- case-sensitive check
+        {
+            return ResponseEntity.status(401).body("Incorrect username or password");
+        }
+        
         try
         {
             Authentication authentication = authenticationManager.authenticate(

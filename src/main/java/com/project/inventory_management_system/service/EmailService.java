@@ -15,6 +15,35 @@ public class EmailService
     private static final String SENDERMAIL = "shubhamkumar10510sk@gmail.com";
 
     //Order Create Mail Method
+    public boolean sendMailNextDepartmentOrderCreate(String departmentEmail, Long orderId)
+    {
+
+        try
+        {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order Confirmation - Order #" + orderId);
+            message.setText("A new order has been created and is waiting for your action. Order ID: "+ orderId);
+
+            mailSender.send(message);
+
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+
+
+    }
+
+
     public boolean sendMailOrderConfirm(String departmentEmail, Long orderId)
     {
 
@@ -26,7 +55,7 @@ public class EmailService
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
             message.setSubject("Order Confirmation - Order #" + orderId);
-            message.setText("Thank you for your order! Your order ID is " + orderId + ".");
+            message.setText("Your order has been successfully placed. Order ID: " + orderId + ".");
 
             mailSender.send(message);
 
@@ -73,7 +102,7 @@ public class EmailService
 
     //Order Rejected email
 
-    public boolean sendMailOrderReject(String departmentEmail, Long orderId)
+    public boolean sendMailOrderReject(String reason, String departmentEmail, Long orderId)
     {
 
         try
@@ -83,7 +112,7 @@ public class EmailService
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
             message.setSubject("Order Rejected - Order #" + orderId);
-            message.setText("Your Order has been Rejected " + orderId + ".");
+            message.setText(reason + " " + orderId + ".");
 
             mailSender.send(message);
             System.out.println("Mail sent successfully to " + departmentEmail);

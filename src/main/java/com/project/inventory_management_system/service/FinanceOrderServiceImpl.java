@@ -189,7 +189,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
 
-        boolean mailsent = emailService.sendMailOrderReject(department.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailOrderReject(financeApproval.getFinanceReason(), department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {
