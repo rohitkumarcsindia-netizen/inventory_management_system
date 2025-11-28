@@ -94,7 +94,7 @@ public class ScmController
     }
 
 
-    @PutMapping("/scm/jira/details/{orderId}")
+    @PostMapping("/scm/jira/details/{orderId}")
     public ResponseEntity<?> fillJiraTicketDetail(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ScmApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
