@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -212,6 +213,92 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         return "Order deleted successfully";
     }
 
+    @Override
+    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+        }
+
+        List<Orders> orders =  orderRepository.findByOrderDateBetweenAndUser(startDate, endDate, user.getUserId());
+
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(ordersDtoList);
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersFilterStatus(String username, String status)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+        }
+
+        List<Orders> orders =  orderRepository.findByStatusAndUser(status, user.getUserId());
+
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(ordersDtoList);
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersFilterProject(String username, String project)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+        }
+
+        List<Orders> orders =  orderRepository.findByProjectAndUser(project, user.getUserId());
+
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(ordersDtoList);
+    }
 
 }
 

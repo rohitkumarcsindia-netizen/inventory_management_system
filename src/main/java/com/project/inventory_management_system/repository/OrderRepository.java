@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -48,4 +50,22 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Long countByStatus(@Param("status") String status);
 
 
+
+    //Search filter Query
+    //Date filter
+    @Query("SELECT o FROM Orders o WHERE o.createAt BETWEEN :start AND :end AND o.users.userId = :userId")
+    List<Orders> findByOrderDateBetweenAndUser(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            @Param("userId") Long userId
+    );
+
+    //status filter
+    @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.users.userId = :userId")
+    List<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId);
+
+
+    //project filter
+    @Query("SELECT o FROM Orders o WHERE o.project = :project AND o.users.userId = :userId")
+    List<Orders> findByProjectAndUser(String project, long userId);
 }

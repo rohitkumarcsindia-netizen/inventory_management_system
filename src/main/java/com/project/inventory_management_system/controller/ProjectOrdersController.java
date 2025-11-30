@@ -7,11 +7,14 @@ import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.ProjectOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -77,27 +80,27 @@ public class ProjectOrdersController
 
         }
 
-        @PutMapping("/order/update/{orderId}")
-        public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+    @PutMapping("/order/update/{orderId}")
+    public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+    {
+
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
         {
-
-            UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-            if (userDetails == null)
-            {
-                return ResponseEntity.status(401).body("Unauthorized");
-            }
-
-            try
-            {
-                OrdersDto orderDetailsUpdate = projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
-                return ResponseEntity.ok(orderDetailsUpdate);
-            }
-            catch (Exception e)
-            {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
+            return ResponseEntity.status(401).body("Unauthorized");
         }
+
+        try
+        {
+            OrdersDto orderDetailsUpdate = projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
+            return ResponseEntity.ok(orderDetailsUpdate);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
         @DeleteMapping("/order/delete/{orderId}")
         public ResponseEntity<?> deleteOrderDetails(HttpServletRequest request, @PathVariable Long orderId)
         {
@@ -118,4 +121,96 @@ public class ProjectOrdersController
 
         }
 
+    //Search Filter
+    @GetMapping("/orders/date-filter")
+    public ResponseEntity<?> getOrdersFilterDate(
+            HttpServletRequest request,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(23,59,59);
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<OrdersDto> orders = (List<OrdersDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "startDate", startDate,
+                "endDate", endDate,
+                "ordersCount", orders.size(),
+                "orders", orders
+        ));
     }
+    @GetMapping("/orders/status-filter")
+    public ResponseEntity<?> getOrdersFilterStatus(
+            HttpServletRequest request,
+            @RequestParam String status)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<OrdersDto> orders = (List<OrdersDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "status", status,
+                "ordersCount", orders.size(),
+                "orders", orders
+        ));
+    }
+    @GetMapping("/orders/project-filter")
+    public ResponseEntity<?> getOrdersFilterProject(
+            HttpServletRequest request,
+            @RequestParam String project)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterProject(userDetails.getUsername(), project);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<OrdersDto> orders = (List<OrdersDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "project", project,
+                "ordersCount", orders.size(),
+                "orders", orders
+        ));
+    }
+}

@@ -4,6 +4,8 @@ import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Users;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProjectOrderService
@@ -18,4 +20,9 @@ public interface ProjectOrderService
 
     String deleteOrder(String username, Long orderId);
 
+    ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate);
+
+    ResponseEntity<?> getOrdersFilterStatus(String username, String status);
+
+    ResponseEntity<?> getOrdersFilterProject(String username, String project);
 }
