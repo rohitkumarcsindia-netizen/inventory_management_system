@@ -118,6 +118,19 @@ public class ScmController
         return scmOrderService.prodbackGenerateAndJiraTicketClosure(userDetails.getUsername(), orderId, jiraDetails);
     }
 
+    // old button method
+    @PostMapping("/old/scm/jira/details/{orderId}")
+    public ResponseEntity<?> fillJiraTicketDetailOldOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ScmApproval jiraDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.fillJiraTicketDetailOldOrder(userDetails.getUsername(),orderId, jiraDetails);
+    }
+
 
     // Scm Recheck Pending And Jira Closure Method
     @GetMapping("/scm/recheck")
