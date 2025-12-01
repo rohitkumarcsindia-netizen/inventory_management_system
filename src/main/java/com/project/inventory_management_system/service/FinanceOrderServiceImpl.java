@@ -259,5 +259,35 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(financeOrderDtoList);
     }
 
+    //Universal Search method
+    @Override
+    public ResponseEntity<?> getOrdersSearch(String username, String keyword)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view this");
+        }
+
+        List<FinanceApproval> financeApprovalList =  financeApprovalRepository.searchFinance(keyword);
+
+        if (financeApprovalList.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeApprovalList.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(financeOrderDtoList);
+    }
+
 
 }

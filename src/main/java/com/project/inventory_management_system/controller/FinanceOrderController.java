@@ -193,4 +193,35 @@ public class FinanceOrderController
         ));
     }
 
+    //Universal searching
+    @GetMapping("/search")
+    public ResponseEntity<?> getOrdersSearch(
+            HttpServletRequest request,
+            @RequestParam String keyword)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "status", keyword,
+                "ordersCount", financeOrderDtoList.size(),
+                "orders", financeOrderDtoList
+        ));
+    }
+
 }
