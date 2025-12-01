@@ -25,4 +25,6 @@ public interface ProjectOrderService
     ResponseEntity<?> getOrdersFilterStatus(String username, String status);
 
     ResponseEntity<?> getOrdersFilterProject(String username, String project);
+
+    ResponseEntity<?> getOrdersSearch(String username, String keyword);
 }

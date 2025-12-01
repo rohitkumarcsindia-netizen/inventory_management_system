@@ -21,14 +21,14 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/orders/project")
 public class ProjectOrdersController
 {
     private final ProjectOrderService projectOrderService;
     private final UsersRepository usersRepository;
     private final OrderRepository orderRepository;
 
-    @PostMapping("/orders")
+    @PostMapping("/create")
     public ResponseEntity<?> addNewOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -43,7 +43,7 @@ public class ProjectOrdersController
 
     }
 
-    @GetMapping("/orders/page")
+    @GetMapping("/page")
     public ResponseEntity<?> getOrdersWithLimitOffset(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,
@@ -80,7 +80,7 @@ public class ProjectOrdersController
 
         }
 
-    @PutMapping("/order/update/{orderId}")
+    @PutMapping("/update/{orderId}")
     public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
     {
 
@@ -101,7 +101,7 @@ public class ProjectOrdersController
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-        @DeleteMapping("/order/delete/{orderId}")
+        @DeleteMapping("/delete/{orderId}")
         public ResponseEntity<?> deleteOrderDetails(HttpServletRequest request, @PathVariable Long orderId)
         {
             UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -122,7 +122,7 @@ public class ProjectOrdersController
         }
 
     //Search Filter
-    @GetMapping("/orders/date-filter")
+    @GetMapping("/date-filter")
     public ResponseEntity<?> getOrdersFilterDate(
             HttpServletRequest request,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -155,7 +155,7 @@ public class ProjectOrdersController
                 "orders", orders
         ));
     }
-    @GetMapping("/orders/status-filter")
+    @GetMapping("/status-filter")
     public ResponseEntity<?> getOrdersFilterStatus(
             HttpServletRequest request,
             @RequestParam String status)
@@ -184,7 +184,7 @@ public class ProjectOrdersController
                 "orders", orders
         ));
     }
-    @GetMapping("/orders/project-filter")
+    @GetMapping("/project-filter")
     public ResponseEntity<?> getOrdersFilterProject(
             HttpServletRequest request,
             @RequestParam String project)
@@ -209,6 +209,37 @@ public class ProjectOrdersController
 
         return ResponseEntity.ok(Map.of(
                 "project", project,
+                "ordersCount", orders.size(),
+                "orders", orders
+        ));
+    }
+
+    //Universal search bar
+    @GetMapping("/search")
+    public ResponseEntity<?> getOrdersSearch(
+            HttpServletRequest request,
+            @RequestParam String keyword)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<OrdersDto> orders = (List<OrdersDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "search", keyword,
                 "ordersCount", orders.size(),
                 "orders", orders
         ));

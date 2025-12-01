@@ -68,4 +68,19 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //project filter
     @Query("SELECT o FROM Orders o WHERE o.project = :project AND o.users.userId = :userId")
     List<Orders> findByProjectAndUser(String project, long userId);
+
+    //Universal search query
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.users.userId = :userId
+      AND (
+            LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+      )
+""")
+    List<Orders> findBySearchOrders(@Param("keyword") String keyword, @Param("userId") Long userId);
 }

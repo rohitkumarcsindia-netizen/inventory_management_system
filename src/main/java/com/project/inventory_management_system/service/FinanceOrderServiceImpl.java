@@ -1,11 +1,13 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.mapper.FinanceOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+
 
 
 @Service
@@ -32,6 +34,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
     private final OrderMapper orderMapper;
     private final EmailService emailService;
     private final FinanceApprovalRepository financeApprovalRepository;
+    private final FinanceOrderMapper financeOrderMapper;
 
 
     @Override
@@ -91,7 +94,6 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(list);
 
     }
-
 
 
     @Override
@@ -198,5 +200,64 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         return ResponseEntity.ok("Order Reject Successfully");
     }
+
+    //Search filter method
+    @Override
+    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view this");
+        }
+
+        List<FinanceApproval> financeAction = financeApprovalRepository.findByDateRange(start, end);
+        if (financeAction.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeAction.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(financeOrderDtoList);
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersFilterStatus(String username, String status)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view this");
+        }
+
+        List<FinanceApproval> financeApprovalList =  financeApprovalRepository.findByStatusFilter(status);
+
+        if (financeApprovalList.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeApprovalList.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(financeOrderDtoList);
+    }
+
 
 }

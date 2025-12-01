@@ -254,7 +254,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+            return ResponseEntity.badRequest().body("Only project team can view this");
         }
 
         List<Orders> orders =  orderRepository.findByStatusAndUser(status, user.getUserId());
@@ -283,10 +283,39 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+            return ResponseEntity.badRequest().body("Only project team can view this");
         }
 
         List<Orders> orders =  orderRepository.findByProjectAndUser(project, user.getUserId());
+
+        if (orders.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(ordersDtoList);
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersSearch(String username, String keyword)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.badRequest().body("Only project team can view this");
+        }
+
+        List<Orders> orders =  orderRepository.findBySearchOrders(keyword, user.getUserId());
 
         if (orders.isEmpty())
         {
