@@ -1,5 +1,6 @@
 package com.project.inventory_management_system.repository;
 
+import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import org.springframework.data.domain.Page;
@@ -53,23 +54,25 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     //Search filter Query
     //Date filter
-    @Query("SELECT o FROM Orders o WHERE o.createAt BETWEEN :start AND :end AND o.users.userId = :userId")
-    List<Orders> findByOrderDateBetweenAndUser(
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.createAt BETWEEN :start AND :end
+      AND o.users.userId = :userId
+""")
+    Page<Orders> findByOrderDateBetweenAndUser(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
-            @Param("userId") Long userId
+            Long userId,
+            Pageable pageable
     );
 
     //status filter
     @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.users.userId = :userId")
-    List<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId);
+    Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
 
 
-    //project filter
-    @Query("SELECT o FROM Orders o WHERE o.project = :project AND o.users.userId = :userId")
-    List<Orders> findByProjectAndUser(String project, long userId);
 
-    //Universal search query
+    //Universal search query for project team
     @Query("""
     SELECT o FROM Orders o
     WHERE o.users.userId = :userId
@@ -82,5 +85,22 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
       )
 """)
-    List<Orders> findBySearchOrders(@Param("keyword") String keyword, @Param("userId") Long userId);
+    Page<Orders> findBySearchOrders(@Param("keyword") String keyword, @Param("userId") Long userId,Pageable pageable);
+
+
+    //Universal searching query for finance pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE
+        o.status = 'FINANCE PENDING' AND
+        (
+             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+        )
+""")
+    Page<Orders> searchFinance(@Param("keyword") String keyword, Pageable pageable);
 }

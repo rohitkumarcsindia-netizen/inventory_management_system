@@ -126,7 +126,9 @@ public class ProjectOrdersController
     public ResponseEntity<?> getOrdersFilterDate(
             HttpServletRequest request,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate)
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
         LocalDateTime start = startDate.atStartOfDay();
@@ -137,7 +139,7 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end);
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end,page,size);
 
         Object body = serviceResponse.getBody();
 
@@ -158,7 +160,9 @@ public class ProjectOrdersController
     @GetMapping("/status-filter")
     public ResponseEntity<?> getOrdersFilterStatus(
             HttpServletRequest request,
-            @RequestParam String status)
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -167,7 +171,7 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status);
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
 
         Object body = serviceResponse.getBody();
 
@@ -184,41 +188,14 @@ public class ProjectOrdersController
                 "orders", orders
         ));
     }
-    @GetMapping("/project-filter")
-    public ResponseEntity<?> getOrdersFilterProject(
-            HttpServletRequest request,
-            @RequestParam String project)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterProject(userDetails.getUsername(), project);
-
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "project", project,
-                "ordersCount", orders.size(),
-                "orders", orders
-        ));
-    }
 
     //Universal search bar
     @GetMapping("/search")
     public ResponseEntity<?> getOrdersSearch(
             HttpServletRequest request,
-            @RequestParam String keyword)
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -227,7 +204,7 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword);
+        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
         Object body = serviceResponse.getBody();
 

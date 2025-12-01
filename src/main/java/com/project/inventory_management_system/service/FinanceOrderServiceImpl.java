@@ -15,12 +15,17 @@ import com.project.inventory_management_system.repository.FinanceApprovalReposit
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.Map;
 
 
 @Service
@@ -261,7 +266,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
     //Universal Search method
     @Override
-    public ResponseEntity<?> getOrdersSearch(String username, String keyword)
+    public ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -275,18 +280,19 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("Only finance team can view this");
         }
 
-        List<FinanceApproval> financeApprovalList =  financeApprovalRepository.searchFinance(keyword);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.searchFinance(keyword.trim(), pageable);
 
-        if (financeApprovalList.isEmpty())
+        if (ordersPage.isEmpty())
         {
             return ResponseEntity.badRequest().body("No orders found");
         }
 
-        List<FinanceOrderDto> financeOrderDtoList = financeApprovalList.stream()
-                .map(financeOrderMapper::toDto)
+        List<OrdersDto> OrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(financeOrderDtoList);
+        return ResponseEntity.ok(OrderDtoList);
     }
 
 

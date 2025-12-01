@@ -2,6 +2,8 @@ package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -46,20 +48,5 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
     @Query("SELECT o FROM FinanceApproval o WHERE o.financeAction = :status")
     List<FinanceApproval> findByStatusFilter(@Param("status") String status);
 
-    //Universal searching query
-    @Query("""
-    SELECT fa FROM FinanceApproval fa
-    JOIN fa.order o
-    WHERE
-         LOWER(fa.financeAction) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(fa.financeReason) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(fa.financeApprovedBy.username) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
-      OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
-""")
-    List<FinanceApproval> searchFinance(@Param("keyword") String keyword);
 
 }

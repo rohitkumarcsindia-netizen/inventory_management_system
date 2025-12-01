@@ -20,11 +20,9 @@ public interface ProjectOrderService
 
     String deleteOrder(String username, Long orderId);
 
-    ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate);
+    ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate, int page, int size);
 
-    ResponseEntity<?> getOrdersFilterStatus(String username, String status);
+    ResponseEntity<?> getOrdersFilterStatus(String username, String status, int page, int size);
 
-    ResponseEntity<?> getOrdersFilterProject(String username, String project);
-
-    ResponseEntity<?> getOrdersSearch(String username, String keyword);
+    ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size);
 }

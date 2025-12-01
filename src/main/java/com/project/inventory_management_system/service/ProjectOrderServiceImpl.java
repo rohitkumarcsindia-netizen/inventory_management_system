@@ -10,6 +10,10 @@ import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -214,7 +218,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
     @Override
-    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate)
+    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate, int page, int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -228,7 +232,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("Only project team can view pending orders");
         }
 
-        List<Orders> orders =  orderRepository.findByOrderDateBetweenAndUser(startDate, endDate, user.getUserId());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> orders =  orderRepository.findByOrderDateBetweenAndUser(startDate, endDate, user.getUserId(), pageable);
 
         if (orders.isEmpty())
         {
@@ -243,7 +248,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
     @Override
-    public ResponseEntity<?> getOrdersFilterStatus(String username, String status)
+    public ResponseEntity<?> getOrdersFilterStatus(String username, String status,int page, int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -257,7 +262,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("Only project team can view this");
         }
 
-        List<Orders> orders =  orderRepository.findByStatusAndUser(status, user.getUserId());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> orders =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
 
         if (orders.isEmpty())
         {
@@ -272,7 +278,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
     @Override
-    public ResponseEntity<?> getOrdersFilterProject(String username, String project)
+    public ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -286,36 +292,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("Only project team can view this");
         }
 
-        List<Orders> orders =  orderRepository.findByProjectAndUser(project, user.getUserId());
-
-        if (orders.isEmpty())
-        {
-            return ResponseEntity.badRequest().body("No orders found");
-        }
-
-        List<OrdersDto> ordersDtoList = orders.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(ordersDtoList);
-    }
-
-    @Override
-    public ResponseEntity<?> getOrdersSearch(String username, String keyword)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
-        {
-            return ResponseEntity.badRequest().body("Only project team can view this");
-        }
-
-        List<Orders> orders =  orderRepository.findBySearchOrders(keyword, user.getUserId());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> orders =  orderRepository.findBySearchOrders(keyword, user.getUserId(),pageable);
 
         if (orders.isEmpty())
         {

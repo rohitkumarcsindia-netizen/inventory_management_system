@@ -9,6 +9,7 @@ import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -197,7 +198,9 @@ public class FinanceOrderController
     @GetMapping("/search")
     public ResponseEntity<?> getOrdersSearch(
             HttpServletRequest request,
-            @RequestParam String keyword)
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -206,7 +209,7 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword);
+        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
         Object body = serviceResponse.getBody();
 
@@ -215,12 +218,12 @@ public class FinanceOrderController
             return ResponseEntity.ok(body);
         }
 
-        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
+        List<OrdersDto> OrderDtoList = (List<OrdersDto>) body;
 
         return ResponseEntity.ok(Map.of(
                 "status", keyword,
-                "ordersCount", financeOrderDtoList.size(),
-                "orders", financeOrderDtoList
+                "ordersCount", OrderDtoList.size(),
+                "orders", OrderDtoList
         ));
     }
 

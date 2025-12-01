@@ -19,5 +19,5 @@ public interface FinanceOrderService
 
     ResponseEntity<?> getOrdersFilterStatus(String username, String status);
 
-    ResponseEntity<?> getOrdersSearch(String username, String keyword);
+    ResponseEntity<?> getOrdersSearch(String username, String keyword,int page,int size);
 }
