@@ -2,8 +2,6 @@ package com.project.inventory_management_system.controller;
 
 
 import com.project.inventory_management_system.entity.ScmApproval;
-import com.project.inventory_management_system.repository.OrderRepository;
-import com.project.inventory_management_system.repository.ScmApprovalRepository;
 import com.project.inventory_management_system.service.ScmOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 public class ScmController
 {
     private final ScmOrderService scmOrderService;
-    private final OrderRepository orderRepository;
-    private final ScmApprovalRepository scmApprovalRepository;
 
 
     @GetMapping("/scm/pending")
