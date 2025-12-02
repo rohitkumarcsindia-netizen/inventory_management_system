@@ -1,5 +1,6 @@
 package com.project.inventory_management_system.controller;
 
+import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.repository.FinanceApprovalRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
@@ -63,7 +64,7 @@ public class FinanceOrderController
 
 
     @PutMapping("/approve/{orderId}")
-    public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody String reason)
+    public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody FinanceOrderDto reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -79,7 +80,7 @@ public class FinanceOrderController
 
 
     @PutMapping("/reject/{orderId}")
-    public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody String reason)
+    public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody FinanceOrderDto reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 

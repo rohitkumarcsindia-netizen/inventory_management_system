@@ -1,9 +1,7 @@
 package com.project.inventory_management_system.mapper;
 
 import com.project.inventory_management_system.dto.FinanceOrderDto;
-import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.FinanceApproval;
-import com.project.inventory_management_system.entity.Orders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

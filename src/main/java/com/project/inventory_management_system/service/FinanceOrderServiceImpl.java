@@ -111,7 +111,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
 
     @Override
-    public ResponseEntity<?> approveOrder(String username, Long orderId, String reason)
+    public ResponseEntity<?> approveOrder(String username, Long orderId, FinanceOrderDto reason)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -140,7 +140,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         FinanceApproval financeApproval = new FinanceApproval();
         financeApproval.setFinanceAction("APPROVED");
         financeApproval.setFinanceActionTime(LocalDateTime.now());
-        financeApproval.setFinanceReason(reason);
+        financeApproval.setFinanceReason(reason.getFinanceReason().trim());
         financeApproval.setFinanceApprovedBy(user);
         financeApproval.setOrder(order);
         financeApprovalRepository.save(financeApproval);
@@ -164,7 +164,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
 
     @Override
-    public ResponseEntity<?> rejectOrder(String username, Long orderId, String reason)
+    public ResponseEntity<?> rejectOrder(String username, Long orderId, FinanceOrderDto reason)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -194,7 +194,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         FinanceApproval financeApproval = new FinanceApproval();
         financeApproval.setFinanceAction("REJECTED");
         financeApproval.setFinanceActionTime(LocalDateTime.now());
-        financeApproval.setFinanceReason(reason);
+        financeApproval.setFinanceReason(reason.getFinanceReason().trim());
         financeApproval.setFinanceApprovedBy(user);
         financeApproval.setOrder(order);
         financeApprovalRepository.save(financeApproval);
