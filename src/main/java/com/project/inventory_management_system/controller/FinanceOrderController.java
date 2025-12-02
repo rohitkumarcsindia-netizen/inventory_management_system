@@ -135,7 +135,9 @@ public class FinanceOrderController
     public ResponseEntity<?> getOrdersFilterDate(
             HttpServletRequest request,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate)
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
         LocalDateTime start = startDate.atStartOfDay();
@@ -146,52 +148,24 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end);
+        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "startDate", startDate,
-                "endDate", endDate,
-                "ordersCount", financeOrderDtoList.size(),
-                "orders", financeOrderDtoList
-        ));
-    }
-    @GetMapping("/status-filter")
-    public ResponseEntity<?> getOrdersFilterStatus(
-            HttpServletRequest request,
-            @RequestParam String status)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterStatus(userDetails.getUsername(), status);
-
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "status", status,
-                "ordersCount", financeOrderDtoList.size(),
-                "orders", financeOrderDtoList
-        ));
+//        Object body = serviceResponse.getBody();
+//
+//        if (body instanceof String)
+//        {
+//            return ResponseEntity.ok(body);
+//        }
+//
+//        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
+//
+//        return ResponseEntity.ok(Map.of(
+//                "startDate", startDate,
+//                "endDate", endDate,
+//                "ordersCount", financeOrderDtoList.size(),
+//                "orders", financeOrderDtoList
+//        ));
+        return ResponseEntity.ok(serviceResponse);
     }
 
     //Universal searching
@@ -224,6 +198,75 @@ public class FinanceOrderController
                 "status", keyword,
                 "ordersCount", OrderDtoList.size(),
                 "orders", OrderDtoList
+        ));
+    }
+    //Complete button searching filter
+    @GetMapping("/status-filter")
+    public ResponseEntity<?> getOrdersFilterStatus(
+            HttpServletRequest request,
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "status", status,
+                "ordersCount", financeOrderDtoList.size(),
+                "orders", financeOrderDtoList
+        ));
+    }
+
+    //Search Filter
+    @GetMapping("/complete/date-filter")
+    public ResponseEntity<?> getCompleteOrdersFilterDate(
+            HttpServletRequest request,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(23,59,59);
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        ResponseEntity<?> serviceResponse = financeOrderService.getCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+
+        Object body = serviceResponse.getBody();
+
+        if (body instanceof String)
+        {
+            return ResponseEntity.ok(body);
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = (List<FinanceOrderDto>) body;
+
+        return ResponseEntity.ok(Map.of(
+                "startDate", startDate,
+                "endDate", endDate,
+                "ordersCount", financeOrderDtoList.size(),
+                "orders", financeOrderDtoList
         ));
     }
 

@@ -15,9 +15,13 @@ public interface FinanceOrderService
 
     ResponseEntity<?> getCompleteOrdersForFinance(String username,int offset, int limit);
 
-    ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end);
-
-    ResponseEntity<?> getOrdersFilterStatus(String username, String status);
+    //Pending button Searching Filter Method
+    ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end,int page,int size);
 
     ResponseEntity<?> getOrdersSearch(String username, String keyword,int page,int size);
+
+    //Complete button Searching Filter Method
+    ResponseEntity<?> getOrdersFilterStatus(String username, String status,int page,int size);
+
+    ResponseEntity<?> getCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
 }

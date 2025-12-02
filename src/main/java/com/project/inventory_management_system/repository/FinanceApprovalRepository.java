@@ -35,18 +35,17 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
     Long countByAction();
 
 
-    @Query("""
-    SELECT fa FROM FinanceApproval fa
-    WHERE fa.financeActionTime BETWEEN :start AND :end
-""")
-    List<FinanceApproval> findByDateRange(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
-    );
-
     //status filter
     @Query("SELECT o FROM FinanceApproval o WHERE o.financeAction = :status")
-    List<FinanceApproval> findByStatusFilter(@Param("status") String status);
+    Page<FinanceApproval> findByStatusFilter(@Param("status") String status, Pageable pageable);
 
 
+
+    @Query("""
+    SELECT fa FROM FinanceApproval fa
+    WHERE fa.financeAction IS NOT NULL
+      AND fa.financeActionTime BETWEEN :start AND :end
+    ORDER BY fa.financeActionTime DESC
+""")
+    Page<FinanceApproval> findByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable);
 }

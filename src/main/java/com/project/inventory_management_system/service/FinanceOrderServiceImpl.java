@@ -208,7 +208,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
     //Search filter method
     @Override
-    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end)
+    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end,int page,int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -222,46 +222,24 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("Only finance team can view this");
         }
 
-        List<FinanceApproval> financeAction = financeApprovalRepository.findByDateRange(start, end);
-        if (financeAction.isEmpty())
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, pageable);
+        if (ordersPage.isEmpty())
         {
             return ResponseEntity.badRequest().body("No orders found");
         }
 
-        List<FinanceOrderDto> financeOrderDtoList = financeAction.stream()
-                .map(financeOrderMapper::toDto)
+        List<OrdersDto> financeOrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(financeOrderDtoList);
-    }
-
-    @Override
-    public ResponseEntity<?> getOrdersFilterStatus(String username, String status)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
-        {
-            return ResponseEntity.badRequest().body("Only finance team can view this");
-        }
-
-        List<FinanceApproval> financeApprovalList =  financeApprovalRepository.findByStatusFilter(status);
-
-        if (financeApprovalList.isEmpty())
-        {
-            return ResponseEntity.badRequest().body("No orders found");
-        }
-
-        List<FinanceOrderDto> financeOrderDtoList = financeApprovalList.stream()
-                .map(financeOrderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(financeOrderDtoList);
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", financeOrderDtoList
+        ));
     }
 
     //Universal Search method
@@ -295,5 +273,64 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(OrderDtoList);
     }
 
+
+    @Override
+    public ResponseEntity<?> getOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
+        Page<FinanceApproval> financeApprovalList =  financeApprovalRepository.findByStatusFilter(status, pageable);
+
+        if (financeApprovalList.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeApprovalList.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(financeOrderDtoList);
+    }
+
+    @Override
+    public ResponseEntity<?> getCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.badRequest().body("Only finance team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
+        Page<FinanceApproval> financeApprovalPage = financeApprovalRepository.findByDateRange(start, end, pageable);
+        if (financeApprovalPage.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeApprovalPage.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(financeOrderDtoList);
+    }
 
 }

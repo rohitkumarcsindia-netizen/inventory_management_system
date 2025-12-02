@@ -103,4 +103,17 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         )
 """)
     Page<Orders> searchFinance(@Param("keyword") String keyword, Pageable pageable);
+
+
+    //Status searching query for finance pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.status = 'FINANCE PENDING'
+      AND o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRange(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            Pageable pageable
+    );
 }
