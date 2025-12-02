@@ -48,4 +48,19 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
     ORDER BY fa.financeActionTime DESC
 """)
     Page<FinanceApproval> findByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    @Query("""
+       SELECT f FROM FinanceApproval f
+       JOIN f.order o
+       JOIN f.financeApprovedBy u
+       WHERE f.financeAction IS NOT NULL
+       AND (
+            CAST(u.userId AS string) LIKE CONCAT('%', :keyword, '%')
+         OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+         OR LOWER(COALESCE(o.project, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(COALESCE(o.productType, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(COALESCE(o.initiator, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+       )
+""")
+    Page<FinanceApproval> searchFinanceComplete(@Param("keyword") String trim, Pageable pageable);
 }

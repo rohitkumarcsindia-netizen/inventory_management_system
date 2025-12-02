@@ -132,8 +132,9 @@ public class FinanceOrderController
         return financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
     }
+
     //Complete button searching filter
-    @GetMapping("/status-filter")
+    @GetMapping("/complete/status-filter")
     public ResponseEntity<?> getOrdersFilterStatus(
             HttpServletRequest request,
             @RequestParam String status,
@@ -170,6 +171,25 @@ public class FinanceOrderController
         }
 
         return financeOrderService.getCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+
+    }
+
+    //Universal searching
+    @GetMapping("/complete/search")
+    public ResponseEntity<?> getOrdersCompleteSearch(
+            HttpServletRequest request,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return financeOrderService.getOrdersCompleteSearch(userDetails.getUsername(), keyword, page, size);
 
     }
 

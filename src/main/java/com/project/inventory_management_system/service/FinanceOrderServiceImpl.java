@@ -360,4 +360,40 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         ));
     }
 
+    @Override
+    public ResponseEntity<?> getOrdersCompleteSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.status(403).body("Only finance team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
+        Page<FinanceApproval> financeApprovalPage = financeApprovalRepository.searchFinanceComplete(keyword.trim(), pageable);
+
+        if (financeApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<FinanceOrderDto> financeOrderDtoList = financeApprovalPage.stream()
+                .map(financeOrderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", financeApprovalPage.getTotalElements(),
+                "totalPages", financeApprovalPage.getTotalPages(),
+                "page", financeApprovalPage.getNumber(),
+                "size", financeApprovalPage.getSize(),
+                "records", financeOrderDtoList
+        ));
+    }
+
 }

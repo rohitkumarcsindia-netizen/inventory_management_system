@@ -24,4 +24,6 @@ public interface FinanceOrderService
     ResponseEntity<?> getOrdersFilterStatus(String username, String status,int page,int size);
 
     ResponseEntity<?> getCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getOrdersCompleteSearch(String username, String keyword, int page, int size);
 }
