@@ -60,23 +60,7 @@ public class ProjectOrdersController
 
         ResponseEntity<?> serviceResponse = projectOrderService.getOrdersByUserWithLimitOffset(userDetails.getUsername(), offset, limit);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        Users user = usersRepository.findByUsername(userDetails.getUsername());
-
-        List<OrdersDto> orders = (List<OrdersDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByUserId(user.getUserId()),
-                "orders", orders
-        ));
+        return serviceResponse;
 
         }
 
@@ -141,21 +125,7 @@ public class ProjectOrdersController
 
         ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end,page,size);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "startDate", startDate,
-                "endDate", endDate,
-                "ordersCount", orders.size(),
-                "orders", orders
-        ));
+       return serviceResponse;
     }
     @GetMapping("/status-filter")
     public ResponseEntity<?> getOrdersFilterStatus(
@@ -173,20 +143,7 @@ public class ProjectOrdersController
 
         ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "status", status,
-                "ordersCount", orders.size(),
-                "orders", orders
-        ));
+        return serviceResponse;
     }
 
     //Universal search bar
@@ -206,19 +163,6 @@ public class ProjectOrdersController
 
         ResponseEntity<?> serviceResponse = projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) body;
-
-        return ResponseEntity.ok(Map.of(
-                "search", keyword,
-                "ordersCount", orders.size(),
-                "orders", orders
-        ));
+        return serviceResponse;
     }
 }

@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -132,21 +133,26 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+            return ResponseEntity.status(403).body("Only project team can view pending orders");
         }
 
         List<Orders> orders =  orderRepository.findOrdersByUserWithLimitOffset(user.getUserId(), offset, limit);
 
         if (orders.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
         List<OrdersDto> ordersDtoList = orders.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(ordersDtoList);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orderRepository.countByUserId(user.getUserId()),
+                "orders", ordersDtoList
+        ));
     }
 
 
@@ -229,22 +235,28 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view pending orders");
+            return ResponseEntity.status(403).body("Only project team can view pending orders");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> orders =  orderRepository.findByOrderDateBetweenAndUser(startDate, endDate, user.getUserId(), pageable);
+        Page<Orders> ordersPage =  orderRepository.findByOrderDateBetweenAndUser(startDate, endDate, user.getUserId(), pageable);
 
-        if (orders.isEmpty())
+        if (ordersPage.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> ordersDtoList = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(ordersDtoList);
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
     }
 
     @Override
@@ -259,22 +271,28 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view this");
+            return ResponseEntity.status(403).body("Only project team can view this");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> orders =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
 
-        if (orders.isEmpty())
+        if (ordersPage.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> ordersDtoList = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(ordersDtoList);
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
     }
 
     @Override
@@ -289,22 +307,28 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only project team can view this");
+            return ResponseEntity.status(403).body("Only project team can view this");
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> orders =  orderRepository.findBySearchOrders(keyword, user.getUserId(),pageable);
+        Page<Orders> ordersPage =  orderRepository.findBySearchOrders(keyword, user.getUserId(),pageable);
 
-        if (orders.isEmpty())
+        if (ordersPage.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> ordersDtoList = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(ordersDtoList);
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
     }
 
 }
