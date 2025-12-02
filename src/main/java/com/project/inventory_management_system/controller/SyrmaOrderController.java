@@ -1,10 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.SyrmaOrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,8 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -39,21 +33,8 @@ public class SyrmaOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = syrmaOrderService.getPendingOrdersForSyrma(userDetails.getUsername(), offset, limit);
+        return syrmaOrderService.getPendingOrdersForSyrma(userDetails.getUsername(), offset, limit);
 
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
-
-        if (orders.isEmpty())
-        {
-            return ResponseEntity.ok(Map.of("message", "No orders found"));
-        }
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SYRMA_PENDING"),
-                "orders", orders
-        ));
     }
 
     @PutMapping("/{orderId}/start-production")
@@ -82,21 +63,8 @@ public class SyrmaOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = syrmaOrderService.getPendingTestingOrders(userDetails.getUsername(), offset, limit);
+        return syrmaOrderService.getPendingTestingOrders(userDetails.getUsername(), offset, limit);
 
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
-
-        if (orders.isEmpty())
-        {
-            return ResponseEntity.ok(Map.of("message", "No orders found"));
-        }
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("PRODUCTION STARTED"),
-                "orders", orders
-        ));
     }
 
 //    @PutMapping("/{orderId}/testing-complete")

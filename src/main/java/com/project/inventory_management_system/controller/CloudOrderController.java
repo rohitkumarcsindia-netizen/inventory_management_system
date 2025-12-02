@@ -1,8 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
-import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.CloudApproval;
 import com.project.inventory_management_system.repository.CloudApprovalRepository;
 import com.project.inventory_management_system.service.CloudOrderService;
@@ -13,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,24 +34,7 @@ public class CloudOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse =
-                cloudOrderService.getOrderPendingForCloud(userDetails.getUsername(), offset, limit);
-
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", cloudApprovalRepository.countByStatus("CLOUD PENDING"),
-                "orders", orders
-        ));
+        return cloudOrderService.getOrderPendingForCloud(userDetails.getUsername(), offset, limit);
     }
 
     @PutMapping("/cloud/update-jira-details/{orderId}")
@@ -84,24 +63,8 @@ public class CloudOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse =
-                cloudOrderService.getCompleteOrdersForScm(userDetails.getUsername(), offset, limit);
+        return cloudOrderService.getCompleteOrdersForScm(userDetails.getUsername(), offset, limit);
 
-        List<CloudOrdersHistoryDto> orders = (List<CloudOrdersHistoryDto>) serviceResponse.getBody();
-
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", cloudApprovalRepository.countByCloudAction(),
-                "orders", orders
-        ));
     }
 
 }

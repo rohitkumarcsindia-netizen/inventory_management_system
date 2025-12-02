@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -47,21 +48,26 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM PENDING", offset, limit);
 
-        if (orders.isEmpty())
+        if (ordersList.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No Orders found");
+            return ResponseEntity.ok("No Orders found");
         }
 
-        List<OrdersDto> list = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersList.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orderRepository.countByStatus("SCM PENDING"),
+                "orders", ordersDtoList
+        ));
     }
 
     @Override
@@ -76,21 +82,26 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
 
         List<ScmApproval> scmApprovalsOrders = scmApprovalRepository.findByScmActionIsNotNull(limit, offset);
 
         if (scmApprovalsOrders.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No Orders found");
+            return ResponseEntity.ok("No Orders found");
         }
-        List<ScmOrdersHistoryDto> list = scmApprovalsOrders.stream()
+        List<ScmOrdersHistoryDto> scmOrdersHistoryDtoList = scmApprovalsOrders.stream()
                 .map(approval -> ordersCompleteMapper.scmOrdersHistoryDto(
                         approval.getOrder(), approval))
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", scmApprovalRepository.countByScmAction(),
+                "orders", scmOrdersHistoryDtoList
+        ));
     }
 
     @Override
@@ -105,19 +116,19 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("SCM PENDING"))
         {
-            return ResponseEntity.badRequest().body("Jira details can only be submitted when the order is pending for SCM action");
+            return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
 
         //ScmApproval Table data insert
@@ -164,26 +175,26 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("SCM RECHECK PENDING"))
         {
-            return ResponseEntity.badRequest().body("Jira details can only be submitted when the order is pending for SCM action");
+            return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
 
         ScmApproval jiraDetailsUpdate = scmApprovalRepository.findLatestByOrderId(order.getOrderId());
 
         if (jiraDetailsUpdate == null)
         {
-            return ResponseEntity.badRequest().body("SCM approval record not found for update");
+            return ResponseEntity.status(404).body("SCM approval record not found for update");
         }
 
         jiraDetailsUpdate.setJiraStatus(jiraDetails.getJiraStatus());
@@ -221,21 +232,26 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM RECHECK PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM RECHECK PENDING", offset, limit);
 
-        if (orders.isEmpty())
+        if (ordersList.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> list = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersList.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orderRepository.countByStatus("SCM RECHECK PENDING"),
+                "orders", ordersDtoList
+        ));
     }
 
     //old button method
@@ -251,19 +267,19 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
         {
-            return ResponseEntity.badRequest().body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("SCM PENDING"))
         {
-            return ResponseEntity.badRequest().body("Jira details can only be submitted when the order is pending for SCM action");
+            return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
 
         //ScmApproval Table data insert

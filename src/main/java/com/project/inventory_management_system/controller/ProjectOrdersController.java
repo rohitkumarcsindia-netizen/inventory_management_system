@@ -1,7 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.ProjectOrderService;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 
 @Controller
@@ -58,9 +55,8 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersByUserWithLimitOffset(userDetails.getUsername(), offset, limit);
+        return projectOrderService.getOrdersByUserWithLimitOffset(userDetails.getUsername(), offset, limit);
 
-        return serviceResponse;
 
         }
 
@@ -141,9 +137,8 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+        return projectOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
 
-        return serviceResponse;
     }
 
     //Universal search bar
@@ -161,8 +156,7 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
+        return projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
-        return serviceResponse;
     }
 }

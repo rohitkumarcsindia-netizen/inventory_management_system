@@ -1,8 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
 import com.project.inventory_management_system.entity.ScmApproval;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.ScmApprovalRepository;
@@ -14,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/api/orders")
@@ -40,23 +36,8 @@ public class ScmController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = scmOrderService.getPendingOrdersForScm(userDetails.getUsername(), offset, limit);
+       return scmOrderService.getPendingOrdersForScm(userDetails.getUsername(), offset, limit);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM PENDING"),
-                "orders", orders
-        ));
     }
 
 
@@ -73,24 +54,8 @@ public class ScmController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse =
-                scmOrderService.getCompleteOrdersForScm(userDetails.getUsername(), offset, limit);
+        return  scmOrderService.getCompleteOrdersForScm(userDetails.getUsername(), offset, limit);
 
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.ok(body);
-        }
-
-        List<ScmOrdersHistoryDto> orders = (List<ScmOrdersHistoryDto>) serviceResponse.getBody();
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", scmApprovalRepository.countByScmAction(),
-                "orders", orders
-        ));
     }
 
 
@@ -146,21 +111,7 @@ public class ScmController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = scmOrderService.getScmRecheckOrderPending(userDetails.getUsername(), offset, limit);
+       return  scmOrderService.getScmRecheckOrderPending(userDetails.getUsername(), offset, limit);
 
-        List<OrdersDto> orders = (List<OrdersDto>) serviceResponse.getBody();
-        Object body = serviceResponse.getBody();
-
-        if (body instanceof String)
-        {
-            return ResponseEntity.badRequest().body(body);
-        }
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM RECHECK PENDING"),
-                "orders", orders
-        ));
     }
 }

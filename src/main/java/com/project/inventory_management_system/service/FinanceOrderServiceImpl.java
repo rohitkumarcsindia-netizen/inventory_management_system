@@ -122,18 +122,18 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
-            return ResponseEntity.badRequest().body("Only finance team can approve orders");
+            return ResponseEntity.status(403).body("Only finance team can approve orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("FINANCE PENDING"))
         {
-            return ResponseEntity.badRequest().body("Order is not pending for finance approval");
+            return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
 
         //Finance Approval table data save
@@ -175,18 +175,18 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
-            return ResponseEntity.badRequest().body("Only finance team can reject orders");
+            return ResponseEntity.status(403).body("Only finance team can reject orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("FINANCE PENDING"))
         {
-            return ResponseEntity.badRequest().body("Order is not pending for finance approval");
+            return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
 
 

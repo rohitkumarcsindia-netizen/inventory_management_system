@@ -1,8 +1,5 @@
 package com.project.inventory_management_system.controller;
 
-import com.project.inventory_management_system.dto.FinanceOrderDto;
-import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
-import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.repository.FinanceApprovalRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
@@ -16,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,10 +37,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse =
-                financeOrderService.getPendingOrdersForFinance(userDetails.getUsername(), offset, limit);
+        return financeOrderService.getPendingOrdersForFinance(userDetails.getUsername(), offset, limit);
 
-        return  serviceResponse;
     }
 
 
@@ -63,10 +56,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse =
-                financeOrderService.getCompleteOrdersForFinance(userDetails.getUsername(), offset, limit);
+        return financeOrderService.getCompleteOrdersForFinance(userDetails.getUsername(), offset, limit);
 
-        return serviceResponse;
     }
 
 
@@ -119,9 +110,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+        return financeOrderService.getOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
 
-        return serviceResponse;
     }
 
     //Universal searching
@@ -139,9 +129,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
+        return financeOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
-       return serviceResponse;
     }
     //Complete button searching filter
     @GetMapping("/status-filter")
@@ -158,9 +147,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+        return financeOrderService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
 
-       return serviceResponse;
     }
 
     //Search Filter
@@ -181,9 +169,8 @@ public class FinanceOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        ResponseEntity<?> serviceResponse = financeOrderService.getCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+        return financeOrderService.getCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
 
-        return serviceResponse;
     }
 
 }

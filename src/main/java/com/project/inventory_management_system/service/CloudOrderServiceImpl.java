@@ -44,21 +44,26 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only Cloud team can view approved orders");
+            return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("CLOUD PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("CLOUD PENDING", offset, limit);
 
-        if (orders.isEmpty())
+        if (ordersList.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No orders found");
+            return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> list = orders.stream()
+        List<OrdersDto> ordersDtoList = ordersList.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", cloudApprovalRepository.countByStatus("CLOUD PENDING"),
+                "orders", ordersDtoList
+        ));
     }
 
     @Override
@@ -73,21 +78,26 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
 
         List<CloudApproval> cloudApprovalsOrders = cloudApprovalRepository.findByCloudActionIsNotNull(limit, offset);
 
         if (cloudApprovalsOrders.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No Orders found");
+            return ResponseEntity.ok("No Orders found");
         }
-        List<CloudOrdersHistoryDto> list = cloudApprovalsOrders.stream()
+        List<CloudOrdersHistoryDto> cloudOrdersHistoryDtoList = cloudApprovalsOrders.stream()
                 .map(approval -> ordersCompleteMapper.cloudOrdersHistoryDto(
                         approval.getOrder(), approval))
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", cloudApprovalRepository.countByCloudAction(),
+                "orders", cloudOrdersHistoryDtoList
+        ));
     }
 
     @Override
@@ -102,18 +112,18 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
         {
-            return ResponseEntity.badRequest().body("Only Cloud team can update jira ticket details");
+            return ResponseEntity.status(403).body("Only Cloud team can update jira ticket details");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("CLOUD PENDING"))
         {
-            return ResponseEntity.badRequest().body("Jira details can only be submitted when the order is pending for SCM action");
+            return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
 
         CloudApproval jiraDetailsUpdate = new CloudApproval();

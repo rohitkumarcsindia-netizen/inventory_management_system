@@ -1,12 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
-import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.SyrmaApproval;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -17,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,21 +35,31 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
 
         if (user == null)
         {
-            return ResponseEntity.badRequest().body("User not found");
+            return ResponseEntity.ok("User not found");
         }
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
         {
-            return ResponseEntity.badRequest().body("Only syrma team can view approved orders");
+            return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SYRMA_PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SYRMA_PENDING", offset, limit);
 
-        List<OrdersDto> list = orders.stream()
+        if (ordersList.isEmpty())
+        {
+            return ResponseEntity.ok("No Orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersList.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orderRepository.countByStatus("SYRMA_PENDING"),
+                "orders", ordersDtoList
+        ));
     }
 
     @Override
@@ -69,19 +74,19 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
         {
-            return ResponseEntity.badRequest().body("Only syrma team can view complete orders");
+            return ResponseEntity.status(403).body("Only syrma team can view complete orders");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
 
         if (order == null)
         {
-            return ResponseEntity.badRequest().body("Order not found");
+            return ResponseEntity.ok("Order not found");
         }
 
         if (!order.getStatus().equalsIgnoreCase("SYRMA_PENDING"))
         {
-            return ResponseEntity.badRequest().body("Order is not ready for production start");
+            return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
         order.setStatus("PRODUCTION STARTED");
@@ -102,16 +107,26 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
         {
-            return ResponseEntity.badRequest().body("Only SCM team can view approved orders");
+            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("PRODUCTION STARTED", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("PRODUCTION STARTED", offset, limit);
 
-        List<OrdersDto> list = orders.stream()
+        if (ordersList.isEmpty())
+        {
+            return ResponseEntity.ok("No Orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersList.stream()
                 .map(orderMapper::toDto)
                 .toList();
 
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", orderRepository.countByStatus("PRODUCTION STARTED"),
+                "orders", ordersDtoList
+        ));
     }
 
 //    @Override
