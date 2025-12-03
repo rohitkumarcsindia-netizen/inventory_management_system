@@ -331,6 +331,48 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         ));
     }
 
+    @Override
+    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only Project team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("SCM > PROJECT TEAM RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
+        }
+
+        order.setStatus("PROJECT TEAM > AMISP PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("AMISP");
+
+        boolean mailsent = emailService.sendMailNotifyAmisp(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for Rma");
+    }
+
 }
 
 

@@ -1,8 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.FinanceOrderDto;
-import com.project.inventory_management_system.repository.FinanceApprovalRepository;
-import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.FinanceOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

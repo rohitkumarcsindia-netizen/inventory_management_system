@@ -159,4 +159,16 @@ public class ProjectOrdersController
         return projectOrderService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
     }
+
+    @PutMapping("/Convey-amisp/{orderId}")
+    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return projectOrderService.projectTeamNotifyConveyToAmisp(userDetails.getUsername(), orderId);
+    }
 }

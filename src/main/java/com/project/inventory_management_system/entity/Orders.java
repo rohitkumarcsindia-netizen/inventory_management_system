@@ -62,4 +62,7 @@ public class Orders
     @OneToMany(mappedBy = "order")
     private List<RmaApproval> rmaApprovalList;
 
+    @OneToMany(mappedBy = "order")
+    private List<AmispApproval> amispApprovalList;
+
 }

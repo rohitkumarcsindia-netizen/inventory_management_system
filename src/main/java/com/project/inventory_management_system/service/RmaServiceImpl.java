@@ -160,6 +160,6 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(500).body("Mail Not Sent");
         }
 
-        return ResponseEntity.ok("Scm Notify Successfully");
+        return ResponseEntity.ok("Syrma Notify Successfully");
     }
 }

@@ -412,4 +412,43 @@ public class EmailService
         }
     }
 
+    //Project notify Amisp Team Mail send Method
+    public boolean sendMailNotifyAmisp(String departmentEmail, Long orderId)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order #" + orderId + " – Build Ready (Request for AMISP Dispatch Coordination)");
+
+            String mailBody = ""
+                    + "Dear AMISP Team,\n\n"
+                    + "This is to inform you that the build for the below-mentioned order has been completed and is now "
+                    + "ready for dispatch. All internal processes including Production, Testing, QC, RMA closure, and "
+                    + "Project Team confirmation have been successfully completed.\n\n"
+                    + "ORDER DETAILS\n"
+                    + "-------------\n"
+                    + "Order ID         : " + orderId + "\n"
+                    + "Current Status   : Ready for Dispatch\n\n"
+                    + "Kindly proceed with AMISP-level coordination including shipment readiness, dispatch planning, "
+                    + "and serial number documentation.\n"
+                    + "Once dispatch arrangements are finalized, please share the details so SCM can execute shipment "
+                    + "and update IMS.\n\n"
+                    + "Thanks & Regards,\n"
+                    + "Project Team\n"
+                    + "IMS Portal";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

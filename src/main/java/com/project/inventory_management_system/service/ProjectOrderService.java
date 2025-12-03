@@ -25,4 +25,6 @@ public interface ProjectOrderService
     ResponseEntity<?> getOrdersFilterStatus(String username, String status, int page, int size);
 
     ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId);
 }
