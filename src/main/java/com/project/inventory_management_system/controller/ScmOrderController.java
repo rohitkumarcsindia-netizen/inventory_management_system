@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/api/orders/scm")
 @RequiredArgsConstructor
-public class ScmController
+public class ScmOrderController
 {
     private final ScmOrderService scmOrderService;
 

@@ -21,9 +21,6 @@ import java.time.LocalDateTime;
 public class FinanceOrderController
 {
     private final FinanceOrderService financeOrderService;
-    private final OrderRepository orderRepository;
-    private final FinanceApprovalRepository financeApprovalRepository;
-
 
     @GetMapping("/pending")
     public ResponseEntity<?> getPendingOrdersForFinance(
