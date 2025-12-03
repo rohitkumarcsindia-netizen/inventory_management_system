@@ -297,4 +297,80 @@ public class EmailService
         }
     }
 
+    //Rma notify Scm Mail send Method
+    public boolean sendMailNotifyScm(String departmentEmail, Long orderId)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order #" + orderId + " – QC Inspection Passed & Ready for Release");
+
+            String mailBody =  ""
+                    + "Dear SCM Team,\n\n"
+                    + "This is to notify you that the QC Inspection for the below-mentioned order has been successfully "
+                    + "completed and the product has passed all Quality parameters.\n\n"
+                    + "ORDER DETAILS\n"
+                    + "-------------\n"
+                    + "Order ID           : " + orderId + "\n"
+                    + "QC Status          : Passed\n"
+                    + "RMA Status         : Completed\n"
+                    + "Current State      : Ready for Release\n\n"
+                    + "Kindly proceed with the next step — arranging release and dispatch planning.\n"
+                    + "Once dispatch arrangements are completed, please update the status in IMS.\n\n"
+                    + "If any clarification is required, feel free to contact the RMA team.\n\n"
+                    + "Thanks & Regards,\n"
+                    + "RMA Team\n"
+                    + "IMS Portal";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    //Rma notify Syrma Mail send Method
+    public boolean sendMailNotifySyrma(String departmentEmail, Long orderId)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order #" + orderId + " – QC Inspection Failed (Re-Work Required)");
+
+            String mailBody =   ""
+                    + "Dear Syrma Production Team,\n\n"
+                    + "This is to inform you that the QC Inspection for the below-mentioned order has failed, and the product "
+                    + "requires re-work as per the inspection report.\n\n"
+                    + "ORDER DETAILS\n"
+                    + "-------------\n"
+                    + "Order ID           : " + orderId + "\n"
+                    + "QC Status          : Failed\n"
+                    + "Kindly initiate the re-work process at the earliest and re-submit the order for QC inspection.\n"
+                    + "Once re-work is completed, please update the status in IMS.\n\n"
+                    + "If any clarification is required, feel free to contact the RMA team.\n\n"
+                    + "Thanks & Regards,\n"
+                    + "RMA Team\n"
+                    + "IMS Portal";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

@@ -1,14 +1,13 @@
 package com.project.inventory_management_system.controller;
 
+import com.project.inventory_management_system.entity.RmaApproval;
 import com.project.inventory_management_system.service.RmaService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,5 +31,31 @@ public class RmaOrderController
         }
 
         return rmaService.getPendingOrdersForRma(userDetails.getUsername(), offset, limit);
+    }
+
+    @PostMapping("/passed/{orderId}")
+    public ResponseEntity<?> passedeOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody RmaApproval comments)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return rmaService.passedOrder(userDetails.getUsername(), orderId, comments);
+    }
+
+    @PostMapping("/failed/{orderId}")
+    public ResponseEntity<?> failedOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody RmaApproval comments)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return rmaService.failedOrder(userDetails.getUsername(), orderId, comments);
     }
 }
