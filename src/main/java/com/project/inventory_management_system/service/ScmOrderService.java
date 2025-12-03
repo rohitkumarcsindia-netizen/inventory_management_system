@@ -20,4 +20,6 @@ public interface ScmOrderService
     ResponseEntity<?> fillJiraTicketDetailOldOrder(String username, Long orderId, ScmApproval jiraDetails);
 
     ResponseEntity<?> scmNotifyRma(String username, Long orderId);
+
+    ResponseEntity<?> scmNotifyProjectTeam(String username, Long orderId);
 }

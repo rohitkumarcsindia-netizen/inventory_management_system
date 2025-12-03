@@ -56,7 +56,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "SCM PENDING",
                 "CLOUD > SCM RECHECK PENDING",
                 "SYRMA > SCM RECHECK PENDING",
-                "SCM HOLD"
+                "RMA > SCM RECHECK PENDING"
         );
 
         List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);
@@ -318,6 +318,48 @@ public class ScmOrderServiceImpl implements ScmOrderService
         Department department = departmentRepository.findByDepartmentname("RMA");
 
         boolean mailsent = emailService.sendMailNotifyRma(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for Rma");
+    }
+
+    @Override
+    public ResponseEntity<?> scmNotifyProjectTeam(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("RMA > SCM RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
+        }
+
+        order.setStatus("SCM > PROJECT TEAM PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyProjectTeam(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {

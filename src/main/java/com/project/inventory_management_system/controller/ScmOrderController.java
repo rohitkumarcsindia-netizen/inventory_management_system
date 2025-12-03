@@ -103,4 +103,16 @@ public class ScmOrderController
         }
         return scmOrderService.scmNotifyRma(userDetails.getUsername(), orderId);
     }
+
+    @PutMapping("/notify-project-team/{orderId}")
+    public ResponseEntity<?> scmNotifyProjectTeam(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.scmNotifyProjectTeam(userDetails.getUsername(), orderId);
+    }
 }

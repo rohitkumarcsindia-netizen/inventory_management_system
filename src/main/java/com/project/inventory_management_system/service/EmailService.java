@@ -373,4 +373,43 @@ public class EmailService
         }
     }
 
+    //Scm notify Project Team Mail send Method
+    public boolean sendMailNotifyProjectTeam(String departmentEmail, Long orderId)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order #" + orderId + " – Build Ready & Awaiting Dispatch Plan");
+
+            String mailBody = ""
+                    + "Dear Project Team,\n\n"
+                    + "This is to inform you that the build for the below-mentioned order is now ready and has successfully "
+                    + "cleared all internal processes (Production, Testing, QC, and RMA). The order is currently marked as "
+                    + "\"Ready to Release\".\n\n"
+                    + "ORDER DETAILS\n"
+                    + "-------------\n"
+                    + "Order ID       : " + orderId + "\n"
+                    + "Current Status : Build Ready / Ready to Release\n\n"
+                    + "Kindly review the order and share the dispatch plan or any further instructions, if required.\n"
+                    + "Once the dispatch details are finalized, the SCM team will proceed with shipment arrangements and "
+                    + "update the status in IMS.\n\n"
+                    + "If you need any additional information, please feel free to contact the SCM team.\n\n"
+                    + "Thanks & Regards,\n"
+                    + "SCM Team\n"
+                    + "IMS Portal";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

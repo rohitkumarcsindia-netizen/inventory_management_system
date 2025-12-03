@@ -48,7 +48,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
                 WHEN status = 'SCM PENDING' THEN 1
                 WHEN status = 'CLOUD > RECHECK PENDING' THEN 2
                 WHEN status = 'SYRMA > PRODUCTION STARTED' THEN 3
-                WHEN status = 'SCM HOLD' THEN 4
+                WHEN status = 'RMA > SCM RECHECK PENDING' THEN 4
                 ELSE 5
             END,
             order_id DESC
