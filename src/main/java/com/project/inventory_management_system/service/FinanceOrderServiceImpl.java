@@ -93,7 +93,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         if (financeApprovalsOrders.isEmpty())
         {
-            return ResponseEntity.badRequest().body("No Orders found");
+            return ResponseEntity.ok("No Orders found");
         }
         List<FinanceOrdersHistoryDto> financeOrdersHistoryDtoList = financeApprovalsOrders.stream()
                 .map(approval -> ordersCompleteMapper.financeOrdersHistoryDto(

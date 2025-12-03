@@ -4,6 +4,7 @@ package com.project.inventory_management_system.mapper;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
 import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
+import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
 import com.project.inventory_management_system.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -118,6 +119,38 @@ public class OrdersCompleteMapper
         cloudOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
 
         return cloudOrdersHistoryDto;
+    }
+
+    //Entity → DTO Syrma Orders Action History
+    public SyrmaOrdersHistoryDto syrmaOrdersHistoryDto(Orders order, SyrmaApproval syrmaApprovalDetails)
+    {
+        SyrmaOrdersHistoryDto syrmaOrdersHistoryDto = new SyrmaOrdersHistoryDto();
+
+        syrmaOrdersHistoryDto.setOrderId(order.getOrderId());
+        syrmaOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        syrmaOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
+        syrmaOrdersHistoryDto.setProject(order.getProject());
+        syrmaOrdersHistoryDto.setOrderType(order.getOrderType());
+        syrmaOrdersHistoryDto.setInitiator(order.getInitiator());
+        syrmaOrdersHistoryDto.setProductType(order.getProductType());
+        syrmaOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        syrmaOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        syrmaOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+
+        syrmaOrdersHistoryDto.setSyrmaAction(syrmaApprovalDetails.getSyrmaAction());
+        syrmaOrdersHistoryDto.setActionTime(syrmaApprovalDetails.getActionTime());
+        syrmaOrdersHistoryDto.setSyrmaComments(syrmaApprovalDetails.getSyrmaComments());
+
+        Users approvedUser = syrmaApprovalDetails.getActionDoneBy();
+        if (approvedUser != null)
+        {
+            syrmaOrdersHistoryDto.setActionDoneBy(approvedUser.getUserId());
+        }
+
+        syrmaOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+
+        return syrmaOrdersHistoryDto;
     }
 
 }

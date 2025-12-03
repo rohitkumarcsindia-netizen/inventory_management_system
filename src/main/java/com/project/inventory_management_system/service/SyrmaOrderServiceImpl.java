@@ -1,15 +1,15 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersDto;
-import com.project.inventory_management_system.entity.Department;
-import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.SyrmaApproval;
-import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
+import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
+import com.project.inventory_management_system.repository.SyrmaApprovalRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +30,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final OrdersCompleteMapper ordersCompleteMapper;
+    private final SyrmaApprovalRepository syrmaApprovalRepository;
 
 
     @Override
@@ -99,6 +100,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
         syrmaApproval.setActionTime(LocalDateTime.now());
         syrmaApproval.setActionDoneBy(user);
         syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());
+        syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
         order.setStatus("SYRMA > SCM RECHECK PENDING");
@@ -116,28 +118,38 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
         return ResponseEntity.ok("Production and Testing successfully");
     }
 
-//
-//    @Override
-//    public ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit)
-//    {
-//        Users user = usersRepository.findByUsername(username);
-//
-//        if (user == null)
-//        {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//
-//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
-//        {
-//            return ResponseEntity.badRequest().body("Only Syrma team can view complete orders");
-//        }
-//
-//        List<Orders> orders = orderRepository.findByScmActionIsNotNull(offset, limit);
-//
-//        List<ScmOrdersHistoryDto> list = orders.stream()
-//                .map(ordersCompleteMapper::scmOrdersHistoryDto)
-//                .toList();
-//
-//        return ResponseEntity.ok(list);
-//    }
+
+    @Override
+    public ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
+        {
+            return ResponseEntity.status(403).body("Only Syrma team can view complete orders");
+        }
+
+        List<SyrmaApproval> syrmaApprovalList = syrmaApprovalRepository.findSyrmaApprovals(limit, offset);
+
+        if (syrmaApprovalList.isEmpty())
+        {
+            return ResponseEntity.ok("No Orders found");
+        }
+        List<SyrmaOrdersHistoryDto> syrmaOrdersHistoryDtoList = syrmaApprovalList.stream()
+                .map(approval -> ordersCompleteMapper.syrmaOrdersHistoryDto(
+                        approval.getOrder(), approval))
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", syrmaApprovalRepository.countByAction(),
+                "orders", syrmaOrdersHistoryDtoList
+        ));
+    }
 }

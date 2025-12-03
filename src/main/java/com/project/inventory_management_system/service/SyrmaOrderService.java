@@ -12,5 +12,5 @@ public interface SyrmaOrderService
 
     ResponseEntity<?> productionAndTestingComplete(String username, Long orderId, SyrmaOrdersDto syrmaComments);
 
-   // ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit);
+    ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit);
 }

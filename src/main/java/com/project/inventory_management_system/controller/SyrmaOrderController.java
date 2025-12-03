@@ -52,35 +52,20 @@ public class SyrmaOrderController
     }
 
 
-//    @GetMapping("/complete")
-//    public ResponseEntity<?> getCompleteOrdersForSyrma(
-//            HttpServletRequest request,
-//            @RequestParam(defaultValue = "0") int offset,
-//            @RequestParam(defaultValue = "10") int limit)
-//    {
-//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-//
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//
-//        ResponseEntity<?> serviceResponse =
-//                syrmaOrderService.getCompleteOrdersForSyrma(userDetails.getUsername(), offset, limit);
-//
-//        List<SyrmaOrdersHistoryDto> orders = (List<SyrmaOrdersHistoryDto>) serviceResponse.getBody();
-//
-//        if (orders.isEmpty())
-//        {
-//            return ResponseEntity.ok(Map.of("message", "No orders found"));
-//        }
-//
-//        return ResponseEntity.ok(Map.of(
-//                "offset", offset,
-//                "limit", limit,
-//                "ordersCount", orderRepository.countByScmAction(),
-//                "orders", orders
-//        ));
-//    }
+    @GetMapping("/complete")
+    public ResponseEntity<?> getCompleteOrdersForSyrma(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return syrmaOrderService.getCompleteOrdersForSyrma(userDetails.getUsername(), offset, limit);
+
+    }
 
 }
