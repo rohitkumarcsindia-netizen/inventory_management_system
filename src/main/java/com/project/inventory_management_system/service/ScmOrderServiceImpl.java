@@ -157,7 +157,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
 
-        boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailCreateJiraTicket(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {
@@ -218,7 +218,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         Department department = departmentRepository.findByDepartmentname("SYRMA");
 
-        boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailProdbackGenerate(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {

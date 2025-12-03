@@ -1,7 +1,10 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.SyrmaOrdersDto;
+import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.SyrmaApproval;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -12,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +67,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
     }
 
     @Override
-    public ResponseEntity<?> productionAndTestingComplete(String username, Long orderId)
+    public ResponseEntity<?> productionAndTestingComplete(String username, Long orderId, SyrmaOrdersDto syrmaComments)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -89,10 +93,27 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
+        SyrmaApproval syrmaApproval = new SyrmaApproval();
+        syrmaApproval.setOrder(order);
+        syrmaApproval.setSyrmaAction("Completed");
+        syrmaApproval.setActionTime(LocalDateTime.now());
+        syrmaApproval.setActionDoneBy(user);
+        syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());
+
+        //Order table status update
         order.setStatus("SYRMA > SCM RECHECK PENDING");
         orderRepository.save(order);
 
-        return ResponseEntity.ok("Production started successfully");
+        Department department = departmentRepository.findByDepartmentname("SCM");
+
+        boolean mailsent = emailService.sendMailProductionAndTestingComplete(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Production and Testing successfully");
     }
 
 //

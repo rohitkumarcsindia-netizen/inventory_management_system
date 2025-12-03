@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 
+import com.project.inventory_management_system.dto.SyrmaOrdersDto;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.service.SyrmaOrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,8 +38,8 @@ public class SyrmaOrderController
 
     }
 
-    @PutMapping("/production-testing/{orderId}")
-    public ResponseEntity<?> productionAndTestingComplete(HttpServletRequest request, @PathVariable Long orderId)
+    @PostMapping("/production-testing/{orderId}")
+    public ResponseEntity<?> productionAndTestingComplete(HttpServletRequest request, @PathVariable Long orderId, @RequestBody SyrmaOrdersDto syrmaComments)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -47,7 +48,7 @@ public class SyrmaOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return syrmaOrderService.productionAndTestingComplete(userDetails.getUsername(), orderId);
+        return syrmaOrderService.productionAndTestingComplete(userDetails.getUsername(), orderId, syrmaComments);
     }
 
 

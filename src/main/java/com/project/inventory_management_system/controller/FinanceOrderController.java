@@ -63,7 +63,7 @@ public class FinanceOrderController
 
 
 
-    @PutMapping("/approve/{orderId}")
+    @PostMapping("/approve/{orderId}")
     public ResponseEntity<?> approveOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody FinanceOrderDto reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -79,7 +79,7 @@ public class FinanceOrderController
 
 
 
-    @PutMapping("/reject/{orderId}")
+    @PostMapping("/reject/{orderId}")
     public ResponseEntity<?> rejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody FinanceOrderDto reason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");

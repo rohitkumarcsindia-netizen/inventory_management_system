@@ -46,8 +46,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'SCM PENDING' THEN 1
-                WHEN status = 'SCM RECHECK PENDING' THEN 2
-                WHEN status = 'SYRMA PRODUCTION STARTED' THEN 3
+                WHEN status = 'CLOUD > RECHECK PENDING' THEN 2
+                WHEN status = 'SYRMA > PRODUCTION STARTED' THEN 3
                 WHEN status = 'SCM HOLD' THEN 4
                 ELSE 5
             END,

@@ -142,7 +142,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         Department department = departmentRepository.findByDepartmentname("SCM");
 
-        boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailCertificateGenerate(department.getDepartmentEmail(), order.getOrderId());
 
         if (!mailsent)
         {

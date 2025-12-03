@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 public class SyrmaOrdersDto
 {
+    private Long id;
     private Orders order;
     private String syrmaAction;
     private LocalDateTime actionTime;
