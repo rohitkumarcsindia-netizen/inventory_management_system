@@ -9,11 +9,7 @@ public interface SyrmaOrderService
 
     ResponseEntity<?> getPendingOrdersForSyrma(String username, int offset, int limit);
 
-    ResponseEntity<?> startProduction(String username, Long orderId);
-
-    ResponseEntity<?> getPendingTestingOrders(String username, int offset, int limit);
-
-//    ResponseEntity<?> testingComplete(String username, Long orderId, SyrmaOrdersDto syrmaOrdersDto);
+    ResponseEntity<?> productionAndTestingComplete(String username, Long orderId);
 
    // ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit);
 }

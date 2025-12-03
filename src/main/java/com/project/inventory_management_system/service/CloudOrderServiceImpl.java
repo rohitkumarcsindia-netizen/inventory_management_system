@@ -136,7 +136,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         jiraDetailsUpdate.setUpdatedBy(user);
         cloudApprovalRepository.save(jiraDetailsUpdate);
 
-        order.setStatus("SCM RECHECK PENDING");
+        order.setStatus("CLOUD > SCM RECHECK PENDING");
         orderRepository.save(order);
 
 

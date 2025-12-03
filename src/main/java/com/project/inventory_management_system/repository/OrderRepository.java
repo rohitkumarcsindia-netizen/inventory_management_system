@@ -40,6 +40,24 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
             @Param("offset") int offset,
             @Param("limit") int limit);
 
+    @Query(value = """
+        SELECT * FROM orders
+        WHERE status IN (:statuses)
+        ORDER BY 
+            CASE 
+                WHEN status = 'SCM PENDING' THEN 1
+                WHEN status = 'SCM RECHECK PENDING' THEN 2
+                WHEN status = 'SYRMA PRODUCTION STARTED' THEN 3
+                WHEN status = 'SCM HOLD' THEN 4
+                ELSE 5
+            END,
+            order_id DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<Orders> findOrdersForScm(@Param("statuses") List<String> statuses,
+                                  @Param("offset") int offset,
+                                  @Param("limit") int limit);
+
 
 
     // Order Count using userId
@@ -49,6 +67,9 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     // Order Count using status
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
     Long countByStatus(@Param("status") String status);
+
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
+    long countOrdersForScm(@Param("statuses") List<String> statuses);
 
 
 

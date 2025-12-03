@@ -37,8 +37,8 @@ public class SyrmaOrderController
 
     }
 
-    @PutMapping("/{orderId}/start-production")
-    public ResponseEntity<?> startProduction(HttpServletRequest request, @PathVariable Long orderId)
+    @PutMapping("/production-testing/{orderId}")
+    public ResponseEntity<?> productionAndTestingComplete(HttpServletRequest request, @PathVariable Long orderId)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -47,38 +47,9 @@ public class SyrmaOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return syrmaOrderService.startProduction(userDetails.getUsername(), orderId);
+        return syrmaOrderService.productionAndTestingComplete(userDetails.getUsername(), orderId);
     }
 
-    @GetMapping("/pending/testing")
-    public ResponseEntity<?> getPendingTestingOrders(
-            HttpServletRequest request,
-            @RequestParam(defaultValue = "0") int offset,
-            @RequestParam(defaultValue = "10") int limit)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        return syrmaOrderService.getPendingTestingOrders(userDetails.getUsername(), offset, limit);
-
-    }
-
-//    @PutMapping("/{orderId}/testing-complete")
-//    public ResponseEntity<?> testingComplete(HttpServletRequest request, @PathVariable Long orderId, SyrmaOrdersDto syrmaOrdersDto)
-//    {
-//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-//
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//
-//        return syrmaOrderService.testingComplete(userDetails.getUsername(), orderId, syrmaOrdersDto);
-//    }
 
 //    @GetMapping("/complete")
 //    public ResponseEntity<?> getCompleteOrdersForSyrma(

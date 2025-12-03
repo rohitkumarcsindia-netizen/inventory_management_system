@@ -51,7 +51,15 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM PENDING", offset, limit);
+        // Allowed SCM statuses (priority order)
+        List<String> scmStatuses = List.of(
+                "SCM PENDING",
+                "CLOUD > SCM RECHECK PENDING",
+                "SYRMA > SCM RECHECK PENDING",
+                "SCM HOLD"
+        );
+
+        List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -65,7 +73,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM PENDING"),
+                "ordersCount", orderRepository.countOrdersForScm(scmStatuses),
                 "orders", ordersDtoList
         ));
     }
@@ -185,7 +193,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("CLOUD > SCM RECHECK PENDING"))
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -220,39 +228,39 @@ public class ScmOrderServiceImpl implements ScmOrderService
         return ResponseEntity.ok("Jira details filled successfully");
     }
 
-    @Override
-    public ResponseEntity<?> getScmRecheckOrderPending(String username, int offset, int limit)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
-        {
-            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
-        }
-
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM RECHECK PENDING", offset, limit);
-
-        if (ordersList.isEmpty())
-        {
-            return ResponseEntity.ok("No orders found");
-        }
-
-        List<OrdersDto> ordersDtoList = ordersList.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM RECHECK PENDING"),
-                "orders", ordersDtoList
-        ));
-    }
+//    @Override
+//    public ResponseEntity<?> getScmRecheckOrderPending(String username, int offset, int limit)
+//    {
+//        Users user = usersRepository.findByUsername(username);
+//
+//        if (user == null)
+//        {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+//        {
+//            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
+//        }
+//
+//        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM RECHECK PENDING", offset, limit);
+//
+//        if (ordersList.isEmpty())
+//        {
+//            return ResponseEntity.ok("No orders found");
+//        }
+//
+//        List<OrdersDto> ordersDtoList = ordersList.stream()
+//                .map(orderMapper::toDto)
+//                .toList();
+//
+//        return ResponseEntity.ok(Map.of(
+//                "offset", offset,
+//                "limit", limit,
+//                "ordersCount", orderRepository.countByStatus("SCM RECHECK PENDING"),
+//                "orders", ordersDtoList
+//        ));
+//    }
 
     //old button method
     @Override

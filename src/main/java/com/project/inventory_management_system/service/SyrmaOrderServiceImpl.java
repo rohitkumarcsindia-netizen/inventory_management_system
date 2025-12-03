@@ -43,7 +43,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SYRMA_PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SYRMA PENDING", offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -57,13 +57,13 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SYRMA_PENDING"),
+                "ordersCount", orderRepository.countByStatus("SYRMA PENDING"),
                 "orders", ordersDtoList
         ));
     }
 
     @Override
-    public ResponseEntity<?> startProduction(String username, Long orderId)
+    public ResponseEntity<?> productionAndTestingComplete(String username, Long orderId)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -84,99 +84,17 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SYRMA_PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SYRMA PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
-        order.setStatus("PRODUCTION STARTED");
+        order.setStatus("SYRMA > SCM RECHECK PENDING");
         orderRepository.save(order);
 
         return ResponseEntity.ok("Production started successfully");
     }
 
-    @Override
-    public ResponseEntity<?> getPendingTestingOrders(String username, int offset, int limit)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
-        {
-            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
-        }
-
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("PRODUCTION STARTED", offset, limit);
-
-        if (ordersList.isEmpty())
-        {
-            return ResponseEntity.ok("No Orders found");
-        }
-
-        List<OrdersDto> ordersDtoList = ordersList.stream()
-                .map(orderMapper::toDto)
-                .toList();
-
-        return ResponseEntity.ok(Map.of(
-                "offset", offset,
-                "limit", limit,
-                "ordersCount", orderRepository.countByStatus("PRODUCTION STARTED"),
-                "orders", ordersDtoList
-        ));
-    }
-
-//    @Override
-//    public ResponseEntity<?> testingComplete(String username, Long orderId, SyrmaOrdersDto syrmaOrdersDto)
-//    {
-//        Users user = usersRepository.findByUsername(username);
-//
-//        if (user == null)
-//        {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//
-//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
-//        {
-//            return ResponseEntity.badRequest().body("Only syrma team can view complete orders");
-//        }
-//
-//        Orders order = orderRepository.findById(orderId).orElse(null);
-//
-//        if (order == null)
-//        {
-//            return ResponseEntity.badRequest().body("Order not found");
-//        }
-//
-//        if (!order.getStatus().equalsIgnoreCase("PRODUCTION STARTED"))
-//        {
-//            return ResponseEntity.badRequest().body("Jira details can only be submitted when the order is pending for SCM action");
-//        }
-//
-//        SyrmaApproval syrmaApproval = new SyrmaApproval();
-//        syrmaApproval.setSyrmaAction(syrmaOrdersDto.getSyrmaAction());
-//        syrmaApproval.setActionTime(LocalDateTime.now());
-//        syrmaApproval.setSyrmaComments(syrmaOrdersDto.getSyrmaComments());
-//        syrmaApproval.setActionDoneBy(user.getUserId());
-//        order.setStatus("TESTING_COMPLETED");
-//        orderRepository.save(order);
-//
-//        Department department = departmentRepository.findByDepartmentname("SCM");
-//
-//        boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
-//
-//        if (!mailsent)
-//        {
-//            return ResponseEntity.status(500).body("Mail Not Sent");
-//        }
-//
-//
-//        return ResponseEntity.ok("Testing Completed successfully");
-//
-//    }
 //
 //    @Override
 //    public ResponseEntity<?> getCompleteOrdersForSyrma(String username, int offset, int limit)

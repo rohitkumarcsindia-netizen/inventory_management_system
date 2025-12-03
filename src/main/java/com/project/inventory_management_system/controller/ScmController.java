@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
-@RequestMapping("/api/orders")
+@RequestMapping("/api/orders/scm")
 @RequiredArgsConstructor
 public class ScmController
 {
     private final ScmOrderService scmOrderService;
 
 
-    @GetMapping("/scm/pending")
+    @GetMapping("/pending")
     public ResponseEntity<?> getPendingOrdersForScm(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,
@@ -37,7 +37,7 @@ public class ScmController
     }
 
 
-    @GetMapping("/scm/complete")
+    @GetMapping("/complete")
     public ResponseEntity<?> getCompleteOrdersForScm(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,
@@ -55,7 +55,7 @@ public class ScmController
     }
 
 
-    @PostMapping("/scm/jira/details/{orderId}")
+    @PostMapping("/jira/details/{orderId}")
     public ResponseEntity<?> fillJiraTicketDetail(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ScmApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -67,7 +67,7 @@ public class ScmController
         return scmOrderService.fillJiraTicketDetail(userDetails.getUsername(),orderId, jiraDetails);
     }
 
-    @PutMapping("/scm/jira-ticket-closure/{orderId}")
+    @PutMapping("/jira-ticket-closure/{orderId}")
     public ResponseEntity<?>  prodbackGenerateAndJiraTicketClosure(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ScmApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -80,7 +80,7 @@ public class ScmController
     }
 
     // old button method
-    @PostMapping("/old/scm/jira/details/{orderId}")
+    @PostMapping("/old/jira/details/{orderId}")
     public ResponseEntity<?> fillJiraTicketDetailOldOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ScmApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -93,21 +93,21 @@ public class ScmController
     }
 
 
-    // Scm Recheck Pending And Jira Closure Method
-    @GetMapping("/scm/recheck")
-    public ResponseEntity<?> getScmRecheckOrderPending(
-            HttpServletRequest request,
-            @RequestParam(defaultValue = "0") int offset,
-            @RequestParam(defaultValue = "10") int limit)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-       return  scmOrderService.getScmRecheckOrderPending(userDetails.getUsername(), offset, limit);
-
-    }
+//    // Scm Recheck Pending And Jira Closure Method
+//    @GetMapping("/recheck")
+//    public ResponseEntity<?> getScmRecheckOrderPending(
+//            HttpServletRequest request,
+//            @RequestParam(defaultValue = "0") int offset,
+//            @RequestParam(defaultValue = "10") int limit)
+//    {
+//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+//
+//        if (userDetails == null)
+//        {
+//            return ResponseEntity.status(401).body("Unauthorized");
+//        }
+//
+//       return  scmOrderService.getScmRecheckOrderPending(userDetails.getUsername(), offset, limit);
+//
+//    }
 }
