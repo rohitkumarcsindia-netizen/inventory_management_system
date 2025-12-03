@@ -17,7 +17,7 @@ public interface ScmOrderService
 
     ResponseEntity<?> prodbackGenerateAndJiraTicketClosure(String username, Long orderId, ScmApproval jiraDetails);
 
-//    ResponseEntity<?> getScmRecheckOrderPending(String username, int offset, int limit);
-
     ResponseEntity<?> fillJiraTicketDetailOldOrder(String username, Long orderId, ScmApproval jiraDetails);
+
+    ResponseEntity<?> scmNotifyRma(String username, Long orderId);
 }

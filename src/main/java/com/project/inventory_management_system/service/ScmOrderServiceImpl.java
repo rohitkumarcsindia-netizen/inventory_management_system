@@ -228,40 +228,6 @@ public class ScmOrderServiceImpl implements ScmOrderService
         return ResponseEntity.ok("Jira details filled successfully");
     }
 
-//    @Override
-//    public ResponseEntity<?> getScmRecheckOrderPending(String username, int offset, int limit)
-//    {
-//        Users user = usersRepository.findByUsername(username);
-//
-//        if (user == null)
-//        {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//
-//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
-//        {
-//            return ResponseEntity.status(403).body("Only SCM team can view approved orders");
-//        }
-//
-//        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM RECHECK PENDING", offset, limit);
-//
-//        if (ordersList.isEmpty())
-//        {
-//            return ResponseEntity.ok("No orders found");
-//        }
-//
-//        List<OrdersDto> ordersDtoList = ordersList.stream()
-//                .map(orderMapper::toDto)
-//                .toList();
-//
-//        return ResponseEntity.ok(Map.of(
-//                "offset", offset,
-//                "limit", limit,
-//                "ordersCount", orderRepository.countByStatus("SCM RECHECK PENDING"),
-//                "orders", ordersDtoList
-//        ));
-//    }
-
     //old button method
     @Override
     public ResponseEntity<?> fillJiraTicketDetailOldOrder(String username, Long orderId, ScmApproval jiraDetails)
@@ -317,5 +283,47 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
 
         return ResponseEntity.ok("Jira details filled successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> scmNotifyRma(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("SYRMA > SCM RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
+        }
+
+        order.setStatus("RMA PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("RMA");
+
+        boolean mailsent = emailService.sendMailNotifyRma(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for Rma");
     }
 }

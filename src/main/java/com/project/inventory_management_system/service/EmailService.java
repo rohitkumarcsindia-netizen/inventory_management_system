@@ -260,4 +260,41 @@ public class EmailService
         }
     }
 
+    //Scm Rma notify Mail send Method
+    public boolean sendMailNotifyRma(String departmentEmail, Long orderId)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order #" + orderId + " – Request for RMA Processing (Production & Testing Completed)");
+
+            String mailBody = ""
+                    + "Dear RMA Team,\n\n"
+                    + "This is to notify you that the below-mentioned order has successfully completed Production and Testing "
+                    + "and is now ready for RMA processing.\n\n"
+                    + "ORDER DETAILS\n"
+                    + "-------------\n"
+                    + "Order ID       : " + orderId + "\n"
+                    + "Completion Status : Production & Testing Completed\n\n"
+                    + "Kindly proceed with the RMA process as per the workflow.\n"
+                    + "Once completed, please update the status in IMS.\n\n"
+                    + "If any clarification is required, feel free to contact the SCM team.\n\n"
+                    + "Thanks & Regards,\n"
+                    + "SCM Team\n"
+                    + "IMS Portal";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

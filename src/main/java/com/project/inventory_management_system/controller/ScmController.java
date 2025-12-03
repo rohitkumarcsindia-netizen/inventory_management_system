@@ -92,22 +92,15 @@ public class ScmController
         return scmOrderService.fillJiraTicketDetailOldOrder(userDetails.getUsername(),orderId, jiraDetails);
     }
 
+    @PutMapping("/notify-rma/{orderId}")
+    public ResponseEntity<?> scmNotifyRma(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
-//    // Scm Recheck Pending And Jira Closure Method
-//    @GetMapping("/recheck")
-//    public ResponseEntity<?> getScmRecheckOrderPending(
-//            HttpServletRequest request,
-//            @RequestParam(defaultValue = "0") int offset,
-//            @RequestParam(defaultValue = "10") int limit)
-//    {
-//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-//
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//
-//       return  scmOrderService.getScmRecheckOrderPending(userDetails.getUsername(), offset, limit);
-//
-//    }
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.scmNotifyRma(userDetails.getUsername(), orderId);
+    }
 }
