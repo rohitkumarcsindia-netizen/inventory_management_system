@@ -189,4 +189,30 @@ public class FinanceOrderController
 
     }
 
+    @PostMapping("/final/approve/{orderId}")
+    public ResponseEntity<?> finalApprovedOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody FinanceOrderDto finalReason)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return financeOrderService.finalApprovedOrder(userDetails.getUsername(), orderId, finalReason);
+    }
+
+    @PostMapping("/final/reject/{orderId}")
+    public ResponseEntity<?> finalRejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody FinanceOrderDto finalReason)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return financeOrderService.finalRejectOrder(userDetails.getUsername(), orderId, finalReason);
+    }
+
 }

@@ -55,8 +55,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "CLOUD > SCM RECHECK PENDING",
                 "SYRMA > SCM RECHECK PENDING",
                 "RMA > SCM RECHECK PENDING",
-                "AMISP > PROJECT TEAM RECHECK PENDING",
-                "PROJECT TEAM > SCM LOCATION SENT"
+                "PROJECT TEAM > SCM RECHECK PENDING",
+                "PROJECT TEAM > SCM LOCATION SENT",
+                "FINANCE > SCM RECHECK PENDING"
         );
 
         List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);

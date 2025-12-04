@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.entity.AmispApproval;
+import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -644,6 +645,80 @@ public class EmailService
                     "IMS Link for Review:\n" +
                     "Regards,\n" +
                     "SCM Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendFinanceApprovalMailToSCM(String departmentEmail, Orders order, FinanceApproval findOrder)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order Finance Approval Received – Ready for Dispatch Planning (Order ID: " + order.getOrderId() + ")");
+
+            String mailBody =
+                    "Dear SCM Team,\n\n" +
+                    "Finance approval has been successfully completed for the below order:\n\n" +
+                    "Order ID       : " + order.getOrderId() + "\n" +
+                    "Project Name   : " + order.getProject() + "\n" +
+                    "Approval Type  : " + order.getOrderType() + "\n" +   // FOC / GST
+                    "Approval Status: APPROVED\n" +
+                    "Final Remark   : " + findOrder.getFinanceFinalRemark() + "\n" +
+                    "Approved By    : " + findOrder.getFinanceApprovedBy().getUsername() + "\n" +
+                    "Approval Date  : " + findOrder.getFinanceActionTime() + "\n\n" +
+                    "Kindly proceed further with dispatch planning at the earliest.\n\n" +
+                    "Regards,\n" +
+                    "Finance Team\n\n" +
+                    "*** This is an auto-generated email from IMS Workflow System ***";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendFinanceRejectedMailToSCM(String departmentEmail, Orders order, FinanceApproval findOrder)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order Rejected by Finance – Action Required (Order ID: " + order.getOrderId() + ")");
+
+            String mailBody =
+                    "Dear Project Team,\n\n" +
+                    "The following order has been rejected by the Finance Department:\n\n" +
+                    "Order ID       : " + order.getOrderId() + "\n" +
+                    "Project Name   : " + order.getProject() + "\n" +
+                    "Approval Type  : " + order.getOrderType() + "\n" +   // FOC / GST
+                    "Approval Status: APPROVED\n" +
+                    "Final Remark   : " + findOrder.getFinanceFinalRemark() + "\n" +
+                    "Rejected By    : " + findOrder.getFinanceApprovedBy().getUsername() + "\n" +
+                    "Approval Date  : " + findOrder.getFinanceActionTime() + "\n\n" +
+                    "You are requested to review the remarks and take necessary action for re-submission or correction.\n\n" +
+                    "Regards,\n" +
+                    "Finance Team\n\n" +
+                    "*** This is an auto-generated email from IMS Workflow System ***";
 
             message.setText(mailBody);
 

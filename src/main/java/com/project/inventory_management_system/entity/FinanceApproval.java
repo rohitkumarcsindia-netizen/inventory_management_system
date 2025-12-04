@@ -28,4 +28,7 @@ public class FinanceApproval
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private Users financeApprovedBy;
+
+    @Column(columnDefinition = "TEXT")
+    private String financeFinalRemark;
 }

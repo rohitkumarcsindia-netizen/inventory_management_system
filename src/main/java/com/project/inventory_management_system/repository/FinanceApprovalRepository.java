@@ -64,4 +64,6 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
        )
 """)
     Page<FinanceApproval> searchFinanceComplete(@Param("keyword") String trim, Pageable pageable);
+
+    FinanceApproval findByOrder_OrderId(Long orderId);
 }

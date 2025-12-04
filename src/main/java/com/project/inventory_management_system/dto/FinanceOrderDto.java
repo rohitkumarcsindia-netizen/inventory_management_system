@@ -20,4 +20,6 @@ public class FinanceOrderDto
 
     private UserDto financeApprovedBy;
 
+    private String financeFinalRemark;
+
 }

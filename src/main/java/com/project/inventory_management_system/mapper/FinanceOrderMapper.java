@@ -24,6 +24,7 @@ public class FinanceOrderMapper
         dto.setFinanceAction(financeApproval.getFinanceAction());
         dto.setFinanceActionTime(financeApproval.getFinanceActionTime());
         dto.setFinanceReason(financeApproval.getFinanceReason());
+        dto.setFinanceFinalRemark(financeApproval.getFinanceFinalRemark());
 
         dto.setOrder(orderMapper.toDto(financeApproval.getOrder()));
         dto.setFinanceApprovedBy(userMapper.toDto(financeApproval.getFinanceApprovedBy())); // nested mapping

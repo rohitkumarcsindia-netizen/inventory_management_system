@@ -27,4 +27,8 @@ public interface FinanceOrderService
     ResponseEntity<?> getCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
 
     ResponseEntity<?> getOrdersCompleteSearch(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> finalApprovedOrder(String username, Long orderId, FinanceOrderDto finalReason);
+
+    ResponseEntity<?> finalRejectOrder(String username, Long orderId, FinanceOrderDto finalReason);
 }
