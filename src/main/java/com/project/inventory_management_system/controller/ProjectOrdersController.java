@@ -171,4 +171,16 @@ public class ProjectOrdersController
         }
         return projectOrderService.projectTeamNotifyConveyToAmisp(userDetails.getUsername(), orderId);
     }
+
+    @PutMapping("/notify-scm/{orderId}")
+    public ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return projectOrderService.projectTeamNotifyToScmDispatchOrderIsReady(userDetails.getUsername(), orderId);
+    }
 }

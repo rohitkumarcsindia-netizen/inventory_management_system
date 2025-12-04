@@ -358,7 +358,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("PROJECT TEAM > AMISP PENDING");
+        order.setStatus("AMISP PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("AMISP");
@@ -371,6 +371,48 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         return ResponseEntity.ok("Notification sent for Amisp");
+    }
+
+    @Override
+    public ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only Project team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
+        }
+
+        order.setStatus("PROJECT TEAM > SCM RECHECK PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("SCM");
+
+        boolean mailsent = emailService.sendMailNotifyToScmDispatchOrderIsReady(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for SCM");
     }
 
 }

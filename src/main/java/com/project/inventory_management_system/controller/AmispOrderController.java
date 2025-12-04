@@ -1,14 +1,14 @@
 package com.project.inventory_management_system.controller;
 
+import com.project.inventory_management_system.dto.AmispOrderDto;
+import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.service.AmispOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,5 +33,31 @@ public class AmispOrderController
 
         return amispOrderService.getPendingOrdersForAmisp(userDetails.getUsername(), offset, limit);
 
+    }
+
+    @PostMapping("/post-delivery-pdi/{orderId}")
+    public ResponseEntity<?> postDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody AmispOrderDto pdiDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return amispOrderService.postDeliveryPdiOrder(userDetails.getUsername(), orderId, pdiDetails);
+    }
+
+    @PostMapping("/pri-delivery-pdi/{orderId}")
+    public ResponseEntity<?> priDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody AmispOrderDto pdiDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return amispOrderService.priDeliveryPdiOrder(userDetails.getUsername(), orderId, pdiDetails);
     }
 }

@@ -1,32 +1,28 @@
-package com.project.inventory_management_system.entity;
+package com.project.inventory_management_system.dto;
 
+
+import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.Users;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
-@Entity
-public class AmispApproval
+@Data
+@RequiredArgsConstructor
+public class AmispOrderDto
 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
     private Orders order;
 
     private String amispAction;
     private LocalDateTime amispActionTime;
 
-    @Column(columnDefinition = "TEXT")
+
     private String amispComment;
 
-    @ManyToOne
-    @JoinColumn(name = "approved_by")
     private Users amispApprovedBy;
 
     private String pdiLocation;

@@ -1,17 +1,18 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
+import com.project.inventory_management_system.dto.AmispOrderDto;
 import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.entity.FinanceApproval;
-import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.repository.AmispApprovalRepository;
+import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,9 @@ public class AmispOrderServiceImpl implements AmispOrderService
     private final UsersRepository usersRepository;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final AmispApprovalRepository amispApprovalRepository;
+    private final DepartmentRepository departmentRepository;
+    private final EmailService emailService;
 
     @Override
     public ResponseEntity<?> getPendingOrdersForAmisp(String username, int offset, int limit)
@@ -39,7 +43,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.status(403).body("Only Amisp team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("PROJECT TEAM > AMISP PENDING", offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("AMISP PENDING", offset, limit);
 
         if (orders.isEmpty())
         {
@@ -55,5 +59,67 @@ public class AmispOrderServiceImpl implements AmispOrderService
                 "ordersCount", orderRepository.countByStatus("PROJECT TEAM > AMISP PENDING"),
                 "orders", ordersDtoList
         ));
+    }
+
+    @Override
+    public ResponseEntity<?> postDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only Amisp team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > AMISP PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for Amisp approval");
+        }
+
+        //Finance Approval table data save
+        AmispApproval amispApproval = new AmispApproval();
+        amispApproval.setAmispAction(" Post-Delivery PDI");
+        amispApproval.setAmispActionTime(LocalDateTime.now());
+        amispApproval.setOrder(order);
+        amispApproval.setAmispApprovedBy(user);
+
+        amispApproval.setAmispComment(pdiDetails.getAmispComment());
+        amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        amispApprovalRepository.save(amispApproval);
+
+        //Order table status update
+        order.setStatus("AMISP > PROJECT TEAM RECHECK PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(),amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification Sent For Project Team");
+    }
+
+    @Override
+    public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
+    {
+        return null;
     }
 }

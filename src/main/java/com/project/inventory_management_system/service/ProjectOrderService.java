@@ -27,4 +27,6 @@ public interface ProjectOrderService
     ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size);
 
     ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId);
+
+    ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId);
 }

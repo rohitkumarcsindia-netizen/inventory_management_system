@@ -1,5 +1,6 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.entity.AmispApproval;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -451,4 +452,72 @@ public class EmailService
         }
     }
 
+    public boolean sendMailNotifyAmispToProjectTeam(String departmentEmail, Long orderId, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Notification] AMISP Status Update – " + amispApproval.getAmispAction() + " (Order No: " + orderId + ")");
+
+            String mailBody = "Dear Project Team,\n\n" +
+                    "This is to inform you that AMISP has updated the approval status for the below order in the IMS system.\n\n" +
+                    "Order ID          : " + orderId + "\n" +
+                    "Current AMISP Action : " + amispApproval.getAmispAction() + "\n" +
+                    "Action Time       : " + amispApproval.getAmispActionTime() + "\n" +
+                    "PDI Location      : " + amispApproval.getPdiLocation() + "\n" +
+                    "Serial Numbers    : " + amispApproval.getSerialNumbers() + "\n" +
+                    "Dispatch Details  : " + amispApproval.getDispatchDetails() + "\n" +
+                    "Comments          : " + amispApproval.getAmispComment() + "\n\n" +
+                    (amispApproval.getDocumentUrl() != null && !amispApproval.getDocumentUrl().isEmpty()
+                            ? "Attachment / Document : " + amispApproval.getDocumentUrl() + "\n\n"
+                            : "") +
+                    "Next Action (If Any): Please review the updated order and proceed accordingly.\n\n" +
+                    "You can review the complete details in IMS Portal:\n" +
+                    "Regards,\n" +
+                    "AMISP Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailNotifyToScmDispatchOrderIsReady(String departmentEmail, Long orderId)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Notification] Dispatch Order Is Ready – Order No: " + orderId);
+
+            String mailBody =
+                    "Dear SCM Team,\n\n" +
+                    "This is to inform you that the project team has marked the following order as \"Dispatch Order Is Ready\" in the IMS system.\n\n" +
+                    "Order ID        : " + orderId + "\n" +
+                    "Next Action Required:\n" +
+                    "Kindly plan for dispatch and proceed with shipment arrangements.\n\n" +
+                    "You can review the full details in the IMS Portal:\n" +
+                    "Regards,\n" +
+                    "Project Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
 }
