@@ -43,7 +43,13 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.status(403).body("Only Amisp team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("AMISP PENDING", offset, limit);
+        // Allowed Amisp statuses (priority order)
+        List<String> amispStatuses = List.of(
+                "AMISP PENDING",
+                "SCM > AMISP RECHECK PENDING"
+        );
+
+        List<Orders> orders = orderRepository.findByStatusListWithLimitOffset(amispStatuses, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -98,7 +104,6 @@ public class AmispOrderServiceImpl implements AmispOrderService
         amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
         amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
         amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
-        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
         amispApprovalRepository.save(amispApproval);
 
         //Order table status update
@@ -124,7 +129,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
     }
 
     @Override
-    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId)
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId,AmispOrderDto locationDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -150,6 +155,11 @@ public class AmispOrderServiceImpl implements AmispOrderService
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for AMISP action");
         }
+
+        //Location details set Db
+        amispApproval.setPdiLocation(locationDetails.getPdiLocation());
+        amispApprovalRepository.save(amispApproval);
+
 
         order.setStatus("AMISP > PROJECT TEAM LOCATION SENT");
         orderRepository.save(order);

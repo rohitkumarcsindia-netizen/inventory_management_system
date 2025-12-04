@@ -2,10 +2,12 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.UserDto;
+import com.project.inventory_management_system.entity.AmispApproval;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.repository.AmispApprovalRepository;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -32,6 +34,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     private final OrderMapper orderMapper;
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
+    private final AmispApprovalRepository amispApprovalRepository;
 
     //Project Team Order Created Method
     @Override
@@ -395,7 +398,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("AMISP > PROJECT TEAM RECHECK PENDING"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
@@ -406,6 +409,49 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         Department department = departmentRepository.findByDepartmentname("SCM");
 
         boolean mailsent = emailService.sendMailNotifyToScmDispatchOrderIsReady(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for SCM");
+    }
+
+    @Override
+    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only Project team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("AMISP > PROJECT TEAM LOCATION SENT"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project action");
+        }
+
+        order.setStatus("PROJECT TEAM > SCM LOCATION SENT");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("SCM");
+
+        boolean mailsent = emailService.sendMailNotifyProjectTeamSentLocationForScm(department.getDepartmentEmail(), order, amispApproval);
 
         if (!mailsent)
         {

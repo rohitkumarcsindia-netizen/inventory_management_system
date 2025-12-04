@@ -29,4 +29,6 @@ public interface ProjectOrderService
     ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId);
 
     ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId);
+
+    ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId);
 }

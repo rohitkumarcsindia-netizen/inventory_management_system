@@ -589,4 +589,72 @@ public class EmailService
             return false;
         }
     }
+
+    public boolean sendMailNotifyProjectTeamSentLocationForScm(String departmentEmail, Orders order, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Notification] Location Details Shared – Order No: " + order.getOrderId());
+
+            String mailBody =
+                    "Dear Scm Team,\n\n" +
+                            "This is to inform you that Project Team has updated the location details for the following order in the IMS system.\n\n" +
+                            "Order ID          : " + order.getOrderId() + "\n" +
+                            "Project Name      : " + order.getProject() + "\n" +
+                            "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                            "Next Action:\n" +
+                            "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
+                            "You can review the complete details in the IMS Portal:\n" +
+                            "Regards,\n" +
+                            "Project Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailScmToFinanceApproval(String departmentEmail, Orders order, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Approval Request] Dispatch Approval Required – Order No: " + order.getOrderId());
+
+            String mailBody =
+                    "Dear Finance Team,\n\n" +
+                    "This is to inform you that SCM has submitted an approval request for the following order in the IMS system.\n\n" +
+                    "Order ID          : " + order.getOrderId() + "\n" +
+                    "Project Name      : " + order.getProject() + "\n" +
+                    "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                    "Action Required:\n" +
+                    "Kindly review the dispatch details and provide the financial approval at the earliest to proceed further.\n\n" +
+                    "IMS Link for Review:\n" +
+                    "Regards,\n" +
+                    "SCM Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
 }

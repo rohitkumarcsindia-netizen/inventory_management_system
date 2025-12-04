@@ -54,7 +54,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "SCM PENDING",
                 "CLOUD > SCM RECHECK PENDING",
                 "SYRMA > SCM RECHECK PENDING",
-                "RMA > SCM RECHECK PENDING"
+                "RMA > SCM RECHECK PENDING",
+                "AMISP > PROJECT TEAM RECHECK PENDING",
+                "PROJECT TEAM > SCM LOCATION SENT"
         );
 
         List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);
@@ -409,5 +411,49 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         return ResponseEntity.ok("Notification sent for AMISP");
+    }
+
+    @Override
+    public ResponseEntity<?> scmApprovalRequestForFinance(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM LOCATION SENT"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project action");
+        }
+
+        order.setStatus("SCM > FINANCE APPROVAL SENT");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("FINANCE");
+
+
+        boolean mailsent = emailService.sendMailScmToFinanceApproval(department.getDepartmentEmail(), order, amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for FINANCE TEAM");
     }
 }

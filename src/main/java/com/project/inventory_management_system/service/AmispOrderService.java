@@ -11,5 +11,5 @@ public interface AmispOrderService
 
     ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails);
 
-    ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId);
+    ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId,AmispOrderDto locationDetails);
 }

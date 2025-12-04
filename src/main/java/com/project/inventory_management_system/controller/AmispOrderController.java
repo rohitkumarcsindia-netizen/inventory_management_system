@@ -62,7 +62,7 @@ public class AmispOrderController
     }
 
     @PutMapping("/notify-location-details/{orderId}")
-    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(HttpServletRequest request, @PathVariable Long orderId)
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody AmispOrderDto locationDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -70,6 +70,6 @@ public class AmispOrderController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return amispOrderService.amispNotifyProjectTeamLocationDetails(userDetails.getUsername(), orderId);
+        return amispOrderService.amispNotifyProjectTeamLocationDetails(userDetails.getUsername(), orderId, locationDetails);
     }
 }

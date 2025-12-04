@@ -127,4 +127,16 @@ public class ScmOrderController
         }
         return scmOrderService.scmNotifyAmisp(userDetails.getUsername(), orderId);
     }
+
+    @PutMapping("/approval-request/{orderId}")
+    public ResponseEntity<?> scmApprovalRequestForFinance(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.scmApprovalRequestForFinance(userDetails.getUsername(), orderId);
+    }
 }

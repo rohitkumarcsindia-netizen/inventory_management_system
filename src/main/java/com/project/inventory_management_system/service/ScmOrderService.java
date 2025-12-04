@@ -24,4 +24,6 @@ public interface ScmOrderService
     ResponseEntity<?> scmNotifyProjectTeam(String username, Long orderId);
 
     ResponseEntity<?> scmNotifyAmisp(String username, Long orderId);
+
+    ResponseEntity<?> scmApprovalRequestForFinance(String username, Long orderId);
 }

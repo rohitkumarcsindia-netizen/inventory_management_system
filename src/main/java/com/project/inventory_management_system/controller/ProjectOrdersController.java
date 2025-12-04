@@ -183,4 +183,16 @@ public class ProjectOrdersController
         }
         return projectOrderService.projectTeamNotifyToScmDispatchOrderIsReady(userDetails.getUsername(), orderId);
     }
+
+    @PutMapping("/notify-scm-location-details/{orderId}")
+    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return projectOrderService.projectTeamNotifyToScmLocationDetails(userDetails.getUsername(), orderId);
+    }
 }

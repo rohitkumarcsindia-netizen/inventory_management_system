@@ -45,10 +45,28 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
+                WHEN status = 'AMISP PENDING' THEN 1
+                WHEN status = 'SCM > AMISP RECHECK PENDING' THEN 2
+                ELSE 5
+            END,
+            order_id DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<Orders> findByStatusListWithLimitOffset(@Param("statuses") List<String> statuses,
+                                                 @Param("offset") int offset,
+                                                 @Param("limit") int limit);
+
+    @Query(value = """
+        SELECT * FROM orders
+        WHERE status IN (:statuses)
+        ORDER BY 
+            CASE 
                 WHEN status = 'SCM PENDING' THEN 1
                 WHEN status = 'CLOUD > RECHECK PENDING' THEN 2
                 WHEN status = 'SYRMA > PRODUCTION STARTED' THEN 3
                 WHEN status = 'RMA > SCM RECHECK PENDING' THEN 4
+                WHEN status = 'AMISP > PROJECT TEAM RECHECK PENDING' THEN 5
+                WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 6
                 ELSE 5
             END,
             order_id DESC
