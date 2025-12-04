@@ -82,7 +82,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > AMISP PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Amisp approval");
         }
@@ -121,5 +121,48 @@ public class AmispOrderServiceImpl implements AmispOrderService
     public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
     {
         return null;
+    }
+
+    @Override
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only Amisp team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("SCM > AMISP RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for AMISP action");
+        }
+
+        order.setStatus("AMISP > PROJECT TEAM LOCATION SENT");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyAmisoToProjectTeam(department.getDepartmentEmail(), order, amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for PROJECT TEAM");
     }
 }

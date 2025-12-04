@@ -60,4 +60,16 @@ public class AmispOrderController
 
         return amispOrderService.priDeliveryPdiOrder(userDetails.getUsername(), orderId, pdiDetails);
     }
+
+    @PutMapping("/notify-location-details/{orderId}")
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return amispOrderService.amispNotifyProjectTeamLocationDetails(userDetails.getUsername(), orderId);
+    }
 }

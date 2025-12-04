@@ -6,10 +6,7 @@ import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
-import com.project.inventory_management_system.repository.DepartmentRepository;
-import com.project.inventory_management_system.repository.OrderRepository;
-import com.project.inventory_management_system.repository.ScmApprovalRepository;
-import com.project.inventory_management_system.repository.UsersRepository;
+import com.project.inventory_management_system.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,6 +30,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     private final OrderMapper orderMapper;
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final ScmApprovalRepository scmApprovalRepository;
+    private final AmispApprovalRepository amispApprovalRepository;
 
 
 
@@ -367,5 +365,49 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         return ResponseEntity.ok("Notification sent for Project Team");
+    }
+
+    @Override
+    public ResponseEntity<?> scmNotifyAmisp(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
+        }
+
+        order.setStatus("SCM > AMISP RECHECK PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("AMISP");
+
+        boolean mailsent = emailService.sendMailNotifyScmToAmisp(department.getDepartmentEmail(), order, amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for AMISP");
     }
 }

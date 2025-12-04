@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AmispApprovalRepository extends JpaRepository<AmispApproval, Long>
 {
+    AmispApproval findByOrder_OrderId(Long orderId);
 }

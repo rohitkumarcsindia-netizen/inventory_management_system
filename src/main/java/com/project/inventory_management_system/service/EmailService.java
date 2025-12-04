@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.entity.AmispApproval;
+import com.project.inventory_management_system.entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -516,6 +517,74 @@ public class EmailService
             System.out.println("Mail sent successfully to " + departmentEmail);
             return true;
         } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailNotifyScmToAmisp(String departmentEmail, Orders order, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Notification] Dispatch Details Shared – Order No: " + order.getOrderId());
+
+            String mailBody = "Dear AMISP Team,\n\n" +
+                    "This is to inform you that SCM has shared the dispatch details for the following order in the IMS system.\n\n" +
+                    "Order ID              : " + order.getOrderId() + "\n" +
+                    "Project Name          : " + order.getProject() + "\n" +
+                    "Dispatch Details      : " + amispApproval.getDispatchDetails() + "\n" +
+                    "Serial Numbers        : " + amispApproval.getSerialNumbers() + "\n" +
+                    "Next Action:\n" +
+                    "Kindly proceed with post-delivery PDI and further workflow.\n\n" +
+                    "You can review the complete details in the IMS Portal:\n" +
+                    "Regards,\n" +
+                    "SCM Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailNotifyAmisoToProjectTeam(String departmentEmail, Orders order, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("[IMS Notification] Location Details Shared – Order No: " + order.getOrderId());
+
+            String mailBody =
+                    "Dear Project Team,\n\n" +
+                    "This is to inform you that AMISP has updated the location details for the following order in the IMS system.\n\n" +
+                    "Order ID          : " + order.getOrderId() + "\n" +
+                    "Project Name      : " + order.getProject() + "\n" +
+                    "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                    "Next Action:\n" +
+                    "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
+                    "You can review the complete details in the IMS Portal:\n" +
+                    "Regards,\n" +
+                    "AMISP Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
             System.out.println("Mail sending failed: " + e.getMessage());
             return false;
         }
