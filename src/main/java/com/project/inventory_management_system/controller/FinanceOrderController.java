@@ -189,7 +189,7 @@ public class FinanceOrderController
 
     }
 
-    @PostMapping("/final/approve/{orderId}")
+    @PutMapping("/final/approve/{orderId}")
     public ResponseEntity<?> finalApprovedOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody FinanceOrderDto finalReason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -202,7 +202,7 @@ public class FinanceOrderController
         return financeOrderService.finalApprovedOrder(userDetails.getUsername(), orderId, finalReason);
     }
 
-    @PostMapping("/final/reject/{orderId}")
+    @PutMapping("/final/reject/{orderId}")
     public ResponseEntity<?> finalRejectOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody FinanceOrderDto finalReason)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
