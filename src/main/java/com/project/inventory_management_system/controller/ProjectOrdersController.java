@@ -160,7 +160,7 @@ public class ProjectOrdersController
 
     }
 
-    @PutMapping("/Convey-amisp/{orderId}")
+    @PutMapping("/convey-amisp/{orderId}")
     public ResponseEntity<?> projectTeamNotifyConveyToAmisp(HttpServletRequest request, @PathVariable Long orderId)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");

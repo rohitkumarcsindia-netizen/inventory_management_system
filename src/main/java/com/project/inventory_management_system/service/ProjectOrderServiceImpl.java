@@ -370,7 +370,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.status(500).body("Mail Not Sent");
         }
 
-        return ResponseEntity.ok("Notification sent for Rma");
+        return ResponseEntity.ok("Notification sent for Amisp");
     }
 
 }

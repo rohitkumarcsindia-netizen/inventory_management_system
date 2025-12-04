@@ -354,7 +354,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM > PROJECT TEAM PENDING");
+        order.setStatus("SCM > PROJECT TEAM RECHECK PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
