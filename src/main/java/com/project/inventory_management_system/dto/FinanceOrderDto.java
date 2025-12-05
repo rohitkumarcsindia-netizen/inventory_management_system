@@ -22,4 +22,8 @@ public class FinanceOrderDto
 
     private String financeFinalRemark;
 
+    private String financeApprovalDocumentUrl;
+    private String financeClosureStatus;
+    private LocalDateTime financeClosureTime;
+
 }

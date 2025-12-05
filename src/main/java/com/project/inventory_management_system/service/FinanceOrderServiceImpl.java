@@ -466,7 +466,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
             financeApproval.setFinanceApprovedBy(user);
             financeApproval.setOrder(order);
-            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark());
+            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
@@ -547,7 +547,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
             financeApproval.setFinanceApprovedBy(user);
             financeApproval.setOrder(order);
-            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark());
+            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
@@ -565,6 +565,49 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         }
 
         return ResponseEntity.ok("Order Final Rejected Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> fillOrderClosureDocument(String username, Long orderId, FinanceOrderDto closureDetails)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.status(403).body("Only finance team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("LOGISTIC > FINANCE CLOSURE PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for finance approval");
+        }
+
+            FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+            //Finance Approval table data update
+            findOrder.setFinanceApprovalDocumentUrl(closureDetails.getFinanceApprovalDocumentUrl());
+            findOrder.setFinanceClosureTime(LocalDateTime.now());
+            findOrder.setFinanceClosureStatus(closureDetails.getFinanceClosureStatus());
+            financeApprovalRepository.save(findOrder);
+
+            //Order table status update
+            order.setStatus("ORDER COMPLETED");
+            orderRepository.save(order);
+
+
+        return ResponseEntity.ok("Order Document Closure Successfully");
     }
 
 }

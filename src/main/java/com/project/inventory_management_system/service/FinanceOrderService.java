@@ -31,4 +31,6 @@ public interface FinanceOrderService
     ResponseEntity<?> finalApprovedOrder(String username, Long orderId, FinanceOrderDto finalReason);
 
     ResponseEntity<?> finalRejectOrder(String username, Long orderId, FinanceOrderDto finalReason);
+
+    ResponseEntity<?> fillOrderClosureDocument(String username, Long orderId, FinanceOrderDto closureDetails);
 }

@@ -215,4 +215,17 @@ public class FinanceOrderController
         return financeOrderService.finalRejectOrder(userDetails.getUsername(), orderId, finalReason);
     }
 
+    @PutMapping("/closure-document/{orderId}")
+    public ResponseEntity<?> fillOrderClosureDocument(HttpServletRequest request, @PathVariable Long orderId,@RequestBody FinanceOrderDto closureDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return financeOrderService.fillOrderClosureDocument(userDetails.getUsername(), orderId, closureDetails);
+    }
+
 }

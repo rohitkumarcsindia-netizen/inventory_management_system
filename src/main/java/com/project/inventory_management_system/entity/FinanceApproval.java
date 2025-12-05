@@ -31,4 +31,9 @@ public class FinanceApproval
 
     @Column(columnDefinition = "TEXT")
     private String financeFinalRemark;
+
+    //Finance Final Closure Details
+    private String financeApprovalDocumentUrl;
+    private String financeClosureStatus;
+    private LocalDateTime financeClosureTime;
 }

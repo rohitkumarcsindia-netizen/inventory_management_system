@@ -23,9 +23,9 @@ public class LogisticsDetails
     private String shippingMode;
     private String courierName;
     private String trackingNumber;
-    private LocalDateTime dispatchDate;
-    private LocalDateTime expectedDeliveryDate;
-    private LocalDateTime actualDeliveryDate;
+    private java.time.LocalDate dispatchDate;
+    private java.time.LocalDate expectedDeliveryDate;
+    private java.time.LocalDate actualDeliveryDate;
     private String deliveredStatus;
 
     @Column(columnDefinition = "TEXT")
