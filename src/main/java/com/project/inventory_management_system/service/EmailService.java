@@ -732,4 +732,38 @@ public class EmailService
             return false;
         }
     }
+
+    public boolean sendMailScmToLogisticTeam(String departmentEmail, Orders order, AmispApproval amispApproval)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Dispatch Plan Received – Arrange Shipping for Order (Order ID: " + order.getOrderId() + ")");
+
+            String mailBody =
+                    "Dear Logistics Team,\n\n" +
+                            "Dispatch planning has been completed by the SCM team for the following order:\n\n" +
+                            "Order ID            : " + order.getOrderId() + "\n" +
+                            "Project Name        : " + order.getProject() + "\n" +
+                            "Dispatch Location   : " + amispApproval.getPdiLocation() + "\n" +
+                            "PDI Type            : " + amispApproval.getAmispAction() + "\n\n" +
+                            "Kindly arrange shipping and initiate logistics activities accordingly.\n\n" +
+                            "Regards,\n" +
+                            "SCM Team\n\n" +
+                            "*** This is an auto-generated email from IMS Workflow System ***";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
 }

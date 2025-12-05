@@ -46,7 +46,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'FINANCE PENDING' THEN 1
-                WHEN status = 'CLOUD > SCM RECHECK PENDING' THEN 2
+                WHEN status = 'SCM > FINANCE APPROVAL SENT' THEN 2
+                WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 3
                 ELSE 5
             END,
             order_id DESC
@@ -105,6 +106,10 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
     long countOrdersForScm(@Param("statuses") List<String> statuses);
+
+    // Order Count using status
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:financeStatuses)", nativeQuery = true)
+    Long countByStatusList(@Param("financeStatuses") List<String> financeStatuses);
 
 
 

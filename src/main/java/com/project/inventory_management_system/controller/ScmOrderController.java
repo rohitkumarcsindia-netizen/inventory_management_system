@@ -139,4 +139,16 @@ public class ScmOrderController
         }
         return scmOrderService.scmApprovalRequestForFinance(userDetails.getUsername(), orderId);
     }
+
+    @PutMapping("/dispatch/{orderId}")
+    public ResponseEntity<?> scmPlanDispatchAndEmailLogistic(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.scmPlanDispatchAndEmailLogistic(userDetails.getUsername(), orderId);
+    }
 }

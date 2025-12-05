@@ -325,7 +325,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(500).body("Mail Not Sent");
         }
 
-        return ResponseEntity.ok("Notification sent for Rma");
+        return ResponseEntity.ok("Notification sent for RMA");
     }
 
     @Override
@@ -367,7 +367,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(500).body("Mail Not Sent");
         }
 
-        return ResponseEntity.ok("Notification sent for Project Team");
+        return ResponseEntity.ok("Notification sent for PROJECT TEAM");
     }
 
     @Override
@@ -439,7 +439,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM LOCATION SENT"))
         {
-            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project action");
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Scm action");
         }
 
         order.setStatus("SCM > FINANCE APPROVAL SENT");
@@ -456,5 +456,49 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         return ResponseEntity.ok("Notification sent for FINANCE TEAM");
+    }
+
+    @Override
+    public ResponseEntity<?> scmPlanDispatchAndEmailLogistic(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("FINANCE > SCM RECHECK PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Scm action");
+        }
+
+        order.setStatus("SCM > LOGISTIC PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("LOGISTIC");
+
+
+        boolean mailsent = emailService.sendMailScmToLogisticTeam(department.getDepartmentEmail(), order, amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for LOGISTIC TEAM");
     }
 }

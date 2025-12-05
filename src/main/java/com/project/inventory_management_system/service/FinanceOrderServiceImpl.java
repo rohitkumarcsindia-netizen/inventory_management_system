@@ -59,7 +59,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         // Allowed Finance statuses (priority order)
         List<String> financeStatuses = List.of(
                 "FINANCE PENDING",
-                "CLOUD > SCM RECHECK PENDING"
+                "SCM > FINANCE APPROVAL SENT",
+                "LOGISTIC > FINANCE CLOSURE PENDING"
         );
 
         List<Orders> orders = orderRepository.findByFinanceStatusWithLimitOffset(financeStatuses, offset, limit);
@@ -75,7 +76,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("FINANCE PENDING"),
+                "ordersCount", orderRepository.countByStatusList(financeStatuses),
                 "orders", ordersDtoList
         ));
     }
@@ -430,26 +431,56 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
 
-        FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Finance Approval table data update
-        findOrder.setFinanceAction("APPROVED");
-        findOrder.setFinanceActionTime(LocalDateTime.now());
-        findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
-        findOrder.setFinanceApprovedBy(user);
-        financeApprovalRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus("FINANCE > SCM RECHECK PENDING");
-        orderRepository.save(order);
-
-        Department department = departmentRepository.findByDepartmentname("SCM");
-
-        boolean mailsent = emailService.sendFinanceApprovalMailToSCM(department.getDepartmentEmail(), order, findOrder);
-
-        if (!mailsent)
+        if (order.getOrderType().equalsIgnoreCase("Free of Cost"))
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+            //Finance Approval table data update
+            findOrder.setFinanceAction("APPROVED");
+            findOrder.setFinanceActionTime(LocalDateTime.now());
+            findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
+            findOrder.setFinanceApprovedBy(user);
+            financeApprovalRepository.save(findOrder);
+
+            //Order table status update
+            order.setStatus("FINANCE > SCM RECHECK PENDING");
+            orderRepository.save(order);
+
+
+            Department department = departmentRepository.findByDepartmentname("SCM");
+
+            boolean mailsent = emailService.sendFinanceApprovalMailToSCM(department.getDepartmentEmail(), order, findOrder);
+
+            if (!mailsent)
+            {
+                return ResponseEntity.status(500).body("Mail Not Sent");
+            }
+        }
+
+        if (order.getOrderType().equalsIgnoreCase("Purchase"))
+        {
+            //Finance Approval table data save
+            FinanceApproval financeApproval = new FinanceApproval();
+            financeApproval.setFinanceAction("APPROVED");
+            financeApproval.setFinanceActionTime(LocalDateTime.now());
+            financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
+            financeApproval.setFinanceApprovedBy(user);
+            financeApproval.setOrder(order);
+            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark());
+            financeApprovalRepository.save(financeApproval);
+
+            //Order table status update
+            order.setStatus("FINANCE > SCM RECHECK PENDING");
+            orderRepository.save(order);
+
+            Department department = departmentRepository.findByDepartmentname("SCM");
+
+            boolean mailsent = emailService.sendFinanceApprovalMailToSCM(department.getDepartmentEmail(), order, financeApproval);
+
+            if (!mailsent)
+            {
+                return ResponseEntity.status(500).body("Mail Not Sent");
+            }
         }
 
         return ResponseEntity.ok("Order Final Approved Successfully");
@@ -482,26 +513,55 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
 
-        FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Finance Approval table data update
-        findOrder.setFinanceAction("REJECTED");
-        findOrder.setFinanceActionTime(LocalDateTime.now());
-        findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
-        findOrder.setFinanceApprovedBy(user);
-        financeApprovalRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus("FINANCE REJECTED");
-        orderRepository.save(order);
-
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
-
-        boolean mailsent = emailService.sendFinanceRejectedMailToSCM(department.getDepartmentEmail(), order, findOrder);
-
-        if (!mailsent)
+        if (order.getOrderType().equalsIgnoreCase("Free of Cost"))
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+            //Finance Approval table data update
+            findOrder.setFinanceAction("REJECTED");
+            findOrder.setFinanceActionTime(LocalDateTime.now());
+            findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
+            findOrder.setFinanceApprovedBy(user);
+            financeApprovalRepository.save(findOrder);
+
+            //Order table status update
+            order.setStatus("FINANCE REJECTED");
+            orderRepository.save(order);
+
+            Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+            boolean mailsent = emailService.sendFinanceRejectedMailToSCM(department.getDepartmentEmail(), order, findOrder);
+
+            if (!mailsent)
+            {
+                return ResponseEntity.status(500).body("Mail Not Sent");
+            }
+        }
+
+        if (order.getOrderType().equalsIgnoreCase("Purchase"))
+        {
+            //Finance Approval table data save
+            FinanceApproval financeApproval = new FinanceApproval();
+            financeApproval.setFinanceAction("REJECTED");
+            financeApproval.setFinanceActionTime(LocalDateTime.now());
+            financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
+            financeApproval.setFinanceApprovedBy(user);
+            financeApproval.setOrder(order);
+            financeApproval.setFinanceFinalRemark(finalReason.getFinanceFinalRemark());
+            financeApprovalRepository.save(financeApproval);
+
+            //Order table status update
+            order.setStatus("FINANCE REJECTED");
+            orderRepository.save(order);
+
+            Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+            boolean mailsent = emailService.sendFinanceRejectedMailToSCM(department.getDepartmentEmail(), order, financeApproval);
+
+            if (!mailsent)
+            {
+                return ResponseEntity.status(500).body("Mail Not Sent");
+            }
         }
 
         return ResponseEntity.ok("Order Final Rejected Successfully");
