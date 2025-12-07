@@ -2,7 +2,6 @@ package com.project.inventory_management_system.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.project.inventory_management_system.entity.Users;
 import lombok.Data;
 
 import java.time.LocalDateTime;

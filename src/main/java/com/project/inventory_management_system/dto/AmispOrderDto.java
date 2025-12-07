@@ -3,7 +3,6 @@ package com.project.inventory_management_system.dto;
 
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 

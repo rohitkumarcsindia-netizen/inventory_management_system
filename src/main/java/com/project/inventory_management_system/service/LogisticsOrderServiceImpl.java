@@ -60,7 +60,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM > LOGISTIC PENDING"),
+                "ordersCount", orderRepository.countByStatusList(logisticStatuses),
                 "orders", ordersDtoList
         ));
     }

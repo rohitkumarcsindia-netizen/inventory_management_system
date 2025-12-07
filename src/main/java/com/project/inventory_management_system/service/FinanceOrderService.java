@@ -33,4 +33,6 @@ public interface FinanceOrderService
     ResponseEntity<?> finalRejectOrder(String username, Long orderId, FinanceOrderDto finalReason);
 
     ResponseEntity<?> fillOrderClosureDocument(String username, Long orderId, FinanceOrderDto closureDetails);
+
+    ResponseEntity<?> getFinanceOrdersFilterStatus(String username, String status, int page, int size);
 }

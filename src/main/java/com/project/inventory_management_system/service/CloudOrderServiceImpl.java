@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
+import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
@@ -10,6 +11,10 @@ import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -151,4 +156,112 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         return ResponseEntity.ok("Jira details submitted successfully and sent back to SCM for recheck");
     }
+
+
+    //Searching Filters
+    @Override
+    public ResponseEntity<?> getCloudOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only cloud team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, pageable);
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> cloudOrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", cloudOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getCloudOrdersSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only cloud team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.searchFinance(keyword.trim(), pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> OrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", OrderDtoList
+        ));
+    }
+
+//    @Override
+//    public ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+//    {
+//        Users user = usersRepository.findByUsername(username);
+//
+//        if (user == null)
+//        {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+//        {
+//            return ResponseEntity.status(403).body("Only cloud team can view this");
+//        }
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+//        Page<CloudApproval> cloudApprovalPage = cloudApprovalRepository.findByDateRange(start, end, pageable);
+//        if (cloudApprovalPage.isEmpty())
+//        {
+//            return ResponseEntity.ok("No orders found");
+//        }
+//
+//        List<CloudOrdersHistoryDto> cloudOrderDtoList = cloudApprovalPage.stream()
+//                .map(cloudApprovalPage::)
+//                .toList();
+//
+//        return ResponseEntity.ok(Map.of(
+//                "totalElements", cloudOrderDtoList.getTotalElements(),
+//                "totalPages", cloudOrderDtoList.getTotalPages(),
+//                "page", cloudOrderDtoList.getNumber(),
+//                "size", cloudOrderDtoList.getSize(),
+//                "records", cloudOrderDtoList
+//        ));
+//    }
 }

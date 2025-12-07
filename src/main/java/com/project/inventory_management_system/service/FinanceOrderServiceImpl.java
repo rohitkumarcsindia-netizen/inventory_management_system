@@ -610,4 +610,40 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok("Order Document Closure Successfully");
     }
 
+    @Override
+    public ResponseEntity<?> getFinanceOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        {
+            return ResponseEntity.status(403).body("Only finance team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
+    }
+
 }

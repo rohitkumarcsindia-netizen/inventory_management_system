@@ -3,6 +3,8 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.entity.CloudApproval;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+
 public interface CloudOrderService
 {
     //Cloud Team Method
@@ -11,4 +13,12 @@ public interface CloudOrderService
     ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit);
 
     ResponseEntity<?> updateJiraDetails(String username, Long orderId, CloudApproval jiraDetails);
+
+    //pending searching filters method
+    ResponseEntity<?> getCloudOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getCloudOrdersSearch(String username, String keyword, int page, int size);
+
+    //complete searching filters method
+//    ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
 }

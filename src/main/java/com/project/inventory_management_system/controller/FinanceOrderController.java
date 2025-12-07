@@ -129,6 +129,24 @@ public class FinanceOrderController
 
     }
 
+    @GetMapping("/status-filter")
+    public ResponseEntity<?> getFinanceOrdersFilterStatus(
+            HttpServletRequest request,
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return financeOrderService.getFinanceOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+
+    }
+
     //Complete button searching filter
     @GetMapping("/complete/status-filter")
     public ResponseEntity<?> getOrdersFilterStatus(
