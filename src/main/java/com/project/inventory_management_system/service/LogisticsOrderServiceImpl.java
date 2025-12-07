@@ -40,8 +40,14 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.status(403).body("Only logistic team can view pending orders");
         }
 
+        // Allowed Finance statuses (priority order)
+        List<String> logisticStatuses = List.of(
+                "SCM > LOGISTIC PENDING",
+                "DELIVERY PENDING",
+                "PDI PENDING"
+        );
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM > LOGISTIC PENDING", offset, limit);
+        List<Orders> orders = orderRepository. findByLogisticStatusWithLimitOffset(logisticStatuses, offset, limit);
 
         if (orders.isEmpty())
         {
