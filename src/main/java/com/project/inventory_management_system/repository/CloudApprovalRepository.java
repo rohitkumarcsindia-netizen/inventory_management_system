@@ -46,7 +46,7 @@ public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Lo
       AND ca.actionTime BETWEEN :start AND :end
     ORDER BY ca.actionTime DESC
 """)
-    Page<CloudApproval> findByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<CloudApproval> findByDateRange(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
 
 
     @Query("""
@@ -63,4 +63,8 @@ public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Lo
        )
 """)
     Page<CloudApproval> searchCloudComplete(@Param("keyword") String keyword, Pageable pageable);
+
+    //status filter
+    @Query("SELECT c FROM CloudApproval c WHERE c.cloudAction = :status")
+    Page<CloudApproval> findByStatusFilterForCloud(@Param("status")String status, Pageable pageable);
 }

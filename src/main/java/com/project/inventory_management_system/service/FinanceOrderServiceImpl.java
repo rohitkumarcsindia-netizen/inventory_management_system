@@ -240,7 +240,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRangeForFinance(start, end, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");

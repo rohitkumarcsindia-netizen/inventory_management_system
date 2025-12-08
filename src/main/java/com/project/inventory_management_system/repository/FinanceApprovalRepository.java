@@ -47,7 +47,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
       AND fa.financeActionTime BETWEEN :start AND :end
     ORDER BY fa.financeActionTime DESC
 """)
-    Page<FinanceApproval> findByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<FinanceApproval> findByDateRange(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
 
     @Query("""
        SELECT f FROM FinanceApproval f

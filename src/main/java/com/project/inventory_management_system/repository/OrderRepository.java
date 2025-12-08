@@ -170,7 +170,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status = 'FINANCE PENDING' AND
+        o.status IN ('FINANCE PENDING', 'LOGISTIC > FINANCE CLOSURE PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -186,12 +186,60 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for finance pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status = 'FINANCE PENDING'
+    WHERE o.status IN ('FINANCE PENDING', 'LOGISTIC TO FINANCE CLOSURE PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
-    Page<Orders> findByDateRange(
+    Page<Orders> findByDateRangeForFinance(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             Pageable pageable
     );
+
+    //Universal searching query for cloud pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE
+        o.status = 'CLOUD PENDING' AND
+        (
+             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+        )
+""")
+    Page<Orders> searchCloud(@Param("keyword") String keyword, Pageable pageable);
+
+
+    //Status searching query for cloud pending button
+    @Query("""
+    SELECT o FROM Orders o WHERE o.status = 'CLOUD PENDING' AND
+    o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRangeForCloud(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
+
+    //Universal searching query for syrma pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE
+        o.status IN ('SYRMA PENDING', 'LOGISTIC > SYRMA RE WORK PENDING') AND
+        (
+             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+        )
+""")
+    Page<Orders> searchSyrma(String trim, Pageable pageable);
+
+    //Status searching query for syrma pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.status IN ('SYRMA PENDING', 'RMA > SYRMA RE WORK PENDING')
+      AND o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRangeForSyrma(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
 }

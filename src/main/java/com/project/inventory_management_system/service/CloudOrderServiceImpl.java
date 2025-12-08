@@ -178,7 +178,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRangeForCloud(start, end, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
@@ -213,7 +213,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.searchFinance(keyword.trim(), pageable);
+        Page<Orders> ordersPage = orderRepository.searchCloud(keyword.trim(), pageable);
 
         if (ordersPage.isEmpty())
         {
@@ -278,29 +278,29 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
         {
-            return ResponseEntity.status(403).body("Only cloud team can view this");
+            return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
+        Page<CloudApproval> cloudApprovalPage =  cloudApprovalRepository.findByStatusFilterForCloud(status, pageable);
 
-        if (ordersPage.isEmpty())
+        if (cloudApprovalPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
         }
 
-        List<OrdersDto> ordersDtoList = ordersPage.stream()
-                .map(orderMapper::toDto)
+        List<CloudOrdersDto> cloudOrderDtoList = cloudApprovalPage.stream()
+                .map(cloudOrdersMapper::cloudOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
-                "totalElements", ordersPage.getTotalElements(),
-                "totalPages", ordersPage.getTotalPages(),
-                "page", ordersPage.getNumber(),
-                "size", ordersPage.getSize(),
-                "records", ordersDtoList
+                "totalElements", cloudApprovalPage.getTotalElements(),
+                "totalPages", cloudApprovalPage.getTotalPages(),
+                "page", cloudApprovalPage.getNumber(),
+                "size", cloudApprovalPage.getSize(),
+                "records", cloudOrderDtoList
         ));
     }
 

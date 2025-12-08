@@ -1,7 +1,5 @@
 package com.project.inventory_management_system.dto;
 
-import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.Users;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,9 +8,9 @@ import java.time.LocalDateTime;
 public class SyrmaOrdersDto
 {
     private Long id;
-    private Orders order;
+    private OrdersDto order;
     private String syrmaAction;
     private LocalDateTime actionTime;
     private String syrmaComments;
-    private Users actionDoneBy;
+    private UserDto actionDoneBy;
 }
