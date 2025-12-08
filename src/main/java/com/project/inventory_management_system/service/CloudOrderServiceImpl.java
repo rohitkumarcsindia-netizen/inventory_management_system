@@ -68,7 +68,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", cloudApprovalRepository.countByStatus("CLOUD PENDING"),
+                "ordersCount", orderRepository.countByStatus("CLOUD PENDING"),
                 "orders", ordersDtoList
         ));
     }
@@ -85,7 +85,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
         {
-            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+            return ResponseEntity.status(403).body("Only cloud team can view complete orders");
         }
 
         List<CloudApproval> cloudApprovalsOrders = cloudApprovalRepository.findByCloudActionIsNotNull(limit, offset);

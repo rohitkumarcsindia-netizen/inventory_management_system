@@ -19,9 +19,9 @@ public class CloudOrdersMapper
 
         CloudOrdersDto cloudOrdersDto = new CloudOrdersDto();
          cloudOrdersDto.setId(cloudApproval.getId());
-         cloudOrdersDto.setCloudAction(cloudOrdersDto.getCloudAction());
+         cloudOrdersDto.setCloudAction(cloudApproval.getCloudAction());
          cloudOrdersDto.setActionTime(cloudApproval.getActionTime());
-         cloudOrdersDto.setPriority(cloudOrdersDto.getPriority());
+         cloudOrdersDto.setPriority(cloudApproval.getPriority());
          cloudOrdersDto.setCloudComments(cloudOrdersDto.getCloudComments());
          cloudOrdersDto.setJiraDescription(cloudOrdersDto.getJiraDescription());
 

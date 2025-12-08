@@ -251,4 +251,28 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //status filter syrma pending
     @Query("SELECT o FROM Orders o WHERE o.status = :status ")
     Page<Orders> findByStatusForSyrma(@Param("status") String status, Pageable pageable);
+
+    //Status searching query for rma pending button
+    @Query("""
+    SELECT o FROM Orders o WHERE o.status = 'RMA PENDING' AND
+    o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRangeForRma(@Param("start")LocalDateTime start, @Param("end") LocalDateTime end, Pageable pageable);
+
+
+    //Universal searching query for rma pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE
+        o.status = 'RMA PENDING' AND
+        (
+             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+        )
+""")
+    Page<Orders> searchRma(@Param("keyword") String keyword, Pageable pageable);
 }

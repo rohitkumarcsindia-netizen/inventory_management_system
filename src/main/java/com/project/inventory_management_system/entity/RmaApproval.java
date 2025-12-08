@@ -27,5 +27,5 @@ public class RmaApproval
 
     @ManyToOne
     @JoinColumn(name = "approved_by")
-    private Users rmaApprovedBy;
+    private Users approvedBy;
 }

@@ -15,11 +15,6 @@ import java.util.List;
 public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Long>
 {
 
-    // Order Count using status
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
-    Long countByStatus(@Param("status") String status);
-
-
     //All order Action count only
     @Query(
             value = "SELECT COUNT(*) FROM cloud_approval " +

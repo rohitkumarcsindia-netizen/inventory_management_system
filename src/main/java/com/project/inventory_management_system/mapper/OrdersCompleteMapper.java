@@ -1,10 +1,7 @@
 package com.project.inventory_management_system.mapper;
 
 
-import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
-import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
-import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
+import com.project.inventory_management_system.dto.*;
 import com.project.inventory_management_system.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -151,6 +148,37 @@ public class OrdersCompleteMapper
         syrmaOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
 
         return syrmaOrdersHistoryDto;
+    }
+
+    //Entity → DTO Rma Orders Action History
+    public RmaOrdersHistoryDto rmaOrdersHistoryDto(Orders order, RmaApproval rmaApprovalDetails)
+    {
+        RmaOrdersHistoryDto rmaOrdersHistoryDto = new RmaOrdersHistoryDto();
+
+        rmaOrdersHistoryDto.setOrderId(order.getOrderId());
+        rmaOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        rmaOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
+        rmaOrdersHistoryDto.setProject(order.getProject());
+        rmaOrdersHistoryDto.setOrderType(order.getOrderType());
+        rmaOrdersHistoryDto.setInitiator(order.getInitiator());
+        rmaOrdersHistoryDto.setProductType(order.getProductType());
+        rmaOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        rmaOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        rmaOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+        rmaOrdersHistoryDto.setRmaAction(rmaApprovalDetails.getRmaAction());
+        rmaOrdersHistoryDto.setRmaActionTime(rmaApprovalDetails.getRmaActionTime());
+        rmaOrdersHistoryDto.setRmaComment(rmaApprovalDetails.getRmaComment());
+
+        Users approvedUser = rmaApprovalDetails.getApprovedBy();
+        if (approvedUser != null)
+        {
+            rmaOrdersHistoryDto.setRmaApprovedBy(approvedUser.getUserId());
+        }
+
+        rmaOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+
+        return rmaOrdersHistoryDto;
     }
 
 }
