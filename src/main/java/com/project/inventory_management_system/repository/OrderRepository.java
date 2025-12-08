@@ -183,6 +183,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Page<Orders> searchFinance(@Param("keyword") String keyword, Pageable pageable);
 
 
+    //status filter finance pending
+    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
+    Page<Orders> findByStatusForFinance(@Param("status") String status, Pageable pageable);
+
+
     //Status searching query for finance pending button
     @Query("""
     SELECT o FROM Orders o
@@ -242,4 +247,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForSyrma(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
+
+    //status filter syrma pending
+    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
+    Page<Orders> findByStatusForSyrma(@Param("status") String status, Pageable pageable);
 }

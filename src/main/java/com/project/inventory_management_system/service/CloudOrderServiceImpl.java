@@ -2,7 +2,6 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
-import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.CloudOrdersMapper;

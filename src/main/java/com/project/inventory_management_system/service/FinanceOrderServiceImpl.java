@@ -626,7 +626,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatusForFinance(status, pageable);
 
         if (ordersPage.isEmpty())
         {

@@ -188,7 +188,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByStatusAndUser(status, user.getUserId(), pageable);
+        Page<Orders> ordersPage = orderRepository.findByStatusForSyrma(status, pageable);
 
         if (ordersPage.isEmpty()) {
             return ResponseEntity.ok("No orders found");
