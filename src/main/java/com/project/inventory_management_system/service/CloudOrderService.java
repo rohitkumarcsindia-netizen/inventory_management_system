@@ -20,5 +20,9 @@ public interface CloudOrderService
     ResponseEntity<?> getCloudOrdersSearch(String username, String keyword, int page, int size);
 
     //complete searching filters method
-//    ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+    ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getCloudCompleteOrdersFilterStatus(String username, String status, int page, int size);
+
+    ResponseEntity<?> getCloudCompleteOrdersSearch(String username, String keyword, int page, int size);
 }

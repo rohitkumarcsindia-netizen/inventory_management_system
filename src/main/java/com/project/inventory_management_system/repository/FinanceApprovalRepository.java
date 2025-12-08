@@ -1,7 +1,6 @@
 package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.FinanceApproval;
-import com.project.inventory_management_system.entity.Orders;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -63,7 +62,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
          OR LOWER(COALESCE(o.initiator, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
        )
 """)
-    Page<FinanceApproval> searchFinanceComplete(@Param("keyword") String trim, Pageable pageable);
+    Page<FinanceApproval> searchFinanceComplete(@Param("keyword") String keyword, Pageable pageable);
 
     FinanceApproval findByOrder_OrderId(Long orderId);
 }

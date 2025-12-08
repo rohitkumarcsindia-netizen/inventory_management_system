@@ -1,9 +1,11 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.mapper.CloudOrdersMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.CloudApprovalRepository;
@@ -35,6 +37,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final CloudApprovalRepository cloudApprovalRepository;
+    private final CloudOrdersMapper cloudOrdersMapper;
 
     //Cloud Team getOrders Method
     @Override
@@ -230,38 +233,110 @@ public class CloudOrderServiceImpl implements CloudOrderService
         ));
     }
 
-//    @Override
-//    public ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
-//    {
-//        Users user = usersRepository.findByUsername(username);
-//
-//        if (user == null)
-//        {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//
-//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
-//        {
-//            return ResponseEntity.status(403).body("Only cloud team can view this");
-//        }
-//
-//        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-//        Page<CloudApproval> cloudApprovalPage = cloudApprovalRepository.findByDateRange(start, end, pageable);
-//        if (cloudApprovalPage.isEmpty())
-//        {
-//            return ResponseEntity.ok("No orders found");
-//        }
-//
-//        List<CloudOrdersHistoryDto> cloudOrderDtoList = cloudApprovalPage.stream()
-//                .map(cloudApprovalPage::)
-//                .toList();
-//
-//        return ResponseEntity.ok(Map.of(
-//                "totalElements", cloudOrderDtoList.getTotalElements(),
-//                "totalPages", cloudOrderDtoList.getTotalPages(),
-//                "page", cloudOrderDtoList.getNumber(),
-//                "size", cloudOrderDtoList.getSize(),
-//                "records", cloudOrderDtoList
-//        ));
-//    }
+    @Override
+    public ResponseEntity<?> getCloudCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only cloud team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<CloudApproval> cloudApprovalPage = cloudApprovalRepository.findByDateRange(start, end, pageable);
+        if (cloudApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<CloudOrdersDto> cloudOrdersDtoList = cloudApprovalPage.stream()
+                .map(cloudOrdersMapper::cloudOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", cloudApprovalPage.getTotalElements(),
+                "totalPages", cloudApprovalPage.getTotalPages(),
+                "page", cloudApprovalPage.getNumber(),
+                "size", cloudApprovalPage.getSize(),
+                "records", cloudOrdersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getCloudCompleteOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only cloud team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<Orders> ordersPage =  orderRepository.findByStatusAndUser(status, user.getUserId(),pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getCloudCompleteOrdersSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only cloud team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<CloudApproval> cloudApprovalPage = cloudApprovalRepository.searchCloudComplete(keyword.trim(), pageable);
+
+        if (cloudApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<CloudOrdersDto> cloudOrderDtoList = cloudApprovalPage.stream()
+                .map(cloudOrdersMapper::cloudOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", cloudApprovalPage.getTotalElements(),
+                "totalPages", cloudApprovalPage.getTotalPages(),
+                "page", cloudApprovalPage.getNumber(),
+                "size", cloudApprovalPage.getSize(),
+                "records", cloudOrderDtoList
+        ));
+    }
 }

@@ -1,7 +1,6 @@
 package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.CloudApproval;
-import com.project.inventory_management_system.entity.FinanceApproval;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,4 +47,20 @@ public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Lo
     ORDER BY ca.actionTime DESC
 """)
     Page<CloudApproval> findByDateRange(LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+
+    @Query("""
+       SELECT c FROM CloudApproval c
+       JOIN c.order o
+       JOIN c.updatedBy u
+       WHERE c.cloudAction IS NOT NULL
+       AND (
+            CAST(u.userId AS string) LIKE CONCAT('%', :keyword, '%')
+         OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+         OR LOWER(COALESCE(o.project, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(COALESCE(o.productType, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+         OR LOWER(COALESCE(o.initiator, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
+       )
+""")
+    Page<CloudApproval> searchCloudComplete(@Param("keyword") String keyword, Pageable pageable);
 }

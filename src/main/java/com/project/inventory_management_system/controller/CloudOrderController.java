@@ -113,27 +113,64 @@ public class CloudOrderController
         return cloudOrderService.getCloudOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
     }
-//
-//    //Search Filter
-//    @GetMapping("/complete/date-filter")
-//    public ResponseEntity<?> getCloudCompleteOrdersFilterDate(
-//            HttpServletRequest request,
-//            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size)
-//    {
-//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-//        LocalDateTime start = startDate.atStartOfDay();
-//        LocalDateTime end = endDate.atTime(23,59,59);
-//
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//
-//        return cloudOrderService.getCloudCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
-//
-//    }
+
+    //Search Filter
+    @GetMapping("/complete/date-filter")
+    public ResponseEntity<?> getCloudCompleteOrdersFilterDate(
+            HttpServletRequest request,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(23,59,59);
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return cloudOrderService.getCloudCompleteOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+
+    }
+
+    @GetMapping("/complete/status-filter")
+    public ResponseEntity<?> getCloudCompleteOrdersFilterStatus(
+            HttpServletRequest request,
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return cloudOrderService.getCloudCompleteOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+
+    }
+
+    //Universal searching
+    @GetMapping("/complete/search")
+    public ResponseEntity<?> getCloudCompleteOrdersFilterSearch(
+            HttpServletRequest request,
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return cloudOrderService.getCloudCompleteOrdersSearch(userDetails.getUsername(), keyword, page, size);
+
+    }
 
 }
