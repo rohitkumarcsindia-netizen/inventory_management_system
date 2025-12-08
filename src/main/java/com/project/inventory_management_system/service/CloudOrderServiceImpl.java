@@ -4,7 +4,7 @@ import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
-import com.project.inventory_management_system.mapper.CloudOrdersMapper;
+import com.project.inventory_management_system.mapper.CloudOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.CloudApprovalRepository;
@@ -36,7 +36,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final CloudApprovalRepository cloudApprovalRepository;
-    private final CloudOrdersMapper cloudOrdersMapper;
+    private final CloudOrderMapper cloudOrderMapper;
 
     //Cloud Team getOrders Method
     @Override
@@ -74,7 +74,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     }
 
     @Override
-    public ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit)
+    public ResponseEntity<?> getCompleteOrdersForCloud(String username, int offset, int limit)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -255,7 +255,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         }
 
         List<CloudOrdersDto> cloudOrdersDtoList = cloudApprovalPage.stream()
-                .map(cloudOrdersMapper::cloudOrdersDto)
+                .map(cloudOrderMapper::cloudOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
@@ -291,7 +291,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         }
 
         List<CloudOrdersDto> cloudOrderDtoList = cloudApprovalPage.stream()
-                .map(cloudOrdersMapper::cloudOrdersDto)
+                .map(cloudOrderMapper::cloudOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
@@ -327,7 +327,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         }
 
         List<CloudOrdersDto> cloudOrderDtoList = cloudApprovalPage.stream()
-                .map(cloudOrdersMapper::cloudOrdersDto)
+                .map(cloudOrderMapper::cloudOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(

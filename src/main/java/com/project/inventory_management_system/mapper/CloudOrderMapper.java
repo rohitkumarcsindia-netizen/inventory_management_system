@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CloudOrdersMapper
+public class CloudOrderMapper
 {
     private final UserMapper userMapper;
     private final OrderMapper orderMapper;
@@ -22,8 +22,8 @@ public class CloudOrdersMapper
          cloudOrdersDto.setCloudAction(cloudApproval.getCloudAction());
          cloudOrdersDto.setActionTime(cloudApproval.getActionTime());
          cloudOrdersDto.setPriority(cloudApproval.getPriority());
-         cloudOrdersDto.setCloudComments(cloudOrdersDto.getCloudComments());
-         cloudOrdersDto.setJiraDescription(cloudOrdersDto.getJiraDescription());
+         cloudOrdersDto.setCloudComments(cloudApproval.getCloudComments());
+         cloudOrdersDto.setJiraDescription(cloudApproval.getJiraDescription());
 
         cloudOrdersDto.setOrder(orderMapper.toDto(cloudApproval.getOrder()));
         cloudOrdersDto.setUpdatedBy(userMapper.toDto(cloudApproval.getUpdatedBy())); // nested mapping

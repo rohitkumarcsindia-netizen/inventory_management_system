@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders")
+@RequestMapping("/api/orders/cloud")
 public class CloudOrderController
 {
     private final CloudOrderService cloudOrderService;
     private final CloudApprovalRepository cloudApprovalRepository;
 
 
-    @GetMapping("/cloud/pending")
+    @GetMapping("/pending")
     public ResponseEntity<?> getPendingOrderForCloud(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,
@@ -41,7 +41,7 @@ public class CloudOrderController
         return cloudOrderService.getOrderPendingForCloud(userDetails.getUsername(), offset, limit);
     }
 
-    @PostMapping("/cloud/update-jira-details/{orderId}")
+    @PostMapping("/update-jira-details/{orderId}")
     public ResponseEntity<?> updateJiraDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody CloudApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
@@ -54,8 +54,8 @@ public class CloudOrderController
         return cloudOrderService.updateJiraDetails(userDetails.getUsername(), orderId, jiraDetails);
     }
 
-    @GetMapping("/cloud/complete")
-    public ResponseEntity<?> getCompleteOrdersForFinance(
+    @GetMapping("/complete")
+    public ResponseEntity<?> getCompleteOrdersForCloud(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(defaultValue = "10") int limit)
@@ -67,7 +67,7 @@ public class CloudOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return cloudOrderService.getCompleteOrdersForScm(userDetails.getUsername(), offset, limit);
+        return cloudOrderService.getCompleteOrdersForCloud(userDetails.getUsername(), offset, limit);
 
     }
 

@@ -181,4 +181,39 @@ public class OrdersCompleteMapper
         return rmaOrdersHistoryDto;
     }
 
+    //Entity → DTO Rma Orders Action History
+    public AmispOrdersHistoryDto amispOrdersHistoryDto(Orders order, AmispApproval amispApprovalDetails)
+    {
+        AmispOrdersHistoryDto amispOrdersHistoryDto = new AmispOrdersHistoryDto();
+
+        amispOrdersHistoryDto.setOrderId(order.getOrderId());
+        amispOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        amispOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
+        amispOrdersHistoryDto.setProject(order.getProject());
+        amispOrdersHistoryDto.setOrderType(order.getOrderType());
+        amispOrdersHistoryDto.setInitiator(order.getInitiator());
+        amispOrdersHistoryDto.setProductType(order.getProductType());
+        amispOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        amispOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        amispOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+        amispOrdersHistoryDto.setAmispAction(amispApprovalDetails.getAmispAction());
+        amispOrdersHistoryDto.setAmispActionTime(amispApprovalDetails.getAmispActionTime());
+        amispOrdersHistoryDto.setAmispComment(amispApprovalDetails.getAmispComment());
+        amispOrdersHistoryDto.setPdiLocation(amispApprovalDetails.getPdiLocation());
+        amispOrdersHistoryDto.setDispatchDetails(amispApprovalDetails.getDispatchDetails());
+        amispOrdersHistoryDto.setDocumentUrl(amispApprovalDetails.getDocumentUrl());
+        amispOrdersHistoryDto.setSerialNumbers(amispApprovalDetails.getSerialNumbers());
+
+        Users approvedUser = amispApprovalDetails.getAmispApprovedBy();
+        if (approvedUser != null)
+        {
+            amispOrdersHistoryDto.setAmispApprovedBy(approvedUser.getUserId());
+        }
+
+        amispOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+
+        return amispOrdersHistoryDto;
+    }
+
 }

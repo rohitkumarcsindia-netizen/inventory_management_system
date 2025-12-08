@@ -14,7 +14,7 @@ public class AmispOrderDto
 {
     private Long id;
 
-    private Orders order;
+    private OrdersDto order;
 
     private String amispAction;
     private LocalDateTime amispActionTime;
@@ -22,7 +22,7 @@ public class AmispOrderDto
 
     private String amispComment;
 
-    private Users amispApprovedBy;
+    private UserDto amispApprovedBy;
 
     private String pdiLocation;
     private String serialNumbers;

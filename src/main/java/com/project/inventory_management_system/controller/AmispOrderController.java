@@ -5,10 +5,14 @@ import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.service.AmispOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
@@ -71,5 +75,45 @@ public class AmispOrderController
             return ResponseEntity.status(401).body("Unauthorized");
         }
         return amispOrderService.amispNotifyProjectTeamLocationDetails(userDetails.getUsername(), orderId, locationDetails);
+    }
+
+    @GetMapping("/complete")
+    public ResponseEntity<?> getCompleteOrdersForAmisp(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return amispOrderService.getCompleteOrdersForAmisp(userDetails.getUsername(), offset, limit);
+
+    }
+
+    //Search Filter
+    @GetMapping("/date-filter")
+    public ResponseEntity<?> getAmispOrdersFilterDate(
+            HttpServletRequest request,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(23,59,59);
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return amispOrderService.getAmispOrdersFilterDate(userDetails.getUsername(), start, end, page, size);
+
     }
 }

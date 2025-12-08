@@ -1,14 +1,21 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.AmispOrderDto;
+import com.project.inventory_management_system.dto.AmispOrdersHistoryDto;
+import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.AmispApprovalRepository;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +34,9 @@ public class AmispOrderServiceImpl implements AmispOrderService
     private final AmispApprovalRepository amispApprovalRepository;
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
+    private final OrdersCompleteMapper ordersCompleteMapper;
+
+
 
     @Override
     public ResponseEntity<?> getPendingOrdersForAmisp(String username, int offset, int limit)
@@ -174,5 +184,74 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         return ResponseEntity.ok("Notification sent for PROJECT TEAM");
+    }
+
+    @Override
+    public ResponseEntity<?> getCompleteOrdersForAmisp(String username, int offset, int limit)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view complete orders");
+        }
+
+        List<AmispApproval> amispApprovalsOrders = amispApprovalRepository.findByAmispActionIsNotNull(limit, offset);
+
+        if (amispApprovalsOrders.isEmpty())
+        {
+            return ResponseEntity.ok("No Orders found");
+        }
+        List<AmispOrdersHistoryDto> amispOrdersHistoryDtoList = amispApprovalsOrders.stream()
+                .map(approval -> ordersCompleteMapper.amispOrdersHistoryDto(
+                        approval.getOrder(), approval))
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", amispApprovalRepository.countByAmispAction(),
+                "orders", amispOrdersHistoryDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getAmispOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.findByDateRangeForAmisp(start, end, pageable);
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> cloudOrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", cloudOrderDtoList
+        ));
     }
 }

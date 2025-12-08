@@ -228,7 +228,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('SYRMA PENDING', 'LOGISTIC > SYRMA RE WORK PENDING') AND
+        o.status IN ('SYRMA PENDING', 'RMA > SYRMA RE WORK PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -238,7 +238,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
           OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
         )
 """)
-    Page<Orders> searchSyrma(String trim, Pageable pageable);
+    Page<Orders> searchSyrma(@Param("keyword")String keyword, Pageable pageable);
 
     //Status searching query for syrma pending button
     @Query("""
@@ -275,4 +275,14 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         )
 """)
     Page<Orders> searchRma(@Param("keyword") String keyword, Pageable pageable);
+
+
+    //Status searching query for syrma pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.status IN ('AMISP PENDING', 'SCM > AMISP RECHECK PENDING')
+      AND o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRangeForAmisp(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
+
 }

@@ -10,7 +10,7 @@ public interface CloudOrderService
     //Cloud Team Method
     ResponseEntity<?> getOrderPendingForCloud(String username, int offset, int limit);
 
-    ResponseEntity<?> getCompleteOrdersForScm(String username, int offset, int limit);
+    ResponseEntity<?> getCompleteOrdersForCloud(String username, int offset, int limit);
 
     ResponseEntity<?> updateJiraDetails(String username, Long orderId, CloudApproval jiraDetails);
 
