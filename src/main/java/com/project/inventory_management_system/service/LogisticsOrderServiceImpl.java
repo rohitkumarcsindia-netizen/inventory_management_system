@@ -8,6 +8,7 @@ import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
+import com.project.inventory_management_system.repository.AmispApprovalRepository;
 import com.project.inventory_management_system.repository.LogisticsDetailsRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -34,6 +35,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final LogisticsDetailsRepository logisticsDetailsRepository;
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final LogisticOrderMapper logisticOrderMapper;
+    private final AmispApprovalRepository amispApprovalRepository;
 
 
     @Override
@@ -151,6 +153,27 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         if (!order.getStatus().equalsIgnoreCase("DELIVERY PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
+        }
+
+        AmispApproval findPdiType = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        if (findPdiType.getAmispAction().equalsIgnoreCase("Pri-Delivery PDI"))
+        {
+            LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
+
+            //Logistic Details table data update
+            findOrder.setDeliveredStatus(deliveryDetails.getDeliveredStatus());
+            findOrder.setActionTime(LocalDateTime.now());
+            findOrder.setLogisticsComment(deliveryDetails.getLogisticsComment().trim());
+            findOrder.setActualDeliveryDate(deliveryDetails.getActualDeliveryDate());
+            findOrder.setActionTime(LocalDateTime.now());
+            findOrder.setLogisticsPdiComment("Pdi Already Completed");
+            logisticsDetailsRepository.save(findOrder);
+
+            //Order table status update
+            order.setStatus("LOGISTIC > FINANCE CLOSURE PENDING");
+            orderRepository.save(order);
+
+            return ResponseEntity.ok("Order Delivery Successfully");
         }
 
         LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());

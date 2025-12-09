@@ -571,7 +571,8 @@ public class EmailService
                     "This is to inform you that AMISP has updated the location details for the following order in the IMS system.\n\n" +
                     "Order ID          : " + order.getOrderId() + "\n" +
                     "Project Name      : " + order.getProject() + "\n" +
-                    "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                    "Pdi Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                    "Location Details  : " + amispApproval.getLocationDetails() + "\n" +
                     "Next Action:\n" +
                     "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
                     "You can review the complete details in the IMS Portal:\n" +

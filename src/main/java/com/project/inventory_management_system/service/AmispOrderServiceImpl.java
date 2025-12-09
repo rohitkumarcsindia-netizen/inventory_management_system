@@ -113,6 +113,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
         amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
         amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
         amispApprovalRepository.save(amispApproval);
 
         //Order table status update
@@ -134,7 +135,57 @@ public class AmispOrderServiceImpl implements AmispOrderService
     @Override
     public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
     {
-        return null;
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only Amisp team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for Amisp approval");
+        }
+
+        //Finance Approval table data save
+        AmispApproval amispApproval = new AmispApproval();
+        amispApproval.setAmispAction("Pri-Delivery PDI");
+        amispApproval.setAmispActionTime(LocalDateTime.now());
+        amispApproval.setOrder(order);
+        amispApproval.setApprovedBy(user);
+
+        amispApproval.setAmispComment(pdiDetails.getAmispComment());
+        amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        amispApprovalRepository.save(amispApproval);
+
+        //Order table status update
+        order.setStatus("AMISP > PROJECT TEAM RECHECK PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(),amispApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification Sent For Project Team");
     }
 
     @Override
@@ -166,7 +217,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         //Location details set Db
-        amispApproval.setPdiLocation(locationDetails.getPdiLocation());
+        amispApproval.setPdiLocation(locationDetails.getLocationDetails());
         amispApprovalRepository.save(amispApproval);
 
 

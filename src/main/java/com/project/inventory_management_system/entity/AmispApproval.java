@@ -33,4 +33,6 @@ public class AmispApproval
     private String serialNumbers;
     private String dispatchDetails;
     private String documentUrl;
+
+    private String locationDetails;
 }

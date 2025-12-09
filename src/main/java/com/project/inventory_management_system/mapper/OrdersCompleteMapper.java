@@ -204,6 +204,7 @@ public class OrdersCompleteMapper
         amispOrdersHistoryDto.setDispatchDetails(amispApprovalDetails.getDispatchDetails());
         amispOrdersHistoryDto.setDocumentUrl(amispApprovalDetails.getDocumentUrl());
         amispOrdersHistoryDto.setSerialNumbers(amispApprovalDetails.getSerialNumbers());
+        amispOrdersHistoryDto.setLocationDetails(amispApprovalDetails.getLocationDetails());
 
         Users approvedUser = amispApprovalDetails.getApprovedBy();
         if (approvedUser != null)

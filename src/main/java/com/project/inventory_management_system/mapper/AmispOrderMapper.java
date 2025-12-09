@@ -27,6 +27,7 @@ public class AmispOrderMapper
         amispOrdersDto.setDispatchDetails(amispApproval.getDispatchDetails());
         amispOrdersDto.setDocumentUrl(amispApproval.getDocumentUrl());
         amispOrdersDto.setSerialNumbers(amispApproval.getSerialNumbers());
+        amispOrdersDto.setLocationDetails(amispApproval.getLocationDetails());
 
         amispOrdersDto.setOrder(orderMapper.toDto(amispApproval.getOrder()));
         amispOrdersDto.setAmispApprovedBy(userMapper.toDto(amispApproval.getApprovedBy())); // nested mapping

@@ -28,4 +28,5 @@ public class AmispOrderDto
     private String serialNumbers;
     private String dispatchDetails;
     private String documentUrl;
+    private String locationDetails;
 }
