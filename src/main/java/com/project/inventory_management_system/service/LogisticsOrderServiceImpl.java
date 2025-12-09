@@ -1,15 +1,21 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.AmispOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.LogisticsDetailsRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +33,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final OrderMapper orderMapper;
     private final LogisticsDetailsRepository logisticsDetailsRepository;
     private final OrdersCompleteMapper ordersCompleteMapper;
+    private final LogisticOrderMapper logisticOrderMapper;
 
 
     @Override
@@ -277,6 +284,220 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
                 "limit", limit,
                 "ordersCount", logisticsDetailsRepository.countByLogisticAction(),
                 "orders", logisticOrdersHistoryDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getLogisticOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.findByDateRangeForLogistic(start, end, pageable);
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> cloudOrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", cloudOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getLogisticOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage =  orderRepository.findByStatusForLogistic(status, pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersSearchForLogistic(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.searchLogistic(keyword.trim(), pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> OrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", OrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getLogisticCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<LogisticsDetails> logisticsDetailsPage = logisticsDetailsRepository.findByDateRange(start, end, pageable);
+        if (logisticsDetailsPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<LogisticOrderDto> logisticOrderDtoList = logisticsDetailsPage.stream()
+                .map(logisticOrderMapper::logisticOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", logisticsDetailsPage.getTotalElements(),
+                "totalPages", logisticsDetailsPage.getTotalPages(),
+                "page", logisticsDetailsPage.getNumber(),
+                "size", logisticsDetailsPage.getSize(),
+                "records", logisticOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getLogisticCompleteOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<LogisticsDetails> logisticsDetailsPage =  logisticsDetailsRepository.findByStatusFilter(status, pageable);
+
+        if (logisticsDetailsPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<LogisticOrderDto> logisticOrderDtoList = logisticsDetailsPage.stream()
+                .map(logisticOrderMapper::logisticOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", logisticsDetailsPage.getTotalElements(),
+                "totalPages", logisticsDetailsPage.getTotalPages(),
+                "page", logisticsDetailsPage.getNumber(),
+                "size", logisticsDetailsPage.getSize(),
+                "records", logisticOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getLogisticCompleteOrdersFilterSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<LogisticsDetails> logisticsDetailsPage = logisticsDetailsRepository.searchLogisticComplete(keyword.trim(), pageable);
+
+        if (logisticsDetailsPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<LogisticOrderDto> logisticOrderDtoList = logisticsDetailsPage.stream()
+                .map(logisticOrderMapper::logisticOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", logisticsDetailsPage.getTotalElements(),
+                "totalPages", logisticsDetailsPage.getTotalPages(),
+                "page", logisticsDetailsPage.getNumber(),
+                "size", logisticsDetailsPage.getSize(),
+                "records", logisticOrderDtoList
         ));
     }
 }
