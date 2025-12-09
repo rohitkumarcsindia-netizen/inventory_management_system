@@ -20,8 +20,8 @@ public interface LogisticsDetailsRepository extends JpaRepository<LogisticsDetai
 
     //All order Action count only
     @Query(
-            value = "SELECT COUNT(*) FROM logistic_details " +
-                    "WHERE logistic_details.action_time IS NOT NULL",
+            value = "SELECT COUNT(*) FROM logistics_details " +
+                    "WHERE logistics_details.action_time IS NOT NULL",
             nativeQuery = true
     )
     Long countByLogisticAction();
@@ -29,7 +29,7 @@ public interface LogisticsDetailsRepository extends JpaRepository<LogisticsDetai
 
     //All Complete Order data fetch
     @Query(
-            value = "SELECT * FROM logistic_details " +
+            value = "SELECT * FROM logistics_details " +
                     "WHERE action_time IS NOT NULL " +
                     "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
