@@ -1,7 +1,6 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.dto.FinanceOrderDto;
 import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.service.LogisticsOrderService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,5 +85,22 @@ public class LogisticsOrdersController
         }
 
         return logisticsOrderService.fillFailPdiDetails(userDetails.getUsername(), orderId, pdiComments);
+    }
+
+    @GetMapping("/complete")
+    public ResponseEntity<?> getCompleteOrdersForLogistics(
+            HttpServletRequest request,
+            @RequestParam(defaultValue = "0") int offset,
+            @RequestParam(defaultValue = "10") int limit)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return logisticsOrderService.getCompleteOrdersForLogistics(userDetails.getUsername(), offset, limit);
+
     }
 }

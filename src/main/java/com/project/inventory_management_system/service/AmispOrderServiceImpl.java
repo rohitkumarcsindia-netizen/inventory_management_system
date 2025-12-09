@@ -71,7 +71,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("PROJECT TEAM > AMISP PENDING"),
+                "ordersCount", orderRepository.countByAmispStatusList(amispStatuses),
                 "orders", ordersDtoList
         ));
     }
@@ -104,7 +104,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
 
         //Finance Approval table data save
         AmispApproval amispApproval = new AmispApproval();
-        amispApproval.setAmispAction(" Post-Delivery PDI");
+        amispApproval.setAmispAction("Post-Delivery PDI");
         amispApproval.setAmispActionTime(LocalDateTime.now());
         amispApproval.setOrder(order);
         amispApproval.setApprovedBy(user);
@@ -336,7 +336,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMSIP"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
         {
             return ResponseEntity.status(403).body("Only amisp team can view this");
         }

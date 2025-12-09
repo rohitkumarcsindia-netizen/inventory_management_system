@@ -181,7 +181,7 @@ public class OrdersCompleteMapper
         return rmaOrdersHistoryDto;
     }
 
-    //Entity → DTO Rma Orders Action History
+    //Entity → DTO Amisp Orders Action History
     public AmispOrdersHistoryDto amispOrdersHistoryDto(Orders order, AmispApproval amispApprovalDetails)
     {
         AmispOrdersHistoryDto amispOrdersHistoryDto = new AmispOrdersHistoryDto();
@@ -214,6 +214,47 @@ public class OrdersCompleteMapper
         amispOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
 
         return amispOrdersHistoryDto;
+    }
+
+    //Entity → DTO Logistic Orders Action History
+    public LogisticOrdersHistoryDto logisticOrderHistoryDto(Orders order, LogisticsDetails logisticsDetails)
+    {
+        LogisticOrdersHistoryDto logisticOrdersHistoryDto = new LogisticOrdersHistoryDto();
+
+        logisticOrdersHistoryDto.setOrderId(order.getOrderId());
+        logisticOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        logisticOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
+        logisticOrdersHistoryDto.setProject(order.getProject());
+        logisticOrdersHistoryDto.setOrderType(order.getOrderType());
+        logisticOrdersHistoryDto.setInitiator(order.getInitiator());
+        logisticOrdersHistoryDto.setProductType(order.getProductType());
+        logisticOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        logisticOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        logisticOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+
+        logisticOrdersHistoryDto.setLogisticsComment(logisticsDetails.getLogisticsComment());
+        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
+        logisticOrdersHistoryDto.setActionTime(logisticsDetails.getActionTime());
+        logisticOrdersHistoryDto.setCourierName(logisticsDetails.getCourierName());
+        logisticOrdersHistoryDto.setDeliveredStatus(logisticsDetails.getDeliveredStatus());
+        logisticOrdersHistoryDto.setDispatchDate(logisticsDetails.getDispatchDate());
+        logisticOrdersHistoryDto.setSerialNumbers(logisticsDetails.getSerialNumbers());
+        logisticOrdersHistoryDto.setActualDeliveryDate(logisticsDetails.getActualDeliveryDate());
+        logisticOrdersHistoryDto.setShippingMode(logisticsDetails.getShippingMode());
+        logisticOrdersHistoryDto.setExpectedDeliveryDate(logisticsDetails.getExpectedDeliveryDate());
+        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
+        logisticOrdersHistoryDto.setShipmentDocumentUrl(logisticsDetails.getShipmentDocumentUrl());
+        logisticOrdersHistoryDto.setTrackingNumber(logisticsDetails.getTrackingNumber());
+
+        Users approvedUser = logisticsDetails.getActionBy();
+        if (approvedUser != null)
+        {
+            logisticOrdersHistoryDto.setActionBy(approvedUser.getUserId());
+        }
+
+        logisticOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+
+        return logisticOrdersHistoryDto;
     }
 
 }

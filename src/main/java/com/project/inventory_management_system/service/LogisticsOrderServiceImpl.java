@@ -1,8 +1,11 @@
 package com.project.inventory_management_system.service;
 
+import com.project.inventory_management_system.dto.LogisticOrderDto;
+import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
+import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.LogisticsDetailsRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -23,6 +26,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
     private final LogisticsDetailsRepository logisticsDetailsRepository;
+    private final OrdersCompleteMapper ordersCompleteMapper;
 
 
     @Override
@@ -240,5 +244,39 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         orderRepository.save(order);
 
         return ResponseEntity.ok("PDI Details Submit Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> getCompleteOrdersForLogistics(String username, int offset, int limit)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        {
+            return ResponseEntity.status(403).body("Only logistic team can view complete orders");
+        }
+
+        List<LogisticsDetails> logisticsDetailsList = logisticsDetailsRepository.findByLogisticActionIsNotNull(limit, offset);
+
+        if (logisticsDetailsList.isEmpty())
+        {
+            return ResponseEntity.ok("No Orders found");
+        }
+        List<LogisticOrdersHistoryDto> logisticOrdersHistoryDtoList = logisticsDetailsList.stream()
+                .map(approval -> ordersCompleteMapper.logisticOrderHistoryDto(
+                        approval.getOrder(), approval))
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "ordersCount", logisticsDetailsRepository.countByLogisticAction(),
+                "orders", logisticOrdersHistoryDtoList
+        ));
     }
 }

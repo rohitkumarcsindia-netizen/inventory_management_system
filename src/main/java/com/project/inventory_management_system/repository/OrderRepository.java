@@ -126,6 +126,10 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:financeStatuses)", nativeQuery = true)
     Long countByStatusList(@Param("financeStatuses") List<String> financeStatuses);
 
+    // Order Count using status
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :amispStatuses", nativeQuery = true)
+    Long countByAmispStatusList(@Param("amispStatuses") List<String> amispStatuses);
+
 
 
     //Search filter Query
