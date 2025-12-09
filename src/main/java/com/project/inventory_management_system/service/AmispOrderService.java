@@ -18,4 +18,14 @@ public interface AmispOrderService
     ResponseEntity<?> getCompleteOrdersForAmisp(String username, int offset, int limit);
 
     ResponseEntity<?> getAmispOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getAmispOrdersFilterStatus(String username, String status, int page, int size);
+
+    ResponseEntity<?> getOrdersSearchForAmisp(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> getAmispCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getAmispCompleteOrdersFilterStatus(String username, String status, int page, int size);
+
+    ResponseEntity<?> getAmispCompleteOrdersFilterSearch(String username, String keyword, int page, int size);
 }

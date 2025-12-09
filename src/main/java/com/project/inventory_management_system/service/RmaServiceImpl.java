@@ -357,12 +357,12 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
         {
-            return ResponseEntity.status(403).body("Only cloud team can view this");
+            return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("rmaActionTime").descending());
         Page<RmaApproval> rmaApprovalPage = rmaApprovalRepository.searchRmaComplete(keyword.trim(), pageable);
 
         if (rmaApprovalPage.isEmpty())

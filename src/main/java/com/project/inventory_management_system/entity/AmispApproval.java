@@ -27,7 +27,7 @@ public class AmispApproval
 
     @ManyToOne
     @JoinColumn(name = "approved_by")
-    private Users amispApprovedBy;
+    private Users approvedBy;
 
     private String pdiLocation;
     private String serialNumbers;

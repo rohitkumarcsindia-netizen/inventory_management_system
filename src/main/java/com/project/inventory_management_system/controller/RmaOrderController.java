@@ -86,7 +86,7 @@ public class RmaOrderController
 
     }
 
-    @GetMapping("/cloud/complete")
+    @GetMapping("/complete")
     public ResponseEntity<?> getCompleteOrdersForRma(
             HttpServletRequest request,
             @RequestParam(defaultValue = "0") int offset,

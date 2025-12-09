@@ -1,10 +1,8 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.AmispOrderDto;
-import com.project.inventory_management_system.dto.AmispOrdersHistoryDto;
-import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
-import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.*;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.mapper.AmispOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.repository.AmispApprovalRepository;
@@ -35,6 +33,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final OrdersCompleteMapper ordersCompleteMapper;
+    private final AmispOrderMapper amispOrderMapper;
 
 
 
@@ -108,7 +107,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         amispApproval.setAmispAction(" Post-Delivery PDI");
         amispApproval.setAmispActionTime(LocalDateTime.now());
         amispApproval.setOrder(order);
-        amispApproval.setAmispApprovedBy(user);
+        amispApproval.setApprovedBy(user);
 
         amispApproval.setAmispComment(pdiDetails.getAmispComment());
         amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
@@ -254,4 +253,185 @@ public class AmispOrderServiceImpl implements AmispOrderService
                 "records", cloudOrderDtoList
         ));
     }
+
+    @Override
+    public ResponseEntity<?> getAmispOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage =  orderRepository.findByStatusForAmisp(status, pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersSearchForAmisp(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.searchAmisp(keyword.trim(), pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> OrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", OrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getAmispCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMSIP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
+        Page<AmispApproval> amispApprovalPage = amispApprovalRepository.findByDateRange(start, end, pageable);
+        if (amispApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<AmispOrderDto> amispOrderDtoList = amispApprovalPage.stream()
+                .map(amispOrderMapper::amispOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", amispApprovalPage.getTotalElements(),
+                "totalPages", amispApprovalPage.getTotalPages(),
+                "page", amispApprovalPage.getNumber(),
+                "size", amispApprovalPage.getSize(),
+                "records", amispOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getAmispCompleteOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
+        Page<AmispApproval> amispApprovalpage =  amispApprovalRepository.findByStatusFilter(status, pageable);
+
+        if (amispApprovalpage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<AmispOrderDto> amispOrderDtoList = amispApprovalpage.stream()
+                .map(amispOrderMapper::amispOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", amispApprovalpage.getTotalElements(),
+                "totalPages", amispApprovalpage.getTotalPages(),
+                "page", amispApprovalpage.getNumber(),
+                "size", amispApprovalpage.getSize(),
+                "records", amispOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getAmispCompleteOrdersFilterSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("AMISP"))
+        {
+            return ResponseEntity.status(403).body("Only amisp team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
+        Page<AmispApproval> amispApprovalPage = amispApprovalRepository.searchAmispComplete(keyword.trim(), pageable);
+
+        if (amispApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<AmispOrderDto> amispOrderDtoList = amispApprovalPage.stream()
+                .map(amispOrderMapper::amispOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", amispApprovalPage.getTotalElements(),
+                "totalPages", amispApprovalPage.getTotalPages(),
+                "page", amispApprovalPage.getNumber(),
+                "size", amispApprovalPage.getSize(),
+                "records", amispOrderDtoList
+        ));
+    }
+
+
 }
