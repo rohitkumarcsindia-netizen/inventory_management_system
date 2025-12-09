@@ -373,4 +373,27 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 """)
     Page<Orders> searchScm(@Param("keyword") String keyword, Pageable pageable);
 
+    //syrma pending data fetch
+    @Query(value = """
+        SELECT * FROM orders
+        WHERE status IN (:statuses)
+        ORDER BY 
+            CASE 
+                WHEN status = 'SYRMA PENDING' THEN 1
+                WHEN status = 'RMA > SYRMA RE WORK PENDING' THEN 2
+                ELSE 5
+            END,
+            order_id DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<Orders> findBySyrmaStatusWithLimitOffset(@Param("statuses") List<String> statuses,
+                                                    @Param("offset") int offset,
+                                                    @Param("limit") int limit);
+
+
+    // Order Count using status for syrma
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:syrmaStatuses)", nativeQuery = true)
+    Long countBySyrmaStatusList(@Param("syrmaStatuses") List<String> syrmaStatuses);
+
+
 }

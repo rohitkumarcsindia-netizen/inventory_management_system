@@ -1,6 +1,5 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
@@ -50,7 +49,13 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SYRMA PENDING", offset, limit);
+        // Allowed Finance statuses (priority order)
+        List<String> syrmaStatuses = List.of(
+                "SYRMA PENDING",
+                "RMA > SYRMA RE WORK PENDING"
+        );
+
+        List<Orders> ordersList = orderRepository.findBySyrmaStatusWithLimitOffset(syrmaStatuses, offset, limit);
 
         if (ordersList.isEmpty()) {
             return ResponseEntity.ok("No Orders found");
@@ -63,7 +68,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SYRMA PENDING"),
+                "ordersCount", orderRepository.countBySyrmaStatusList(syrmaStatuses),
                 "orders", ordersDtoList
         ));
     }
