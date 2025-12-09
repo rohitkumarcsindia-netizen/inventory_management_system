@@ -43,9 +43,9 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'FINANCE PENDING' THEN 1
-                WHEN status = 'SCM > FINANCE APPROVAL SENT' THEN 2
-                WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 3
+                WHEN status = 'FINANCE PENDING' THEN 2
+                WHEN status = 'SCM > FINANCE APPROVAL SENT' THEN 3
+                WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 1
                 ELSE 5
             END,
             order_id DESC
@@ -60,9 +60,9 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'SCM > LOGISTIC PENDING' THEN 1
-                WHEN status = 'DELIVERY PENDING' THEN 2
-                WHEN status = 'PDI PENDING' THEN 3
+                WHEN status = 'SCM > LOGISTIC PENDING' THEN 2
+                WHEN status = 'DELIVERY PENDING' THEN 3
+                WHEN status = 'PDI PENDING' THEN 1
                 ELSE 5
             END,
             order_id DESC
@@ -77,8 +77,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'AMISP PENDING' THEN 1
-                WHEN status = 'SCM > AMISP RECHECK PENDING' THEN 2
+                WHEN status = 'AMISP PENDING' THEN 2
+                WHEN status = 'SCM > AMISP RECHECK PENDING' THEN 1
                 ELSE 5
             END,
             order_id DESC
@@ -93,13 +93,13 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'SCM PENDING' THEN 1
-                WHEN status = 'CLOUD > SCM RECHECK PENDING' THEN 2
-                WHEN status = 'SYRMA > SCM PRODUCTION STARTED' THEN 3
+                WHEN status = 'SCM PENDING' THEN 7
+                WHEN status = 'CLOUD > SCM RECHECK PENDING' THEN 6
+                WHEN status = 'SYRMA > SCM PRODUCTION STARTED' THEN 5
                 WHEN status = 'RMA > SCM RECHECK PENDING' THEN 4
-                WHEN status = 'PROJECT TEAM > SCM RECHECK PENDING' THEN 5
-                WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 6
-                WHEN status = 'FINANCE > SCM RECHECK PENDING' THEN 7
+                WHEN status = 'PROJECT TEAM > SCM RECHECK PENDING' THEN 3
+                WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 2
+                WHEN status = 'FINANCE > SCM RECHECK PENDING' THEN 1
                 ELSE 5
             END,
             order_id DESC

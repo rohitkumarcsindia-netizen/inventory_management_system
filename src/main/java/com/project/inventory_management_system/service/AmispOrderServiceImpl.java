@@ -217,7 +217,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         //Location details set Db
-        amispApproval.setPdiLocation(locationDetails.getLocationDetails());
+        amispApproval.setLocationDetails(locationDetails.getLocationDetails());
         amispApprovalRepository.save(amispApproval);
 
 
