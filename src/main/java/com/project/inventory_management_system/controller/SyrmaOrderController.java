@@ -190,4 +190,17 @@ public class SyrmaOrderController
         return syrmaOrderService.getSyrmaCompleteOrdersFilterSearch(userDetails.getUsername(), keyword, page, size);
 
     }
+
+    @PostMapping("/re-production-testing/{orderId}")
+    public ResponseEntity<?> reProductionAndTestingComplete(HttpServletRequest request, @PathVariable Long orderId, @RequestBody SyrmaOrdersDto syrmaComments)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return syrmaOrderService.reProductionAndTestingComplete(userDetails.getUsername(), orderId, syrmaComments);
+    }
 }

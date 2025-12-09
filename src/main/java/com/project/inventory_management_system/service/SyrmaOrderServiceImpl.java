@@ -339,4 +339,53 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
                 "records", syrmaOrdersDtoList
         ));
     }
+
+    @Override
+    public ResponseEntity<?> reProductionAndTestingComplete(String username, Long orderId, SyrmaOrdersDto syrmaComments)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
+        {
+            return ResponseEntity.status(403).body("Only syrma team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("RMA > SYRMA RE WORK PENDING")) {
+            return ResponseEntity.status(403).body("Order is not ready for production start");
+        }
+
+        SyrmaApproval syrmaApproval = syrmaApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        syrmaApproval.setOrder(order);
+        syrmaApproval.setSyrmaAction("Re-Work-Completed");
+        syrmaApproval.setActionTime(LocalDateTime.now());
+        syrmaApproval.setActionDoneBy(user);
+        syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());
+        syrmaApprovalRepository.save(syrmaApproval);
+
+        //Order table status update
+        order.setStatus("SYRMA > SCM RECHECK PENDING");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("SCM");
+
+        boolean mailsent = emailService.sendMailProductionAndTestingComplete(department.getDepartmentEmail(), order.getOrderId());
+
+        if (!mailsent) {
+            return ResponseEntity.status(500).body("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Re Production and Testing successfully");
+    }
 }

@@ -27,4 +27,6 @@ public interface SyrmaOrderService
     ResponseEntity<?> getSyrmaCompleteOrdersFilterStatus(String username, String status, int page, int size);
 
     ResponseEntity<?> getSyrmaCompleteOrdersFilterSearch(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> reProductionAndTestingComplete(String username, Long orderId, SyrmaOrdersDto syrmaComments);
 }

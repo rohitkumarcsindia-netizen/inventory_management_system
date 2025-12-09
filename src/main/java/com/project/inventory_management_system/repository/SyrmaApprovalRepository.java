@@ -61,4 +61,6 @@ public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Lo
        )
 """)
     Page<SyrmaApproval> searchSyrmaComplete(@Param("keyword")String keyword, Pageable pageable);
+
+    SyrmaApproval findByOrder_OrderId(Long orderId);
 }
