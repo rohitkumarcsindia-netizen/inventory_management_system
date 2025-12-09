@@ -2,12 +2,18 @@ package com.project.inventory_management_system.service;
 
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.ScmOrdersDto;
 import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
+import com.project.inventory_management_system.mapper.ScmOrderMapper;
 import com.project.inventory_management_system.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +37,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final ScmApprovalRepository scmApprovalRepository;
     private final AmispApprovalRepository amispApprovalRepository;
+    private final ScmOrderMapper scmOrderMapper;
 
 
 
@@ -500,5 +507,219 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         return ResponseEntity.ok("Notification sent for LOGISTIC TEAM");
+    }
+
+    @Override
+    public ResponseEntity<?> getScmOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.findByDateRangeForScm(start, end, pageable);
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> cloudOrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", cloudOrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getScmpOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage =  orderRepository.findByStatusForScm(status, pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> ordersDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", ordersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getOrdersSearchForScm(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
+        Page<Orders> ordersPage = orderRepository.searchScm(keyword.trim(), pageable);
+
+        if (ordersPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<OrdersDto> OrderDtoList = ordersPage.stream()
+                .map(orderMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", ordersPage.getTotalElements(),
+                "totalPages", ordersPage.getTotalPages(),
+                "page", ordersPage.getNumber(),
+                "size", ordersPage.getSize(),
+                "records", OrderDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getScmCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<ScmApproval> scmApprovalPage = scmApprovalRepository.findByDateRange(start, end, pageable);
+        if (scmApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<ScmOrdersDto> scmOrdersDtoList = scmApprovalPage.stream()
+                .map(scmOrderMapper::scmOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", scmApprovalPage.getTotalElements(),
+                "totalPages", scmApprovalPage.getTotalPages(),
+                "page", scmApprovalPage.getNumber(),
+                "size", scmApprovalPage.getSize(),
+                "records", scmOrdersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getScmCompleteOrdersFilterStatus(String username, String status, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<ScmApproval> scmApprovalPage =  scmApprovalRepository.findByStatusFilter(status, pageable);
+
+        if (scmApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<ScmOrdersDto> scmOrdersDtoList = scmApprovalPage.stream()
+                .map(scmOrderMapper::scmOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", scmApprovalPage.getTotalElements(),
+                "totalPages", scmApprovalPage.getTotalPages(),
+                "page", scmApprovalPage.getNumber(),
+                "size", scmApprovalPage.getSize(),
+                "records", scmOrdersDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> getScmCompleteOrdersFilterSearch(String username, String keyword, int page, int size)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only scm team can view this");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
+        Page<ScmApproval> scmApprovalPage = scmApprovalRepository.searchScmComplete(keyword.trim(), pageable);
+
+        if (scmApprovalPage.isEmpty())
+        {
+            return ResponseEntity.ok("No orders found");
+        }
+
+        List<ScmOrdersDto> scmOrdersDtoList = scmApprovalPage.stream()
+                .map(scmOrderMapper::scmOrdersDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "totalElements", scmApprovalPage.getTotalElements(),
+                "totalPages", scmApprovalPage.getTotalPages(),
+                "page", scmApprovalPage.getNumber(),
+                "size", scmApprovalPage.getSize(),
+                "records", scmOrdersDtoList
+        ));
     }
 }

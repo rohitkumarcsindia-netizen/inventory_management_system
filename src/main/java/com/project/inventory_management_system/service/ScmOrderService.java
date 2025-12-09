@@ -4,6 +4,8 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.entity.ScmApproval;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+
 public interface ScmOrderService
 {
 
@@ -28,4 +30,16 @@ public interface ScmOrderService
     ResponseEntity<?> scmApprovalRequestForFinance(String username, Long orderId);
 
     ResponseEntity<?> scmPlanDispatchAndEmailLogistic(String username, Long orderId);
+
+    ResponseEntity<?> getScmOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getScmpOrdersFilterStatus(String username, String status, int page, int size);
+
+    ResponseEntity<?> getOrdersSearchForScm(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> getScmCompleteOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
+
+    ResponseEntity<?> getScmCompleteOrdersFilterStatus(String username, String status, int page, int size);
+
+    ResponseEntity<?> getScmCompleteOrdersFilterSearch(String username, String keyword, int page, int size);
 }

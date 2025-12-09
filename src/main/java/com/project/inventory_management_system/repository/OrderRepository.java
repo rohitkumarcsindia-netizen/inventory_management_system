@@ -337,4 +337,40 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         )
 """)
     Page<Orders> searchLogistic(@Param("keyword") String keyword, Pageable pageable);
+
+
+    //Status searching query for scm pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE o.status IN ('SCM PENDING', 'CLOUD > SCM RECHECK PENDING','SYRMA > SCM RECHECK PENDING',
+    'RMA > SCM RECHECK PENDING','PROJECT TEAM > SCM RECHECK PENDING','PROJECT TEAM > SCM LOCATION SENT',
+    'FINANCE > SCM RECHECK PENDING')
+      AND o.createAt BETWEEN :start AND :end
+""")
+    Page<Orders> findByDateRangeForScm(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
+
+
+    //status filter scm pending
+    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
+    Page<Orders> findByStatusForScm(@Param("status") String status, Pageable pageable);
+
+
+    //Universal searching query for amisp pending button
+    @Query("""
+    SELECT o FROM Orders o
+    WHERE
+        o.status IN ('SCM PENDING', 'CLOUD > SCM RECHECK PENDING','SYRMA > SCM RECHECK PENDING',
+    'RMA > SCM RECHECK PENDING','PROJECT TEAM > SCM RECHECK PENDING','PROJECT TEAM > SCM LOCATION SENT',
+    'FINANCE > SCM RECHECK PENDING') AND
+        (
+             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+        )
+""")
+    Page<Orders> searchScm(@Param("keyword") String keyword, Pageable pageable);
+
 }

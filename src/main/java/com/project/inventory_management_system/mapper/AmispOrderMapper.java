@@ -2,9 +2,7 @@ package com.project.inventory_management_system.mapper;
 
 
 import com.project.inventory_management_system.dto.AmispOrderDto;
-import com.project.inventory_management_system.dto.SyrmaOrdersDto;
 import com.project.inventory_management_system.entity.AmispApproval;
-import com.project.inventory_management_system.entity.SyrmaApproval;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
