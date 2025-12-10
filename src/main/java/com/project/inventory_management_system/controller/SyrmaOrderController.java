@@ -191,7 +191,7 @@ public class SyrmaOrderController
 
     }
 
-    @PostMapping("/re-production-testing/{orderId}")
+    @PutMapping("/re-production-testing/{orderId}")
     public ResponseEntity<?> reProductionAndTestingComplete(HttpServletRequest request, @PathVariable Long orderId, @RequestBody SyrmaOrdersDto syrmaComments)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
