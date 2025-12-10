@@ -16,7 +16,7 @@ public interface ProjectOrderService
 
     ResponseEntity<?> getOrdersByUserWithLimitOffset(String username, int offset, int limit);
 
-    OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
+//    ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
 
     String deleteOrder(String username, Long orderId);
 
@@ -31,4 +31,6 @@ public interface ProjectOrderService
     ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId);
 
     ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId);
+
+    ResponseEntity<?> saveOrders(String username, OrdersDto ordersDto);
 }

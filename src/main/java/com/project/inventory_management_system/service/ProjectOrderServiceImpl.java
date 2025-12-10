@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -159,46 +159,53 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
 
-    //Project Team Order update Method
-    @Override
-    public OrdersDto updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            throw new RuntimeException("User not found");
-        }
-
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-
-        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
-                order.getUsers().getUserId() != user.getUserId())
-        {
-            throw new RuntimeException("Order not found for this user");
-        }
-
-        // 🚀 Update only fields from DTO
-        order.setCreateAt(ordersDto.getCreateAt());
-        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
-        order.setProject(ordersDto.getProject());
-        order.setProductType(ordersDto.getProductType());
-        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
-        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
-        order.setInitiator(ordersDto.getInitiator());
-        order.setStatus(ordersDto.getStatus());
-        order.setPmsRemarks(ordersDto.getPmsRemarks());
-
-
-
-        // Save updated order
-        Orders updateOrder = orderRepository.save(order);
-
-        // Return Dto
-        return orderMapper.toDto(updateOrder);
-    }
+//    //Project Team Order update Method
+//    @Override
+//    public ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
+//    {
+//        Users user = usersRepository.findByUsername(username);
+//
+//        if (user == null)
+//        {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+//        {
+//            return ResponseEntity.status(403).body("Only project team can update orders");
+//        }
+//
+//        Optional<Orders> findOrder = orderRepository.findById(orderId);
+//        if (findOrder.isEmpty())
+//        {
+//            return ResponseEntity.status(403).body("Order not found");
+//        }
+//        Orders userOrderId = orderRepository.findByUserId(user.getUserId());
+//        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
+//                order.getUsers().getUserId() != user.getUserId())
+//        {
+//            throw new RuntimeException("Order not found for this user");
+//        }
+//
+//        // 🚀 Update only fields from DTO
+//        order.setCreateAt(ordersDto.getCreateAt());
+//        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
+//        order.setProject(ordersDto.getProject());
+//        order.setProductType(ordersDto.getProductType());
+//        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
+//        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
+//        order.setInitiator(ordersDto.getInitiator());
+//        order.setStatus(ordersDto.getStatus());
+//        order.setPmsRemarks(ordersDto.getPmsRemarks());
+//
+//
+//
+//        // Save updated order
+//        Orders updateOrder = orderRepository.save(order);
+//
+//        // Return Dto
+//        return orderMapper.toDto(updateOrder);
+//    }
 
 
     //Project Team Order delete Method
@@ -459,6 +466,43 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         return ResponseEntity.ok("Notification sent for SCM");
+    }
+
+    @Override
+    public ResponseEntity<?> saveOrders(String username, OrdersDto ordersDto)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("This User not allowed save orders");
+        }
+
+
+        // Set user inside Dto
+        UserDto userDto = new UserDto();
+        userDto.setUserId(user.getUserId());
+        userDto.setUsername(user.getUsername());
+        userDto.setEmail(user.getEmail());
+
+        ordersDto.setUsers(userDto);
+
+        // Convert Dto → Entity
+        Orders orders = orderMapper.toEntity(ordersDto);
+        orders.setUsers(user);
+
+        orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+        orders.setStatus("PROJECT TEAM PENDING");
+
+        orderRepository.save(orders);
+
+        return ResponseEntity.ok("Order Saved Successfully");
     }
 
 }

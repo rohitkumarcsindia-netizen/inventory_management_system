@@ -60,27 +60,19 @@ public class ProjectOrdersController
 
         }
 
-    @PutMapping("/update/{orderId}")
-    public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
-    {
-
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        try
-        {
-            OrdersDto orderDetailsUpdate = projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
-            return ResponseEntity.ok(orderDetailsUpdate);
-        }
-        catch (Exception e)
-        {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+//    @PutMapping("/update/{orderId}")
+//    public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+//    {
+//
+//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+//
+//        if (userDetails == null)
+//        {
+//            return ResponseEntity.status(401).body("Unauthorized");
+//        }
+//        return  projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
+//
+//    }
         @DeleteMapping("/delete/{orderId}")
         public ResponseEntity<?> deleteOrderDetails(HttpServletRequest request, @PathVariable Long orderId)
         {
@@ -194,5 +186,19 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
         return projectOrderService.projectTeamNotifyToScmLocationDetails(userDetails.getUsername(), orderId);
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<?> saveOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.saveOrders(userDetails.getUsername(), ordersDto);
+
     }
 }
