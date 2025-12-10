@@ -16,9 +16,9 @@ public interface ProjectOrderService
 
     ResponseEntity<?> getOrdersByUserWithLimitOffset(String username, int offset, int limit);
 
-//    ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
+    ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto);
 
-    String deleteOrder(String username, Long orderId);
+    ResponseEntity<?> deleteOrder(String username, Long orderId);
 
     ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate, int page, int size);
 
@@ -33,4 +33,6 @@ public interface ProjectOrderService
     ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId);
 
     ResponseEntity<?> saveOrders(String username, OrdersDto ordersDto);
+
+    ResponseEntity<?> submitOrders(String username, Long orderId, OrdersDto ordersDto);
 }

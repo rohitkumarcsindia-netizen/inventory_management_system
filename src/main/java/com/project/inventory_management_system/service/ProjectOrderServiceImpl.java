@@ -75,16 +75,16 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
                 Orders saved = orderRepository.save(orders);
 
-                Department financeTeam = departmentRepository.findByDepartmentname("SCM");
+                Department scmTeam = departmentRepository.findByDepartmentname("SCM");
 
                 //sending mail
-                boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
+                boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(scmTeam.getDepartmentEmail(), saved.getOrderId());
 
                 boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
 
                 if (!mailSent && !mailSentPM)
                 {
-                    return ResponseEntity.status(500).body("Mail Not Sent");
+                    return ResponseEntity.ok("Order submitted but mail failed to send");
                 }
 
                 // Return Dto
@@ -109,7 +109,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
             if (!mailSent && !mailSentPM)
             {
-                return ResponseEntity.status(500).body("Mail Not Sent");
+                return ResponseEntity.ok("Order submitted but mail failed to send");
             }
 
             // Return Dto
@@ -159,78 +159,82 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
 
-//    //Project Team Order update Method
-//    @Override
-//    public ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
-//    {
-//        Users user = usersRepository.findByUsername(username);
-//
-//        if (user == null)
-//        {
-//            return ResponseEntity.badRequest().body("User not found");
-//        }
-//
-//        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
-//        {
-//            return ResponseEntity.status(403).body("Only project team can update orders");
-//        }
-//
-//        Optional<Orders> findOrder = orderRepository.findById(orderId);
-//        if (findOrder.isEmpty())
-//        {
-//            return ResponseEntity.status(403).body("Order not found");
-//        }
-//        Orders userOrderId = orderRepository.findByUserId(user.getUserId());
-//        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
-//                order.getUsers().getUserId() != user.getUserId())
-//        {
-//            throw new RuntimeException("Order not found for this user");
-//        }
-//
-//        // 🚀 Update only fields from DTO
-//        order.setCreateAt(ordersDto.getCreateAt());
-//        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
-//        order.setProject(ordersDto.getProject());
-//        order.setProductType(ordersDto.getProductType());
-//        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
-//        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
-//        order.setInitiator(ordersDto.getInitiator());
-//        order.setStatus(ordersDto.getStatus());
-//        order.setPmsRemarks(ordersDto.getPmsRemarks());
-//
-//
-//
-//        // Save updated order
-//        Orders updateOrder = orderRepository.save(order);
-//
-//        // Return Dto
-//        return orderMapper.toDto(updateOrder);
-//    }
+    //Project Team Order update Method
+    @Override
+    public ResponseEntity<?> updateOrderDetails(String username, Long orderId, OrdersDto ordersDto)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only project team can update orders");
+        }
+
+        Orders order = orderRepository.findByOrderIdAndUsers(orderId, user);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found or This user is not allowed to update order");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for project team update");
+        }
+
+        // 🚀 Update only fields from DTO
+        order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
+        order.setProject(ordersDto.getProject());
+        order.setProductType(ordersDto.getProductType());
+        order.setOrderType(ordersDto.getOrderType());
+        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
+        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
+        order.setInitiator(ordersDto.getInitiator());
+        order.setPmsRemarks(ordersDto.getPmsRemarks());
+        order.setStatus("PROJECT TEAM PENDING");
+
+        // Save updated order
+         orderRepository.save(order);
+
+         return ResponseEntity.ok("Orders Details Update Successfully");
+    }
 
 
     //Project Team Order delete Method
     @Override
-    public String deleteOrder(String username, Long orderId)
+    public ResponseEntity<?> deleteOrder(String username, Long orderId)
     {
         Users user = usersRepository.findByUsername(username);
-         if (user == null)
-         {
-             throw new RuntimeException("User not found");
-         }
-        Orders order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
 
-
-        if (order.getUsers() == null || order.getUsers().getUserId() == 0 ||
-                order.getUsers().getUserId() != user.getUserId())
+        if (user == null)
         {
-            throw new RuntimeException("Order not found for this user");
+            return ResponseEntity.badRequest().body("User not found");
         }
 
-        //delete order
-        orderRepository.deleteById(orderId);
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only project team can delete orders");
+        }
 
-        return "Order deleted successfully";
+        Orders order = orderRepository.findByOrderIdAndUsers(orderId, user);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found or This user is not allowed to delete order");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+        {
+            return ResponseEntity.status(403).body("This order cannot be deleted because it has already moved to the next department");
+        }
+
+        orderRepository.delete(order);
+
+        return ResponseEntity.ok("Order deleted successfully");
     }
 
     @Override
@@ -503,6 +507,90 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         orderRepository.save(orders);
 
         return ResponseEntity.ok("Order Saved Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> submitOrders(String username, Long orderId, OrdersDto ordersDto)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only project team can submit orders");
+        }
+
+        Orders order = orderRepository.findByOrderIdAndUsers(orderId, user);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found or This user is not allowed to update order");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for project team update");
+        }
+
+        if (order.getOrderType().equalsIgnoreCase("PURCHASE"))
+        {
+            order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+            order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
+            order.setProject(ordersDto.getProject());
+            order.setProductType(ordersDto.getProductType());
+            order.setOrderType(ordersDto.getOrderType());
+            order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
+            order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
+            order.setInitiator(ordersDto.getInitiator());
+            order.setPmsRemarks(ordersDto.getPmsRemarks());
+            order.setStatus("SCM PENDING");
+
+            Orders saved = orderRepository.save(order);
+
+            Department scmTeam = departmentRepository.findByDepartmentname("SCM");
+
+            //sending mail
+            boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(scmTeam.getDepartmentEmail(), saved.getOrderId());
+
+            boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
+
+            if (!mailSent && !mailSentPM)
+            {
+                return ResponseEntity.ok("Order submitted but mail failed to send");
+            }
+
+            return ResponseEntity.ok("Order Submit Successfully");
+        }
+
+        order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+        order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
+        order.setProject(ordersDto.getProject());
+        order.setProductType(ordersDto.getProductType());
+        order.setOrderType(ordersDto.getOrderType());
+        order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
+        order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
+        order.setInitiator(ordersDto.getInitiator());
+        order.setPmsRemarks(ordersDto.getPmsRemarks());
+        order.setStatus("FINANCE PENDING");
+
+        Orders saved = orderRepository.save(order);
+
+        Department financeTeam = departmentRepository.findByDepartmentname("FINANCE");
+
+        //sending mail
+        boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
+
+        boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
+
+        if (!mailSent && !mailSentPM)
+        {
+            return ResponseEntity.ok("Order submitted but mail failed to send");
+        }
+
+        return ResponseEntity.ok("Order Submit Successfully");
     }
 
 }

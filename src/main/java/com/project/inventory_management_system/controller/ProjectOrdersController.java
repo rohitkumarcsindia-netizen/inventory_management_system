@@ -60,19 +60,19 @@ public class ProjectOrdersController
 
         }
 
-//    @PutMapping("/update/{orderId}")
-//    public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
-//    {
-//
-//        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-//
-//        if (userDetails == null)
-//        {
-//            return ResponseEntity.status(401).body("Unauthorized");
-//        }
-//        return  projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
-//
-//    }
+    @PutMapping("/update/{orderId}")
+    public ResponseEntity<?> updateOrderDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+    {
+
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return  projectOrderService.updateOrderDetails(userDetails.getUsername(), orderId, ordersDto);
+
+    }
         @DeleteMapping("/delete/{orderId}")
         public ResponseEntity<?> deleteOrderDetails(HttpServletRequest request, @PathVariable Long orderId)
         {
@@ -81,15 +81,7 @@ public class ProjectOrdersController
             {
                 return ResponseEntity.status(401).body("Unauthorized");
             }
-            try
-            {
-                String deleteOrder = projectOrderService.deleteOrder(userDetails.getUsername(), orderId);
-                return ResponseEntity.ok(deleteOrder);
-            }
-            catch (RuntimeException e)
-            {
-                return ResponseEntity.badRequest().body(e.getMessage());
-            }
+            return projectOrderService.deleteOrder(userDetails.getUsername(), orderId);
 
         }
 
@@ -199,6 +191,20 @@ public class ProjectOrdersController
         }
 
         return projectOrderService.saveOrders(userDetails.getUsername(), ordersDto);
+
+    }
+
+    @PutMapping("/submit")
+    public ResponseEntity<?> submitOrders(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.submitOrders(userDetails.getUsername(), orderId, ordersDto);
 
     }
 }
