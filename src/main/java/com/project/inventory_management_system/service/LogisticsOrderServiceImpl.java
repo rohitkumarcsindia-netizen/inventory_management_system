@@ -1,6 +1,5 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.AmispOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
@@ -8,7 +7,7 @@ import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
-import com.project.inventory_management_system.repository.AmispApprovalRepository;
+import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
 import com.project.inventory_management_system.repository.LogisticsDetailsRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -35,7 +34,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final LogisticsDetailsRepository logisticsDetailsRepository;
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final LogisticOrderMapper logisticOrderMapper;
-    private final AmispApprovalRepository amispApprovalRepository;
+    private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
 
 
     @Override
@@ -155,8 +154,8 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
 
-        AmispApproval findPdiType = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
-        if (findPdiType.getAmispAction().equalsIgnoreCase("Pri-Delivery PDI"))
+        ProjectTeamApproval findPdiType = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        if (findPdiType.getAmispPdiType().equalsIgnoreCase("Pri-Delivery PDI"))
         {
             LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
 

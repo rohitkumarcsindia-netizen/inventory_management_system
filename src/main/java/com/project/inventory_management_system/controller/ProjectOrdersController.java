@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.ProjectOrderService;
@@ -144,8 +145,8 @@ public class ProjectOrdersController
 
     }
 
-    @PutMapping("/convey-amisp/{orderId}")
-    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(HttpServletRequest request, @PathVariable Long orderId)
+    @PostMapping("/convey-amisp/{orderId}")
+    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamApproval projectTeamApproval)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -153,7 +154,7 @@ public class ProjectOrdersController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectOrderService.projectTeamNotifyConveyToAmisp(userDetails.getUsername(), orderId);
+        return projectOrderService.projectTeamNotifyConveyToAmisp(userDetails.getUsername(), orderId, projectTeamApproval);
     }
 
     @PutMapping("/notify-scm/{orderId}")

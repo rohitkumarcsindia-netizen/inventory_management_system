@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-public class AmispApproval
+public class ProjectTeamApproval
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,15 +19,18 @@ public class AmispApproval
     @JoinColumn(name = "order_id")
     private Orders order;
 
-    private String amispAction;
-    private LocalDateTime amispActionTime;
+    private String amispPdiType;
+    private LocalDateTime projectTeamActionTime;
 
     @Column(columnDefinition = "TEXT")
-    private String amispComment;
+    private String projectTeamComment;
+
+    @Column(columnDefinition = "TEXT")
+    private String amispEmailId;
 
     @ManyToOne
-    @JoinColumn(name = "approved_by")
-    private Users approvedBy;
+    @JoinColumn(name = "action_by")
+    private Users actionBy;
 
     private String pdiLocation;
     private String serialNumbers;

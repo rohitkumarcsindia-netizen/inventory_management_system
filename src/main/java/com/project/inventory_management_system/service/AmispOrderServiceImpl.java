@@ -2,10 +2,10 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.*;
 import com.project.inventory_management_system.entity.*;
-import com.project.inventory_management_system.mapper.AmispOrderMapper;
+import com.project.inventory_management_system.mapper.ProjectTeamOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
-import com.project.inventory_management_system.repository.AmispApprovalRepository;
+import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -29,11 +29,11 @@ public class AmispOrderServiceImpl implements AmispOrderService
     private final UsersRepository usersRepository;
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
-    private final AmispApprovalRepository amispApprovalRepository;
+    private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
     private final DepartmentRepository departmentRepository;
     private final EmailService emailService;
     private final OrdersCompleteMapper ordersCompleteMapper;
-    private final AmispOrderMapper amispOrderMapper;
+    private final ProjectTeamOrderMapper projectTeamOrderMapper;
 
 
 
@@ -77,7 +77,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
     }
 
     @Override
-    public ResponseEntity<?> postDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
+    public ResponseEntity<?> postDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -103,18 +103,18 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         //Finance Approval table data save
-        AmispApproval amispApproval = new AmispApproval();
-        amispApproval.setAmispAction("Post-Delivery PDI");
-        amispApproval.setAmispActionTime(LocalDateTime.now());
-        amispApproval.setOrder(order);
-        amispApproval.setApprovedBy(user);
+        ProjectTeamApproval projectTeamApproval = new ProjectTeamApproval();
+        projectTeamApproval.setAmispPdiType("Post-Delivery PDI");
+        projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
+        projectTeamApproval.setOrder(order);
+        projectTeamApproval.setActionBy(user);
 
-        amispApproval.setAmispComment(pdiDetails.getAmispComment());
-        amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
-        amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
-        amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
-        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
-        amispApprovalRepository.save(amispApproval);
+        projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
+        projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        projectTeamApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        projectTeamApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        projectTeamApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        projectTeamApprovalRepository.save(projectTeamApproval);
 
         //Order table status update
         order.setStatus("AMISP > POST PDI");
@@ -122,7 +122,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
 
-        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(),amispApproval);
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
 
         if (!mailsent)
         {
@@ -133,7 +133,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
     }
 
     @Override
-    public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, AmispOrderDto pdiDetails)
+    public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -159,18 +159,18 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         //Finance Approval table data save
-        AmispApproval amispApproval = new AmispApproval();
-        amispApproval.setAmispAction("Pri-Delivery PDI");
-        amispApproval.setAmispActionTime(LocalDateTime.now());
-        amispApproval.setOrder(order);
-        amispApproval.setApprovedBy(user);
+        ProjectTeamApproval projectTeamApproval = new ProjectTeamApproval();
+        projectTeamApproval.setAmispPdiType("Pri-Delivery PDI");
+        projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
+        projectTeamApproval.setOrder(order);
+        projectTeamApproval.setActionBy(user);
 
-        amispApproval.setAmispComment(pdiDetails.getAmispComment());
-        amispApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
-        amispApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
-        amispApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
-        amispApproval.setPdiLocation(pdiDetails.getPdiLocation());
-        amispApprovalRepository.save(amispApproval);
+        projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
+        projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        projectTeamApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        projectTeamApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        projectTeamApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        projectTeamApprovalRepository.save(projectTeamApproval);
 
         //Order table status update
         order.setStatus("AMISP > PRE PDI");
@@ -178,7 +178,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
 
-        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(),amispApproval);
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
 
         if (!mailsent)
         {
@@ -189,7 +189,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
     }
 
     @Override
-    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId,AmispOrderDto locationDetails)
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(String username, Long orderId, ProjectTeamOrderDto locationDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -204,7 +204,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
-        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
@@ -217,8 +217,8 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         //Location details set Db
-        amispApproval.setLocationDetails(locationDetails.getLocationDetails());
-        amispApprovalRepository.save(amispApproval);
+        projectTeamApproval.setLocationDetails(locationDetails.getLocationDetails());
+        projectTeamApprovalRepository.save(projectTeamApproval);
 
 
         order.setStatus("AMISP > PROJECT TEAM LOCATION SENT");
@@ -226,7 +226,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
 
-        boolean mailsent = emailService.sendMailNotifyAmisoToProjectTeam(department.getDepartmentEmail(), order, amispApproval);
+        boolean mailsent = emailService.sendMailNotifyAmisoToProjectTeam(department.getDepartmentEmail(), order, projectTeamApproval);
 
         if (!mailsent)
         {
@@ -251,13 +251,13 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.status(403).body("Only amisp team can view complete orders");
         }
 
-        List<AmispApproval> amispApprovalsOrders = amispApprovalRepository.findByAmispActionIsNotNull(limit, offset);
+        List<ProjectTeamApproval> projectTeamApprovalsOrders = projectTeamApprovalRepository.findByAmispActionIsNotNull(limit, offset);
 
-        if (amispApprovalsOrders.isEmpty())
+        if (projectTeamApprovalsOrders.isEmpty())
         {
             return ResponseEntity.ok("No Orders found");
         }
-        List<AmispOrdersHistoryDto> amispOrdersHistoryDtoList = amispApprovalsOrders.stream()
+        List<ProjectTeamOrdersHistoryDto> projectTeamOrdersHistoryDtoList = projectTeamApprovalsOrders.stream()
                 .map(approval -> ordersCompleteMapper.amispOrdersHistoryDto(
                         approval.getOrder(), approval))
                 .toList();
@@ -265,8 +265,8 @@ public class AmispOrderServiceImpl implements AmispOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", amispApprovalRepository.countByAmispAction(),
-                "orders", amispOrdersHistoryDtoList
+                "ordersCount", projectTeamApprovalRepository.countByAmispAction(),
+                "orders", projectTeamOrdersHistoryDtoList
         ));
     }
 
@@ -393,14 +393,14 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
-        Page<AmispApproval> amispApprovalPage = amispApprovalRepository.findByDateRange(start, end, pageable);
+        Page<ProjectTeamApproval> amispApprovalPage = projectTeamApprovalRepository.findByDateRange(start, end, pageable);
         if (amispApprovalPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
         }
 
-        List<AmispOrderDto> amispOrderDtoList = amispApprovalPage.stream()
-                .map(amispOrderMapper::amispOrdersDto)
+        List<ProjectTeamOrderDto> projectTeamOrderDtoList = amispApprovalPage.stream()
+                .map(projectTeamOrderMapper::amispOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
@@ -408,7 +408,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
                 "totalPages", amispApprovalPage.getTotalPages(),
                 "page", amispApprovalPage.getNumber(),
                 "size", amispApprovalPage.getSize(),
-                "records", amispOrderDtoList
+                "records", projectTeamOrderDtoList
         ));
     }
 
@@ -428,15 +428,15 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
-        Page<AmispApproval> amispApprovalpage =  amispApprovalRepository.findByStatusFilter(status, pageable);
+        Page<ProjectTeamApproval> amispApprovalpage =  projectTeamApprovalRepository.findByStatusFilter(status, pageable);
 
         if (amispApprovalpage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
         }
 
-        List<AmispOrderDto> amispOrderDtoList = amispApprovalpage.stream()
-                .map(amispOrderMapper::amispOrdersDto)
+        List<ProjectTeamOrderDto> projectTeamOrderDtoList = amispApprovalpage.stream()
+                .map(projectTeamOrderMapper::amispOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
@@ -444,7 +444,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
                 "totalPages", amispApprovalpage.getTotalPages(),
                 "page", amispApprovalpage.getNumber(),
                 "size", amispApprovalpage.getSize(),
-                "records", amispOrderDtoList
+                "records", projectTeamOrderDtoList
         ));
     }
 
@@ -464,15 +464,15 @@ public class AmispOrderServiceImpl implements AmispOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("amispActionTime").descending());
-        Page<AmispApproval> amispApprovalPage = amispApprovalRepository.searchAmispComplete(keyword.trim(), pageable);
+        Page<ProjectTeamApproval> amispApprovalPage = projectTeamApprovalRepository.searchAmispComplete(keyword.trim(), pageable);
 
         if (amispApprovalPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
         }
 
-        List<AmispOrderDto> amispOrderDtoList = amispApprovalPage.stream()
-                .map(amispOrderMapper::amispOrdersDto)
+        List<ProjectTeamOrderDto> projectTeamOrderDtoList = amispApprovalPage.stream()
+                .map(projectTeamOrderMapper::amispOrdersDto)
                 .toList();
 
         return ResponseEntity.ok(Map.of(
@@ -480,7 +480,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
                 "totalPages", amispApprovalPage.getTotalPages(),
                 "page", amispApprovalPage.getNumber(),
                 "size", amispApprovalPage.getSize(),
-                "records", amispOrderDtoList
+                "records", projectTeamOrderDtoList
         ));
     }
 

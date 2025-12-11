@@ -1,6 +1,5 @@
 package com.project.inventory_management_system.repository;
 
-import com.project.inventory_management_system.entity.AmispApproval;
 import com.project.inventory_management_system.entity.LogisticsDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

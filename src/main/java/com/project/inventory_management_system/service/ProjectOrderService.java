@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.Users;
 import org.springframework.http.ResponseEntity;
 
@@ -26,7 +27,7 @@ public interface ProjectOrderService
 
     ResponseEntity<?> getOrdersSearch(String username, String keyword, int page, int size);
 
-    ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId);
+    ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId, ProjectTeamApproval projectTeamApproval);
 
     ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId);
 

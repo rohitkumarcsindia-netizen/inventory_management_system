@@ -36,7 +36,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     private final OrderMapper orderMapper;
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final ScmApprovalRepository scmApprovalRepository;
-    private final AmispApprovalRepository amispApprovalRepository;
+    private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
     private final ScmOrderMapper scmOrderMapper;
 
 
@@ -372,7 +372,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM Notify > PROJECT TEAM BUILD IS READY");
+        order.setStatus("SCM NOTIFY > PROJECT TEAM BUILD IS READY");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
@@ -404,7 +404,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         Orders order = orderRepository.findById(orderId).orElse(null);
 
-        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
@@ -421,7 +421,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         Department department = departmentRepository.findByDepartmentname("AMISP");
 
-        boolean mailsent = emailService.sendMailNotifyScmToAmisp(department.getDepartmentEmail(), order, amispApproval);
+        boolean mailsent = emailService.sendMailNotifyScmToAmisp(department.getDepartmentEmail(), order, projectTeamApproval);
 
         if (!mailsent)
         {
@@ -447,7 +447,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
-        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
@@ -465,7 +465,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         Department department = departmentRepository.findByDepartmentname("FINANCE");
 
 
-        boolean mailsent = emailService.sendMailScmToFinanceApproval(department.getDepartmentEmail(), order, amispApproval);
+        boolean mailsent = emailService.sendMailScmToFinanceApproval(department.getDepartmentEmail(), order, projectTeamApproval);
 
         if (!mailsent)
         {
@@ -491,7 +491,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
-        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
@@ -509,7 +509,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         Department department = departmentRepository.findByDepartmentname("LOGISTIC");
 
 
-        boolean mailsent = emailService.sendMailScmToLogisticTeam(department.getDepartmentEmail(), order, amispApproval);
+        boolean mailsent = emailService.sendMailScmToLogisticTeam(department.getDepartmentEmail(), order, projectTeamApproval);
 
         if (!mailsent)
         {

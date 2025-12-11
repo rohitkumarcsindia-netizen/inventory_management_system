@@ -2,12 +2,12 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.UserDto;
-import com.project.inventory_management_system.entity.AmispApproval;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.OrderMapper;
-import com.project.inventory_management_system.repository.AmispApprovalRepository;
+import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -34,7 +34,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     private final OrderMapper orderMapper;
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
-    private final AmispApprovalRepository amispApprovalRepository;
+    private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
 
     //Project Team Order Created Method
     @Override
@@ -346,7 +346,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
     @Override
-    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId)
+    public ResponseEntity<?> projectTeamNotifyConveyToAmisp(String username, Long orderId, ProjectTeamApproval projectTeamApproval)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -367,17 +367,21 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > PROJECT TEAM BUILD IS READY"))
+        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > PROJECT TEAM BUILD IS READY"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("PROJECT TEAM > AMISP PDI PENDING");
+        order.setStatus("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("AMISP");
+        ProjectTeamApproval amispEmailId = new ProjectTeamApproval();
+        amispEmailId.setOrder(order);
+        amispEmailId.setActionBy(user);
+        amispEmailId.setAmispEmailId(projectTeamApproval.getAmispEmailId());
+        projectTeamApprovalRepository.save(amispEmailId);
 
-        boolean mailsent = emailService.sendMailNotifyAmisp(department.getDepartmentEmail(), order.getOrderId());
+        boolean mailsent = emailService.sendMailNotifyAmispPdiType(amispEmailId.getAmispEmailId(), order);
 
         if (!mailsent)
         {
@@ -445,7 +449,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
-        AmispApproval amispApproval = amispApprovalRepository.findByOrder_OrderId(order.getOrderId());
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
@@ -462,7 +466,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         Department department = departmentRepository.findByDepartmentname("SCM");
 
-        boolean mailsent = emailService.sendMailNotifyProjectTeamSentLocationForScm(department.getDepartmentEmail(), order, amispApproval);
+        boolean mailsent = emailService.sendMailNotifyProjectTeamSentLocationForScm(department.getDepartmentEmail(), order, projectTeamApproval);
 
         if (!mailsent)
         {

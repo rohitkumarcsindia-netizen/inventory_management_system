@@ -182,39 +182,39 @@ public class OrdersCompleteMapper
     }
 
     //Entity → DTO Amisp Orders Action History
-    public AmispOrdersHistoryDto amispOrdersHistoryDto(Orders order, AmispApproval amispApprovalDetails)
+    public ProjectTeamOrdersHistoryDto amispOrdersHistoryDto(Orders order, ProjectTeamApproval projectTeamApprovalDetails)
     {
-        AmispOrdersHistoryDto amispOrdersHistoryDto = new AmispOrdersHistoryDto();
+        ProjectTeamOrdersHistoryDto projectTeamOrdersHistoryDto = new ProjectTeamOrdersHistoryDto();
 
-        amispOrdersHistoryDto.setOrderId(order.getOrderId());
-        amispOrdersHistoryDto.setCreateAt(order.getCreateAt());
-        amispOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
-        amispOrdersHistoryDto.setProject(order.getProject());
-        amispOrdersHistoryDto.setOrderType(order.getOrderType());
-        amispOrdersHistoryDto.setInitiator(order.getInitiator());
-        amispOrdersHistoryDto.setProductType(order.getProductType());
-        amispOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        amispOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-        amispOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
+        projectTeamOrdersHistoryDto.setOrderId(order.getOrderId());
+        projectTeamOrdersHistoryDto.setCreateAt(order.getCreateAt());
+        projectTeamOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
+        projectTeamOrdersHistoryDto.setProject(order.getProject());
+        projectTeamOrdersHistoryDto.setOrderType(order.getOrderType());
+        projectTeamOrdersHistoryDto.setInitiator(order.getInitiator());
+        projectTeamOrdersHistoryDto.setProductType(order.getProductType());
+        projectTeamOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
+        projectTeamOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
+        projectTeamOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
-        amispOrdersHistoryDto.setAmispAction(amispApprovalDetails.getAmispAction());
-        amispOrdersHistoryDto.setAmispActionTime(amispApprovalDetails.getAmispActionTime());
-        amispOrdersHistoryDto.setAmispComment(amispApprovalDetails.getAmispComment());
-        amispOrdersHistoryDto.setPdiLocation(amispApprovalDetails.getPdiLocation());
-        amispOrdersHistoryDto.setDispatchDetails(amispApprovalDetails.getDispatchDetails());
-        amispOrdersHistoryDto.setDocumentUrl(amispApprovalDetails.getDocumentUrl());
-        amispOrdersHistoryDto.setSerialNumbers(amispApprovalDetails.getSerialNumbers());
-        amispOrdersHistoryDto.setLocationDetails(amispApprovalDetails.getLocationDetails());
+        projectTeamOrdersHistoryDto.setAmispAction(projectTeamApprovalDetails.getAmispPdiType());
+        projectTeamOrdersHistoryDto.setAmispActionTime(projectTeamApprovalDetails.getProjectTeamActionTime());
+        projectTeamOrdersHistoryDto.setAmispComment(projectTeamApprovalDetails.getProjectTeamComment());
+        projectTeamOrdersHistoryDto.setPdiLocation(projectTeamApprovalDetails.getPdiLocation());
+        projectTeamOrdersHistoryDto.setDispatchDetails(projectTeamApprovalDetails.getDispatchDetails());
+        projectTeamOrdersHistoryDto.setDocumentUrl(projectTeamApprovalDetails.getDocumentUrl());
+        projectTeamOrdersHistoryDto.setSerialNumbers(projectTeamApprovalDetails.getSerialNumbers());
+        projectTeamOrdersHistoryDto.setLocationDetails(projectTeamApprovalDetails.getLocationDetails());
 
-        Users approvedUser = amispApprovalDetails.getApprovedBy();
+        Users approvedUser = projectTeamApprovalDetails.getActionBy();
         if (approvedUser != null)
         {
-            amispOrdersHistoryDto.setAmispApprovedBy(approvedUser.getUserId());
+            projectTeamOrdersHistoryDto.setAmispApprovedBy(approvedUser.getUserId());
         }
 
-        amispOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        projectTeamOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
 
-        return amispOrdersHistoryDto;
+        return projectTeamOrdersHistoryDto;
     }
 
     //Entity → DTO Logistic Orders Action History

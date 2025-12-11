@@ -1,6 +1,6 @@
 package com.project.inventory_management_system.controller;
 
-import com.project.inventory_management_system.dto.AmispOrderDto;
+import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.service.AmispOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class AmispOrderController
     }
 
     @PostMapping("/post-delivery-pdi/{orderId}")
-    public ResponseEntity<?> postDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody AmispOrderDto pdiDetails)
+    public ResponseEntity<?> postDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamOrderDto pdiDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -52,7 +52,7 @@ public class AmispOrderController
     }
 
     @PostMapping("/pri-delivery-pdi/{orderId}")
-    public ResponseEntity<?> priDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody AmispOrderDto pdiDetails)
+    public ResponseEntity<?> priDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody ProjectTeamOrderDto pdiDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -65,7 +65,7 @@ public class AmispOrderController
     }
 
     @PutMapping("/notify-location-details/{orderId}")
-    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody AmispOrderDto locationDetails)
+    public ResponseEntity<?> amispNotifyProjectTeamLocationDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamOrderDto locationDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 

@@ -63,6 +63,6 @@ public class Orders
     private List<RmaApproval> rmaApprovalList;
 
     @OneToMany(mappedBy = "order")
-    private List<AmispApproval> amispApprovalList;
+    private List<ProjectTeamApproval> projectTeamApprovalList;
 
 }

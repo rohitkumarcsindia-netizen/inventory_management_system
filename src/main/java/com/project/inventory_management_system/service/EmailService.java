@@ -1,6 +1,6 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.entity.AmispApproval;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -454,26 +454,61 @@ public class EmailService
         }
     }
 
-    public boolean sendMailNotifyAmispToProjectTeam(String departmentEmail, Long orderId, AmispApproval amispApproval)
+
+    //Project notify Amisp Team Mail send Method
+    public boolean sendMailNotifyAmispPdiType(String departmentEmail, Orders order)
+    {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("PDI Type Selection Required for Order ID: " + order.getOrderId());
+
+            String mailBody =
+                    "Dear AMISP Team,\n\n" +
+                    "The Project Team has completed the required build and requests your assistance in determining the PDI (Pre-Dispatch Inspection) type for the following order:\n\n" +
+                    "• Order ID: " + order.getOrderId() + "\n" +
+                    "• Product Type: " + order.getProductType() + "\n" +
+                    "• Project Name: " + order.getProject() + "\n" +
+                    "• Proposed Quantity: " + order.getProposedBuildPlanQty() + "\n\n" +
+                    "Kindly review the order details and confirm the appropriate PDI type (Internal / Customer Site).\n\n" +
+                    "Please let us know if any additional information is required.\n\n" +
+                    "Regards,\n" +
+                    "Project Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailNotifyAmispToProjectTeam(String departmentEmail, Long orderId, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("[IMS Notification] AMISP Status Update – " + amispApproval.getAmispAction() + " (Order No: " + orderId + ")");
+            message.setSubject("[IMS Notification] AMISP Status Update – " + projectTeamApproval.getAmispPdiType() + " (Order No: " + orderId + ")");
 
             String mailBody = "Dear Project Team,\n\n" +
                     "This is to inform you that AMISP has updated the approval status for the below order in the IMS system.\n\n" +
                     "Order ID          : " + orderId + "\n" +
-                    "Current AMISP Action : " + amispApproval.getAmispAction() + "\n" +
-                    "Action Time       : " + amispApproval.getAmispActionTime() + "\n" +
-                    "PDI Location      : " + amispApproval.getPdiLocation() + "\n" +
-                    "Serial Numbers    : " + amispApproval.getSerialNumbers() + "\n" +
-                    "Dispatch Details  : " + amispApproval.getDispatchDetails() + "\n" +
-                    "Comments          : " + amispApproval.getAmispComment() + "\n\n" +
-                    (amispApproval.getDocumentUrl() != null && !amispApproval.getDocumentUrl().isEmpty()
-                            ? "Attachment / Document : " + amispApproval.getDocumentUrl() + "\n\n"
+                    "Current AMISP Action : " + projectTeamApproval.getAmispPdiType() + "\n" +
+                    "Action Time       : " + projectTeamApproval.getProjectTeamActionTime() + "\n" +
+                    "PDI Location      : " + projectTeamApproval.getPdiLocation() + "\n" +
+                    "Serial Numbers    : " + projectTeamApproval.getSerialNumbers() + "\n" +
+                    "Dispatch Details  : " + projectTeamApproval.getDispatchDetails() + "\n" +
+                    "Comments          : " + projectTeamApproval.getProjectTeamComment() + "\n\n" +
+                    (projectTeamApproval.getDocumentUrl() != null && !projectTeamApproval.getDocumentUrl().isEmpty()
+                            ? "Attachment / Document : " + projectTeamApproval.getDocumentUrl() + "\n\n"
                             : "") +
                     "Next Action (If Any): Please review the updated order and proceed accordingly.\n\n" +
                     "You can review the complete details in IMS Portal:\n" +
@@ -523,7 +558,7 @@ public class EmailService
         }
     }
 
-    public boolean sendMailNotifyScmToAmisp(String departmentEmail, Orders order, AmispApproval amispApproval)
+    public boolean sendMailNotifyScmToAmisp(String departmentEmail, Orders order, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -536,8 +571,8 @@ public class EmailService
                     "This is to inform you that SCM has shared the dispatch details for the following order in the IMS system.\n\n" +
                     "Order ID              : " + order.getOrderId() + "\n" +
                     "Project Name          : " + order.getProject() + "\n" +
-                    "Dispatch Details      : " + amispApproval.getDispatchDetails() + "\n" +
-                    "Serial Numbers        : " + amispApproval.getSerialNumbers() + "\n" +
+                    "Dispatch Details      : " + projectTeamApproval.getDispatchDetails() + "\n" +
+                    "Serial Numbers        : " + projectTeamApproval.getSerialNumbers() + "\n" +
                     "Next Action:\n" +
                     "Kindly proceed with post-delivery PDI and further workflow.\n\n" +
                     "You can review the complete details in the IMS Portal:\n" +
@@ -557,7 +592,7 @@ public class EmailService
         }
     }
 
-    public boolean sendMailNotifyAmisoToProjectTeam(String departmentEmail, Orders order, AmispApproval amispApproval)
+    public boolean sendMailNotifyAmisoToProjectTeam(String departmentEmail, Orders order, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -571,8 +606,8 @@ public class EmailService
                     "This is to inform you that AMISP has updated the location details for the following order in the IMS system.\n\n" +
                     "Order ID          : " + order.getOrderId() + "\n" +
                     "Project Name      : " + order.getProject() + "\n" +
-                    "Pdi Location Details  : " + amispApproval.getPdiLocation() + "\n" +
-                    "Location Details  : " + amispApproval.getLocationDetails() + "\n" +
+                    "Pdi Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
+                    "Location Details  : " + projectTeamApproval.getLocationDetails() + "\n" +
                     "Next Action:\n" +
                     "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
                     "You can review the complete details in the IMS Portal:\n" +
@@ -592,7 +627,7 @@ public class EmailService
         }
     }
 
-    public boolean sendMailNotifyProjectTeamSentLocationForScm(String departmentEmail, Orders order, AmispApproval amispApproval)
+    public boolean sendMailNotifyProjectTeamSentLocationForScm(String departmentEmail, Orders order, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -606,7 +641,7 @@ public class EmailService
                             "This is to inform you that Project Team has updated the location details for the following order in the IMS system.\n\n" +
                             "Order ID          : " + order.getOrderId() + "\n" +
                             "Project Name      : " + order.getProject() + "\n" +
-                            "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                            "Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
                             "Next Action:\n" +
                             "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
                             "You can review the complete details in the IMS Portal:\n" +
@@ -626,7 +661,7 @@ public class EmailService
         }
     }
 
-    public boolean sendMailScmToFinanceApproval(String departmentEmail, Orders order, AmispApproval amispApproval)
+    public boolean sendMailScmToFinanceApproval(String departmentEmail, Orders order, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -640,7 +675,7 @@ public class EmailService
                     "This is to inform you that SCM has submitted an approval request for the following order in the IMS system.\n\n" +
                     "Order ID          : " + order.getOrderId() + "\n" +
                     "Project Name      : " + order.getProject() + "\n" +
-                    "Location Details  : " + amispApproval.getPdiLocation() + "\n" +
+                    "Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
                     "Action Required:\n" +
                     "Kindly review the dispatch details and provide the financial approval at the earliest to proceed further.\n\n" +
                     "IMS Link for Review:\n" +
@@ -734,7 +769,7 @@ public class EmailService
         }
     }
 
-    public boolean sendMailScmToLogisticTeam(String departmentEmail, Orders order, AmispApproval amispApproval)
+    public boolean sendMailScmToLogisticTeam(String departmentEmail, Orders order, ProjectTeamApproval projectTeamApproval)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -748,8 +783,8 @@ public class EmailService
                             "Dispatch planning has been completed by the SCM team for the following order:\n\n" +
                             "Order ID            : " + order.getOrderId() + "\n" +
                             "Project Name        : " + order.getProject() + "\n" +
-                            "Dispatch Location   : " + amispApproval.getPdiLocation() + "\n" +
-                            "PDI Type            : " + amispApproval.getAmispAction() + "\n\n" +
+                            "Dispatch Location   : " + projectTeamApproval.getPdiLocation() + "\n" +
+                            "PDI Type            : " + projectTeamApproval.getAmispPdiType() + "\n\n" +
                             "Kindly arrange shipping and initiate logistics activities accordingly.\n\n" +
                             "Regards,\n" +
                             "SCM Team\n\n" +
