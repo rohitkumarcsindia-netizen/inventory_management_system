@@ -96,7 +96,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'PROJECT TEAM > SCM PENDING' THEN 7
-                WHEN status = 'CLOUD > SCM PENDING' THEN 6
+                WHEN status = 'FINANCE APPROVED > SCM PENDING' THEN 6
                 WHEN status = 'SYRMA > SCM PENDING' THEN 5
                 WHEN status = 'RMA QC PASS > SCM PENDING' THEN 4
                 WHEN status = 'DISPATCH ORDER IS READY' THEN 3

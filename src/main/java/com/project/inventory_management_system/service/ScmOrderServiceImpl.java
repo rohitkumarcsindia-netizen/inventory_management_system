@@ -59,7 +59,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         // Allowed SCM statuses (priority order)
         List<String> scmStatuses = List.of(
                 "PROJECT TEAM > SCM PENDING",
-                "CLOUD > SCM PENDING",
+                "FINANCE APPROVED > SCM PENDING",
                 "SYRMA > SCM PENDING",
                 "RMA QC PASS > SCM PENDING",
                 "DISPATCH ORDER IS READY",
