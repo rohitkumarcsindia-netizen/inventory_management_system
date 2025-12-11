@@ -58,11 +58,11 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         // Allowed SCM statuses (priority order)
         List<String> scmStatuses = List.of(
-                "SCM PENDING",
-                "CLOUD > SCM RECHECK PENDING",
-                "SYRMA > SCM RECHECK PENDING",
-                "RMA > SCM RECHECK PENDING",
-                "PROJECT TEAM > SCM RECHECK PENDING",
+                "PROJECT TEAM > SCM PENDING",
+                "CLOUD > SCM PENDING",
+                "SYRMA > SCM PENDING",
+                "RMA QC PASS > SCM PENDING",
+                "DISPATCH ORDER IS READY",
                 "PROJECT TEAM > SCM LOCATION SENT",
                 "FINANCE > SCM RECHECK PENDING"
         );
@@ -201,7 +201,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("CLOUD > SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("CLOUD > SCM PENDING"))
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -315,12 +315,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SYRMA > SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SYRMA > SCM PENDING"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("RMA PENDING");
+        order.setStatus("RMA QC PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("RMA");
@@ -357,12 +357,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA > SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("RMA QC PASS > SCM PENDING"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM > PROJECT TEAM RECHECK PENDING");
+        order.setStatus("SCM > PROJECT TEAM BUILD IS READY");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
@@ -401,12 +401,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("DISPATCH ORDER IS READY"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM > AMISP RECHECK PENDING");
+        order.setStatus("SCM > LOCATION INFO PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("AMISP");

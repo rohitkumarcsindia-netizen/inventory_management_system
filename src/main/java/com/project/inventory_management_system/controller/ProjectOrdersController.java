@@ -194,7 +194,7 @@ public class ProjectOrdersController
 
     }
 
-    @PutMapping("/submit")
+    @PutMapping("/submit/{orderId}")
     public ResponseEntity<?> submitOrders(HttpServletRequest request, @PathVariable Long orderId, @RequestBody OrdersDto ordersDto)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");

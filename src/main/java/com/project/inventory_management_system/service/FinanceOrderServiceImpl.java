@@ -58,7 +58,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         // Allowed Finance statuses (priority order)
         List<String> financeStatuses = List.of(
-                "FINANCE PENDING",
+                "PROJECT TEAM > FINANCE PRE APPROVAL PENDING",
                 "SCM > FINANCE APPROVAL SENT",
                 "LOGISTIC > FINANCE CLOSURE PENDING"
         );
@@ -138,7 +138,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("FINANCE PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("FINANCE PRE APPROVAL PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
@@ -191,7 +191,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("FINANCE PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("FINANCE PRE APPROVAL PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }

@@ -45,7 +45,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'FINANCE PENDING' THEN 2
+                WHEN status = 'PROJECT TEAM > FINANCE PRE APPROVAL PENDING' THEN 2
                 WHEN status = 'SCM > FINANCE APPROVAL SENT' THEN 3
                 WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 1
                 ELSE 5
@@ -79,7 +79,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'AMISP PENDING' THEN 2
+                WHEN status = 'PDI PENDING' THEN 2
                 WHEN status = 'SCM > AMISP RECHECK PENDING' THEN 1
                 ELSE 5
             END,
@@ -95,11 +95,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'SCM PENDING' THEN 7
-                WHEN status = 'CLOUD > SCM RECHECK PENDING' THEN 6
-                WHEN status = 'SYRMA > SCM PRODUCTION STARTED' THEN 5
-                WHEN status = 'RMA > SCM RECHECK PENDING' THEN 4
-                WHEN status = 'PROJECT TEAM > SCM RECHECK PENDING' THEN 3
+                WHEN status = 'PROJECT TEAM > SCM PENDING' THEN 7
+                WHEN status = 'CLOUD > SCM PENDING' THEN 6
+                WHEN status = 'SYRMA > SCM PENDING' THEN 5
+                WHEN status = 'RMA QC PASS > SCM PENDING' THEN 4
+                WHEN status = 'DISPATCH ORDER IS READY' THEN 3
                 WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 2
                 WHEN status = 'FINANCE > SCM RECHECK PENDING' THEN 1
                 ELSE 5
@@ -174,7 +174,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('FINANCE PENDING', 'LOGISTIC > FINANCE CLOSURE PENDING') AND
+        o.status IN ('FINANCE PRE APPROVAL PENDING', 'LOGISTIC > FINANCE CLOSURE PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -195,7 +195,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for finance pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status IN ('FINANCE PENDING', 'LOGISTIC TO FINANCE CLOSURE PENDING')
+    WHERE o.status IN ('FINANCE PRE APPROVAL PENDING', 'LOGISTIC TO FINANCE CLOSURE PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForFinance(
@@ -232,7 +232,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('SYRMA PENDING', 'RMA > SYRMA RE WORK PENDING') AND
+        o.status IN ('SYRMA PENDING', 'RMA QC FAIL > SYRMA PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -247,7 +247,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for syrma pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status IN ('SYRMA PENDING', 'RMA > SYRMA RE WORK PENDING')
+    WHERE o.status IN ('SYRMA PENDING', 'RMA QC FAIL > SYRMA PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForSyrma(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
@@ -268,7 +268,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status = 'RMA PENDING' AND
+        o.status = 'RMA QC PENDING' AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -382,7 +382,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'SYRMA PENDING' THEN 1
-                WHEN status = 'RMA > SYRMA RE WORK PENDING' THEN 2
+                WHEN status = 'RMA QC FAIL > SYRMA PENDING' THEN 2
                 ELSE 5
             END,
             order_id DESC

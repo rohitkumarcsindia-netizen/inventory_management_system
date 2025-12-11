@@ -52,7 +52,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         // Allowed Finance statuses (priority order)
         List<String> syrmaStatuses = List.of(
                 "SYRMA PENDING",
-                "RMA > SYRMA RE WORK PENDING"
+                "RMA QC FAIL > SYRMA PENDING"
         );
 
         List<Orders> ordersList = orderRepository.findBySyrmaStatusWithLimitOffset(syrmaStatuses, offset, limit);
@@ -104,7 +104,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA > SCM RECHECK PENDING");
+        order.setStatus("SYRMA > SCM PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
@@ -361,7 +361,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA > SYRMA RE WORK PENDING")) {
+        if (!order.getStatus().equalsIgnoreCase("RMA QC FAIL > SYRMA PENDING")) {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
@@ -375,7 +375,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA > SCM RECHECK PENDING");
+        order.setStatus("SYRMA > SCM PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");

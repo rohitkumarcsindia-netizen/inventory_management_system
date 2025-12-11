@@ -54,7 +54,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
 
         // Allowed Amisp statuses (priority order)
         List<String> amispStatuses = List.of(
-                "AMISP PENDING",
+                "PDI PENDING",
                 "SCM > AMISP RECHECK PENDING"
         );
 
@@ -97,7 +97,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > AMISP PDI PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Amisp approval");
         }
@@ -117,7 +117,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         amispApprovalRepository.save(amispApproval);
 
         //Order table status update
-        order.setStatus("AMISP > PROJECT TEAM RECHECK PENDING");
+        order.setStatus("AMISP > POST PDI");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
@@ -153,7 +153,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > AMISP PDI PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Amisp approval");
         }
@@ -173,7 +173,7 @@ public class AmispOrderServiceImpl implements AmispOrderService
         amispApprovalRepository.save(amispApproval);
 
         //Order table status update
-        order.setStatus("AMISP > PROJECT TEAM RECHECK PENDING");
+        order.setStatus("AMISP > PRE PDI");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");

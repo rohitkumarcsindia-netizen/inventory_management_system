@@ -50,7 +50,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only Rma team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("RMA PENDING", offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("RMA QC PENDING", offset, limit);
 
         if (orders.isEmpty())
         {
@@ -63,7 +63,7 @@ public class RmaServiceImpl implements RmaService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("RMA PENDING"),
+                "ordersCount", orderRepository.countByStatus("RMA QC PENDING"),
                 "orders", ordersDtoList
         ));
     }
@@ -89,7 +89,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("Rma PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("RMA QC PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -104,7 +104,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA > SCM RECHECK PENDING");
+        order.setStatus("RMA QC PASS > SCM PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
@@ -140,7 +140,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("Rma PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("RMA QC PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -156,7 +156,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA > SYRMA RE WORK PENDING");
+        order.setStatus("RMA QC FAIL > SYRMA PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SYRMA");

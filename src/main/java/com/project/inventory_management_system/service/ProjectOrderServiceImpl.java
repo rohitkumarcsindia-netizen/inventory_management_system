@@ -70,7 +70,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             if (orders.getOrderType().equalsIgnoreCase("PURCHASE"))
             {
                 orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-                orders.setStatus("SCM PENDING");
+                orders.setStatus("PROJECT TEAM > SCM PENDING");
 
 
                 Orders saved = orderRepository.save(orders);
@@ -96,7 +96,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
 
             orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-            orders.setStatus("FINANCE PENDING");
+            orders.setStatus("PROJECT TEAM > FINANCE PRE APPROVAL PENDING");
 
             Orders saved = orderRepository.save(orders);
 
@@ -367,12 +367,12 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > PROJECT TEAM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SCM > PROJECT TEAM BUILD IS READY"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("AMISP PENDING");
+        order.setStatus("PROJECT TEAM > AMISP PDI PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("AMISP");
@@ -409,7 +409,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP > PROJECT TEAM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("AMISP > PRE PDI"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
