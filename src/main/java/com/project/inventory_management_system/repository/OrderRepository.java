@@ -392,4 +392,41 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Long countBySyrmaStatusList(@Param("syrmaStatuses") List<String> syrmaStatuses);
 
 
+    //Admin all data fetch query
+    @Query(value = """
+        SELECT * FROM orders
+        ORDER BY order_id DESC
+        LIMIT :limit OFFSET :offset
+        """, nativeQuery = true)
+    List<Orders> findAllOrders(@Param("offset") int offset,
+                               @Param("limit") int limit);
+
+
+    @Query("""
+       SELECT o FROM Orders o
+       WHERE o.createAt BETWEEN :startDate AND :endDate
+       ORDER BY o.createAt DESC
+       """)
+    Page<Orders> findByOrderDate(@Param("startDate") LocalDateTime startDate,
+                                 @Param("endDate") LocalDateTime endDate,
+                                 Pageable pageable);
+
+
+    @Query("""
+       SELECT o FROM Orders o
+       WHERE o.status = :status
+       """)
+    Page<Orders> findByStatus(@Param("status") String status, Pageable pageable);
+
+    @Query("""
+       SELECT o FROM Orders o
+       WHERE 
+           LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
+        OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
+       """)
+    Page<Orders> findBySearchOrdersForAdmin(@Param("keyword") String keyword, Pageable pageable);
 }

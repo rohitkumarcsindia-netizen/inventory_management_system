@@ -21,28 +21,30 @@ public class EmailService
     public boolean sendMailNextDepartmentOrderCreate(String departmentEmail, Long orderId)
     {
 
-        try
-        {
+        try {
             SimpleMailMessage message = new SimpleMailMessage();
-
 
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("Order Confirmation - Order #" + orderId);
-            message.setText("A new order has been created and is waiting for your action. Order ID: "+ orderId);
+            message.setSubject("Order Confirmation – New Order #" + orderId + " Requires Your Action");
+            String mailBody =
+                    "Dear Team,\n\n" +
+                    "A new order has been created and is now pending your action.\n\n" +
+                    "Order Details:\n" +
+                    "• Order ID: " + orderId + "\n\n" +
+                    "Please review the order at your earliest convenience and proceed with the next required steps.\n\n" +
+                    "Regards,\n" +
+                    "Project Team";
+
+            message.setText(mailBody);
 
             mailSender.send(message);
-
             System.out.println("Mail sent successfully to " + departmentEmail);
             return true;
-
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println("Mail sending failed: " + e.getMessage());
             return false;
         }
-
 
     }
 
@@ -54,11 +56,20 @@ public class EmailService
         {
             SimpleMailMessage message = new SimpleMailMessage();
 
-
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("Order Confirmation - Order #" + orderId);
-            message.setText("Your order has been successfully placed. Order ID: " + orderId + ".");
+            message.setSubject("Order Submission Successful – Order #" + orderId);
+
+            String body =
+                    "Dear Project Team,\n\n" +
+                    "Your order has been successfully submitted.\n\n" +
+                    "Order Details:\n" +
+                    "• Order ID: " + orderId + "\n\n" +
+                    "The order has been forwarded to the next department for further processing.\n\n" +
+                    "Regards,\n" +
+                    "Inventory Management System";
+
+            message.setText(body);
 
             mailSender.send(message);
 
@@ -71,7 +82,6 @@ public class EmailService
             System.out.println("Mail sending failed: " + e.getMessage());
             return false;
         }
-
 
     }
 
@@ -86,8 +96,16 @@ public class EmailService
 
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("Order Approved - Order #" + orderId);
-            message.setText("Create Jira Ticket for this OrderId " + orderId + ".");
+            message.setSubject("Order Approved by Finance – Order #" + orderId);
+
+            message.setText(
+                    "Dear SCM Team,\n\n" +
+                    "The Finance Department has approved the following order:\n\n" +
+                    "• Order ID: " + orderId + "\n\n" +
+                    "Please proceed with the next required steps as per the workflow.\n\n" +
+                    "Regards,\n" +
+                    "Finance Team"
+            );
 
             mailSender.send(message);
             System.out.println("Mail sent successfully to " + departmentEmail);
@@ -114,11 +132,20 @@ public class EmailService
 
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("Order Rejected - Order #" + orderId);
-            message.setText(reason + " " + orderId + ".");
+            message.setSubject("Order Rejected by Finance – Order #" + orderId);
 
+            message.setText(
+                    "Dear Project Team,\n\n" +
+                    "The following order has been reviewed and rejected by the Finance Department:\n\n" +
+                    "• Order ID: " + orderId + "\n" +
+                    "• Rejection Reason: " + reason + "\n\n" +
+                    "Please review the remarks and re-submit the order after making the necessary corrections.\n\n" +
+                    "Regards,\n" +
+                    "Finance Team"
+            );
             mailSender.send(message);
             System.out.println("Mail sent successfully to " + departmentEmail);
+
             return true;
         }
         catch (Exception e)
@@ -140,12 +167,21 @@ public class EmailService
 
             message.setFrom(SENDERMAIL);
             message.setTo(departmentEmail);
-            message.setSubject("Jira Ticket Created #" + orderId);
-            message.setText("This OrderId Jira Ticket has been Generated " + orderId + ".");
+            message.setSubject("Jira Ticket Created for Order #" + orderId);
 
+            message.setText(
+                    "Dear Team,\n\n" +
+                    "A Jira ticket has been successfully created for the below order:\n\n" +
+                    "• Order ID: " + orderId + "\n\n" +
+                    "Please proceed with the necessary next steps as per the workflow.\n\n" +
+                    "Regards,\n" +
+                    "SCM Team"
+            );
             mailSender.send(message);
             System.out.println("Mail sent successfully to " + departmentEmail);
+
             return true;
+
         }
         catch (Exception e)
         {
@@ -598,16 +634,16 @@ public class EmailService
 
             String mailBody =
                     "Dear Scm Team,\n\n" +
-                            "This is to inform you that Project Team has updated the location details for the following order in the IMS system.\n\n" +
-                            "Order ID          : " + order.getOrderId() + "\n" +
-                            "Project Name      : " + order.getProject() + "\n" +
-                            "Pdi Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
-                            "Location Details  : " + projectTeamApproval.getLocationDetails() + "\n" +
-                            "Next Action:\n" +
-                            "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
-                            "You can review the complete details in the IMS Portal:\n" +
-                            "Regards,\n" +
-                            "Project Team";
+                    "This is to inform you that Project Team has updated the location details for the following order in the IMS system.\n\n" +
+                    "Order ID          : " + order.getOrderId() + "\n" +
+                    "Project Name      : " + order.getProject() + "\n" +
+                    "Pdi Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
+                    "Location Details  : " + projectTeamApproval.getLocationDetails() + "\n" +
+                    "Next Action:\n" +
+                    "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
+                    "You can review the complete details in the IMS Portal:\n" +
+                    "Regards,\n" +
+                    "Project Team";
 
             message.setText(mailBody);
 
@@ -741,15 +777,15 @@ public class EmailService
 
             String mailBody =
                     "Dear Logistics Team,\n\n" +
-                            "Dispatch planning has been completed by the SCM team for the following order:\n\n" +
-                            "Order ID            : " + order.getOrderId() + "\n" +
-                            "Project Name        : " + order.getProject() + "\n" +
-                            "Dispatch Location   : " + projectTeamApproval.getPdiLocation() + "\n" +
-                            "PDI Type            : " + projectTeamApproval.getAmispPdiType() + "\n\n" +
-                            "Kindly arrange shipping and initiate logistics activities accordingly.\n\n" +
-                            "Regards,\n" +
-                            "SCM Team\n\n" +
-                            "*** This is an auto-generated email from IMS Workflow System ***";
+                    "Dispatch planning has been completed by the SCM team for the following order:\n\n" +
+                    "Order ID            : " + order.getOrderId() + "\n" +
+                    "Project Name        : " + order.getProject() + "\n" +
+                    "Dispatch Location   : " + projectTeamApproval.getPdiLocation() + "\n" +
+                    "PDI Type            : " + projectTeamApproval.getAmispPdiType() + "\n\n" +
+                    "Kindly arrange shipping and initiate logistics activities accordingly.\n\n" +
+                    "Regards,\n" +
+                    "SCM Team\n\n" +
+                    "*** This is an auto-generated email from IMS Workflow System ***";
 
             message.setText(mailBody);
 
@@ -774,17 +810,17 @@ public class EmailService
             message.setSubject("Order Completion Notification – Order ID: " + order.getOrderId());
 
             String mailBody =
-                            "Dear Project Team,\n\n" +
-                            "We are pleased to inform you that the following order has been successfully completed:\n\n" +
-                            "• Order ID: " + order.getOrderId() + "\n" +
-                            "• Project Name: " + order.getProject() + "\n" +
-                            "• Product Type: " + order.getProductType() + "\n" +
-                            "• Total Quantity: " + order.getProposedBuildPlanQty() + "\n\n" +
-                            "All required processes including dispatch, delivery confirmation, and final approvals have been completed.\n" +
-                            "No further action is required from your side.\n\n" +
-                            "Thank you for your support and coordination throughout the process.\n\n" +
-                            "Regards,\n" +
-                            "SCM Team";
+                    "Dear Project Team,\n\n" +
+                    "We are pleased to inform you that the following order has been successfully completed:\n\n" +
+                    "• Order ID: " + order.getOrderId() + "\n" +
+                    "• Project Name: " + order.getProject() + "\n" +
+                    "• Product Type: " + order.getProductType() + "\n" +
+                    "• Total Quantity: " + order.getProposedBuildPlanQty() + "\n\n" +
+                    "All required processes including dispatch, delivery confirmation, and final approvals have been completed.\n" +
+                    "No further action is required from your side.\n\n" +
+                    "Thank you for your support and coordination throughout the process.\n\n" +
+                    "Regards,\n" +
+                    "SCM Team";
 
             message.setText(mailBody);
 
@@ -809,16 +845,16 @@ public class EmailService
             message.setSubject("Financial Document Closure – Action Required for Order ID: " + order.getOrderId());
 
             String mailBody =
-                            "Dear SCM Team,\n\n" +
-                            "This is to inform you that the Finance Team has successfully completed and closed the financial document review for the following order:\n\n" +
-                            "• Order ID: " + order.getOrderId() + "\n" +
-                            "• Project Name: " + order.getProject() + "\n" +
-                            "• Product Type: " + order.getProductType() + "\n" +
-                            "• Approved Amount / GST/FOC Status: Completed\n\n" +
-                            "You may now proceed with the next steps as per the SCM workflow.\n\n" +
-                            "Please take the necessary action at your earliest convenience.\n\n" +
-                            "Regards,\n" +
-                            "Finance Team";
+                    "Dear SCM Team,\n\n" +
+                    "This is to inform you that the Finance Team has successfully completed and closed the financial document review for the following order:\n\n" +
+                    "• Order ID: " + order.getOrderId() + "\n" +
+                    "• Project Name: " + order.getProject() + "\n" +
+                    "• Product Type: " + order.getProductType() + "\n" +
+                    "• Approved Amount / GST/FOC Status: Completed\n\n" +
+                    "You may now proceed with the next steps as per the SCM workflow.\n\n" +
+                    "Please take the necessary action at your earliest convenience.\n\n" +
+                    "Regards,\n" +
+                    "Finance Team";
 
             message.setText(mailBody);
 

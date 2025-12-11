@@ -563,7 +563,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
             order.setInitiator(ordersDto.getInitiator());
             order.setPmsRemarks(ordersDto.getPmsRemarks());
-            order.setStatus("SCM PENDING");
+            order.setStatus("PROJECT TEAM > SCM PENDING");
 
             Orders saved = orderRepository.save(order);
 
@@ -591,7 +591,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
         order.setInitiator(ordersDto.getInitiator());
         order.setPmsRemarks(ordersDto.getPmsRemarks());
-        order.setStatus("FINANCE PENDING");
+        order.setStatus("PROJECT TEAM > FINANCE PRE APPROVAL PENDING");
 
         Orders saved = orderRepository.save(order);
 
