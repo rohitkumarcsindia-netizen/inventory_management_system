@@ -318,12 +318,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SYRMA > SCM PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SYRMA PROD/TEST DONE > SCM ACTION PENDING"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("RMA QC PENDING");
+        order.setStatus("SCM NOTIFY > RMA QC PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("RMA");

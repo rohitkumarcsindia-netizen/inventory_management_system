@@ -50,7 +50,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only Rma team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("RMA QC PENDING", offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM NOTIFY > RMA QC PENDING", offset, limit);
 
         if (orders.isEmpty())
         {
@@ -63,7 +63,7 @@ public class RmaServiceImpl implements RmaService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("RMA QC PENDING"),
+                "ordersCount", orderRepository.countByStatus("SCM NOTIFY > RMA QC PENDING"),
                 "orders", ordersDtoList
         ));
     }
