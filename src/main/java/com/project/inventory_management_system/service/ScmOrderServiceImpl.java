@@ -61,7 +61,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "PROJECT TEAM > SCM PENDING",
                 "FINANCE APPROVED > SCM PENDING",
                 "CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING",
-                "RMA QC PASS > SCM PENDING",
+                "SYRMA PROD/TEST DONE > SCM ACTION PENDING",
                 "DISPATCH ORDER IS READY",
                 "PROJECT TEAM > SCM LOCATION SENT",
                 "FINANCE > SCM RECHECK PENDING"

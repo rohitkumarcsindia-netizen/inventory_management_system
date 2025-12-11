@@ -91,7 +91,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SYRMA PENDING")) {
+        if (!order.getStatus().equalsIgnoreCase("SCM JIRA TICKET CLOSURE > SYRMA PENDING")) {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
@@ -104,7 +104,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA > SCM PENDING");
+        order.setStatus("SYRMA PROD/TEST DONE > SCM ACTION PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
