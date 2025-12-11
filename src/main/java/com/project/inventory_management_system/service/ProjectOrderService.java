@@ -32,7 +32,7 @@ public interface ProjectOrderService
 
     ResponseEntity<?> projectTeamNotifyToScmDispatchOrderIsReady(String username, Long orderId);
 
-    ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId);
+    ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId, ProjectTeamApproval locationDetails);
 
     ResponseEntity<?> saveOrders(String username, OrdersDto ordersDto);
 

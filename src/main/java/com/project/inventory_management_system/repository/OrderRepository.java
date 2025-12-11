@@ -46,7 +46,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'PROJECT TEAM > FINANCE PRE APPROVAL PENDING' THEN 2
-                WHEN status = 'SCM > FINANCE APPROVAL SENT' THEN 3
+                WHEN status = 'SCM > FINANCE POST APPROVAL PENDING' THEN 3
                 WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 1
                 ELSE 5
             END,
@@ -102,6 +102,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
                 WHEN status = 'RMA QC PASS > SCM ORDER RELEASE PENDING' THEN 3
                 WHEN status = 'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING' THEN 2
                 WHEN status = 'PROJECT TEAM > SCM READY FOR DISPATCH' THEN 1
+                WHEN status = 'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS' THEN 8
                 ELSE 5
             END,
             order_id DESC

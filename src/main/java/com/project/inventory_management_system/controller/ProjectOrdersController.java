@@ -197,7 +197,7 @@ public class ProjectOrdersController
     }
 
     @PutMapping("/notify-scm-location-details/{orderId}")
-    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(HttpServletRequest request, @PathVariable Long orderId)
+    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamApproval locationDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -205,7 +205,7 @@ public class ProjectOrdersController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectOrderService.projectTeamNotifyToScmLocationDetails(userDetails.getUsername(), orderId);
+        return projectOrderService.projectTeamNotifyToScmLocationDetails(userDetails.getUsername(), orderId,locationDetails);
     }
 
     @PostMapping("/save")

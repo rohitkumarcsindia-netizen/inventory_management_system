@@ -436,7 +436,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     }
 
     @Override
-    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId)
+    public ResponseEntity<?> projectTeamNotifyToScmLocationDetails(String username, Long orderId, ProjectTeamApproval locationDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -447,23 +447,34 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
         {
-            return ResponseEntity.status(403).body("Only Project team can view complete orders");
+            return ResponseEntity.status(403).body("Only Project Team can send location details");
         }
 
         Orders order = orderRepository.findById(orderId).orElse(null);
-        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         if (order == null)
         {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP > PROJECT TEAM LOCATION SENT"))
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        if (projectTeamApproval == null)
         {
-            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project action");
+            return ResponseEntity.ok("Approval details not found for this order");
         }
 
-        order.setStatus("PROJECT TEAM > SCM LOCATION SENT");
+        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > AMISP READY FOR DISPATCH"))
+        {
+            return ResponseEntity.status(403).body("Location details can only be submitted when the order is pending for SCM location update");
+        }
+
+
+        //Location details set Db
+        projectTeamApproval.setLocationDetails(locationDetails.getLocationDetails());
+        projectTeamApprovalRepository.save(projectTeamApproval);
+
+        order.setStatus("PROJECT TEAM NOTIFY > SCM LOCATION DETAILS");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
@@ -475,7 +486,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Mail Not Sent");
         }
 
-        return ResponseEntity.ok("Notification sent for SCM");
+        return ResponseEntity.ok("Location details sent to SCM successfully");
     }
 
     @Override

@@ -641,7 +641,8 @@ public class EmailService
                             "This is to inform you that Project Team has updated the location details for the following order in the IMS system.\n\n" +
                             "Order ID          : " + order.getOrderId() + "\n" +
                             "Project Name      : " + order.getProject() + "\n" +
-                            "Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
+                            "Pdi Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
+                            "Location Details  : " + projectTeamApproval.getLocationDetails() + "\n" +
                             "Next Action:\n" +
                             "Kindly ensure dispatch readiness and continue further workflow.\n\n" +
                             "You can review the complete details in the IMS Portal:\n" +
@@ -675,7 +676,7 @@ public class EmailService
                     "This is to inform you that SCM has submitted an approval request for the following order in the IMS system.\n\n" +
                     "Order ID          : " + order.getOrderId() + "\n" +
                     "Project Name      : " + order.getProject() + "\n" +
-                    "Location Details  : " + projectTeamApproval.getPdiLocation() + "\n" +
+                    "Location Details  : " + projectTeamApproval.getLocationDetails() + "\n" +
                     "Action Required:\n" +
                     "Kindly review the dispatch details and provide the financial approval at the earliest to proceed further.\n\n" +
                     "IMS Link for Review:\n" +
