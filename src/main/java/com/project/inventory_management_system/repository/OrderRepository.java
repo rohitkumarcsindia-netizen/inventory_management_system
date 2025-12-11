@@ -97,7 +97,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
             CASE 
                 WHEN status = 'PROJECT TEAM > SCM PENDING' THEN 7
                 WHEN status = 'FINANCE APPROVED > SCM PENDING' THEN 6
-                WHEN status = 'SYRMA > SCM PENDING' THEN 5
+                WHEN status = 'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING' THEN 5
                 WHEN status = 'RMA QC PASS > SCM PENDING' THEN 4
                 WHEN status = 'DISPATCH ORDER IS READY' THEN 3
                 WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 2

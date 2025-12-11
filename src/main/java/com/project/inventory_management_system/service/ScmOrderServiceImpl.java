@@ -60,7 +60,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         List<String> scmStatuses = List.of(
                 "PROJECT TEAM > SCM PENDING",
                 "FINANCE APPROVED > SCM PENDING",
-                "SYRMA > SCM PENDING",
+                "CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING",
                 "RMA QC PASS > SCM PENDING",
                 "DISPATCH ORDER IS READY",
                 "PROJECT TEAM > SCM LOCATION SENT",

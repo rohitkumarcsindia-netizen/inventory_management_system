@@ -68,7 +68,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("CLOUD PENDING"),
+                "ordersCount", orderRepository.countByStatus("SCM CREATED TICKET > CLOUD PENDING"),
                 "orders", ordersDtoList
         ));
     }
@@ -128,7 +128,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("CLOUD PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SCM CREATED TICKET > CLOUD PENDING"))
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -143,7 +143,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         jiraDetailsUpdate.setUpdatedBy(user);
         cloudApprovalRepository.save(jiraDetailsUpdate);
 
-        order.setStatus("CLOUD > SCM PENDING");
+        order.setStatus("CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING");
         orderRepository.save(order);
 
 
