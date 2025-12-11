@@ -54,7 +54,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("CLOUD PENDING", offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM CREATED TICKET > CLOUD PENDING", offset, limit);
 
         if (ordersList.isEmpty())
         {

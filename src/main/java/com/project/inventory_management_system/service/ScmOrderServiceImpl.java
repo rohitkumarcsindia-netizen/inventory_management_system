@@ -142,7 +142,10 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM PENDING"))
+        String status = order.getStatus();
+        boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
+
+        if (!allowed)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -160,7 +163,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(scmApproval);
 
 
-        order.setStatus("CLOUD PENDING");
+        order.setStatus("SCM CREATED TICKET > CLOUD PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
