@@ -42,15 +42,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     @Query(value = """
         SELECT * FROM orders
-        WHERE status IN (:statuses)
-        ORDER BY 
-            CASE 
-                WHEN status = 'PROJECT TEAM > FINANCE PRE APPROVAL PENDING' THEN 2
-                WHEN status = 'SCM > FINANCE POST APPROVAL PENDING' THEN 3
-                WHEN status = 'LOGISTIC > FINANCE CLOSURE PENDING' THEN 1
-                ELSE 5
-            END,
-            order_id DESC
+        WHERE status IN (
+            'PROJECT TEAM > FINANCE PRE APPROVAL PENDING',
+            'SCM > FINANCE POST APPROVAL PENDING',
+            'LOGISTIC > FINANCE CLOSURE PENDING'
+        )
+        ORDER BY order_id DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<Orders> findByFinanceStatusWithLimitOffset(@Param("statuses") List<String> statuses,
@@ -59,15 +56,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     @Query(value = """
         SELECT * FROM orders
-        WHERE status IN (:statuses)
-        ORDER BY 
-            CASE 
-                WHEN status = 'SCM > LOGISTIC PENDING' THEN 2
-                WHEN status = 'DELIVERY PENDING' THEN 3
-                WHEN status = 'PDI PENDING' THEN 1
-                ELSE 5
-            END,
-            order_id DESC
+        WHERE status IN (
+            'SCM > LOGISTIC PENDING',
+            'DELIVERY PENDING',
+            'PDI PENDING'
+        )
+        ORDER BY order_id DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<Orders> findByLogisticStatusWithLimitOffset(@Param("statuses") List<String> statuses,
@@ -76,14 +70,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     @Query(value = """
         SELECT * FROM orders
-        WHERE status IN (:statuses)
-        ORDER BY 
-            CASE 
-                WHEN status = 'PDI PENDING' THEN 2
-                WHEN status = 'SCM > AMISP RECHECK PENDING' THEN 1
-                ELSE 5
-            END,
-            order_id DESC
+        WHERE status IN (
+            'PDI PENDING',
+            'SCM > AMISP RECHECK PENDING'
+        )
+        ORDER BY order_id DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<Orders> findByStatusListWithLimitOffset(@Param("statuses") List<String> statuses,
@@ -92,22 +83,19 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     @Query(value = """
         SELECT * FROM orders
-        WHERE status IN (:statuses)
-        ORDER BY 
-            CASE 
-                WHEN status = 'PROJECT TEAM > SCM PENDING' THEN 7
-                WHEN status = 'FINANCE APPROVED > SCM PENDING' THEN 6
-                WHEN status = 'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING' THEN 5
-                WHEN status = 'SYRMA PROD/TEST DONE > SCM ACTION PENDING' THEN 4
-                WHEN status = 'RMA QC PASS > SCM ORDER RELEASE PENDING' THEN 3
-                WHEN status = 'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING' THEN 2
-                WHEN status = 'PROJECT TEAM > SCM READY FOR DISPATCH' THEN 1
-                WHEN status = 'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS' THEN 8
-                WHEN status = 'FINANCE > SCM PLAN TO DISPATCH' THEN 9
-                 WHEN status = 'FINANCE CLOSURE DONE > SCM CLOSURE PENDING' THEN 9
-                ELSE 5
-            END,
-            order_id DESC
+        WHERE status IN (
+            'PROJECT TEAM > SCM PENDING',
+            'FINANCE APPROVED > SCM PENDING',
+            'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING',
+            'SYRMA PROD/TEST DONE > SCM ACTION PENDING',
+            'RMA QC PASS > SCM ORDER RELEASE PENDING',
+            'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING',
+            'PROJECT TEAM > SCM READY FOR DISPATCH',
+            'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS',
+            'FINANCE > SCM PLAN TO DISPATCH',
+            'FINANCE CLOSURE DONE > SCM CLOSURE PENDING'
+        )
+        ORDER BY order_id DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<Orders> findOrdersForScm(@Param("statuses") List<String> statuses,
@@ -177,7 +165,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('FINANCE PRE APPROVAL PENDING', 'LOGISTIC > FINANCE CLOSURE PENDING') AND
+        o.status IN ('PROJECT TEAM > FINANCE PRE APPROVAL PENDING', 'SCM > FINANCE POST APPROVAL PENDING','LOGISTIC > FINANCE CLOSURE PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -198,7 +186,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for finance pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status IN ('FINANCE PRE APPROVAL PENDING', 'LOGISTIC TO FINANCE CLOSURE PENDING')
+    WHERE o.status IN ('PROJECT TEAM > FINANCE PRE APPROVAL PENDING', 'SCM > FINANCE POST APPROVAL PENDING','LOGISTIC > FINANCE CLOSURE PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForFinance(
@@ -211,7 +199,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status = 'CLOUD PENDING' AND
+        o.status = 'SCM CREATED TICKET > CLOUD PENDING' AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -226,7 +214,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     //Status searching query for cloud pending button
     @Query("""
-    SELECT o FROM Orders o WHERE o.status = 'CLOUD PENDING' AND
+    SELECT o FROM Orders o WHERE o.status = 'SCM CREATED TICKET > CLOUD PENDING' AND
     o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForCloud(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
@@ -235,7 +223,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('SYRMA PENDING', 'RMA QC FAIL > SYRMA PENDING') AND
+        o.status IN ('SCM JIRA TICKET CLOSURE > SYRMA PENDING', 'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -250,7 +238,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for syrma pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status IN ('SYRMA PENDING', 'RMA QC FAIL > SYRMA PENDING')
+    WHERE o.status IN ('SCM JIRA TICKET CLOSURE > SYRMA PENDING', 'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForSyrma(@Param("start")LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
@@ -261,7 +249,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 
     //Status searching query for rma pending button
     @Query("""
-    SELECT o FROM Orders o WHERE o.status = 'RMA PENDING' AND
+    SELECT o FROM Orders o WHERE o.status = 'SCM NOTIFY > RMA QC PENDING' AND
     o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForRma(@Param("start")LocalDateTime start, @Param("end") LocalDateTime end, Pageable pageable);
@@ -271,7 +259,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status = 'RMA QC PENDING' AND
+        o.status = 'SCM NOTIFY > RMA QC PENDING' AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -347,9 +335,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //Status searching query for scm pending button
     @Query("""
     SELECT o FROM Orders o
-    WHERE o.status IN ('SCM PENDING', 'CLOUD > SCM RECHECK PENDING','SYRMA > SCM RECHECK PENDING',
-    'RMA > SCM RECHECK PENDING','PROJECT TEAM > SCM RECHECK PENDING','PROJECT TEAM > SCM LOCATION SENT',
-    'FINANCE > SCM RECHECK PENDING')
+    WHERE o.status IN ('PROJECT TEAM > SCM PENDING','FINANCE APPROVED > SCM PENDING',
+    'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING',
+    'SYRMA PROD/TEST DONE > SCM ACTION PENDING','RMA QC PASS > SCM ORDER RELEASE PENDING',
+    'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING','PROJECT TEAM > SCM READY FOR DISPATCH',
+    'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS',
+    'FINANCE > SCM PLAN TO DISPATCH','FINANCE CLOSURE DONE > SCM CLOSURE PENDING')
       AND o.createAt BETWEEN :start AND :end
 """)
     Page<Orders> findByDateRangeForScm(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
@@ -364,9 +355,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     @Query("""
     SELECT o FROM Orders o
     WHERE
-        o.status IN ('SCM PENDING', 'CLOUD > SCM RECHECK PENDING','SYRMA > SCM RECHECK PENDING',
-    'RMA > SCM RECHECK PENDING','PROJECT TEAM > SCM RECHECK PENDING','PROJECT TEAM > SCM LOCATION SENT',
-    'FINANCE > SCM RECHECK PENDING') AND
+        o.status IN ('PROJECT TEAM > SCM PENDING','FINANCE APPROVED > SCM PENDING',
+    'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING',
+    'SYRMA PROD/TEST DONE > SCM ACTION PENDING','RMA QC PASS > SCM ORDER RELEASE PENDING',
+    'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING','PROJECT TEAM > SCM READY FOR DISPATCH',
+    'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS',
+    'FINANCE > SCM PLAN TO DISPATCH','FINANCE CLOSURE DONE > SCM CLOSURE PENDING') AND
         (
              LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
           OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -381,14 +375,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //syrma pending data fetch
     @Query(value = """
         SELECT * FROM orders
-        WHERE status IN (:statuses)
-        ORDER BY 
-            CASE 
-                WHEN status = 'SCM JIRA TICKET CLOSURE > SYRMA PENDING' THEN 1
-                WHEN status = 'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING' THEN 2
-                ELSE 5
-            END,
-            order_id DESC
+        WHERE status IN (
+            'SCM JIRA TICKET CLOSURE > SYRMA PENDING',
+            'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING'
+        )
+        ORDER BY order_id DESC
         LIMIT :limit OFFSET :offset
         """, nativeQuery = true)
     List<Orders> findBySyrmaStatusWithLimitOffset(@Param("statuses") List<String> statuses,
