@@ -64,7 +64,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "SYRMA PROD/TEST DONE > SCM ACTION PENDING",
                 "RMA QC PASS > SCM ORDER RELEASE PENDING",
                 "SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING",
-                "PROJECT TEAM > SCM LOCATION SENT",
+                "PROJECT TEAM > SCM READY FOR DISPATCH",
                 "FINANCE > SCM RECHECK PENDING"
         );
 
@@ -411,21 +411,22 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("DISPATCH ORDER IS READY"))
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM READY FOR DISPATCH"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM > LOCATION INFO PENDING");
+        order.setStatus("SCM NOTIFY > AMISP READY FOR DISPATCH");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("AMISP");
 
-        boolean mailsent = emailService.sendMailNotifyScmToAmisp(department.getDepartmentEmail(), order, projectTeamApproval);
+        ProjectTeamApproval amispEmailId = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        boolean mailsent = emailService.sendMailNotifyScmToAmisp(amispEmailId.getAmispEmailId(), order, projectTeamApproval);
 
         if (!mailsent)
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            return ResponseEntity.ok("Mail Not Sent");
         }
 
         return ResponseEntity.ok("Notification sent for AMISP");

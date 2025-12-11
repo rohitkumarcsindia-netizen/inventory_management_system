@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -155,6 +156,32 @@ public class ProjectOrdersController
             return ResponseEntity.status(401).body("Unauthorized");
         }
         return projectOrderService.projectTeamNotifyConveyToAmisp(userDetails.getUsername(), orderId, projectTeamApproval);
+    }
+
+    @PutMapping("/post-delivery-pdi/{orderId}")
+    public ResponseEntity<?> postDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamOrderDto pdiDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.postDeliveryPdiOrder(userDetails.getUsername(), orderId, pdiDetails);
+    }
+
+    @PutMapping("/pri-delivery-pdi/{orderId}")
+    public ResponseEntity<?> priDeliveryPdiOrder(HttpServletRequest request, @PathVariable Long orderId,@RequestBody ProjectTeamOrderDto pdiDetails)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.priDeliveryPdiOrder(userDetails.getUsername(), orderId, pdiDetails);
     }
 
     @PutMapping("/notify-scm/{orderId}")

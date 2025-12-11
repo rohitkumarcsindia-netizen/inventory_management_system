@@ -19,7 +19,7 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
     //All order Action count only
     @Query(
             value = "SELECT COUNT(*) FROM project_team_approval " +
-                    "WHERE project_team_approval.project_team_action_time IS NOT NULL",
+                    "WHERE project_team_approval.action_by IS NOT NULL",
             nativeQuery = true
     )
     Long countByAmispAction();
@@ -28,7 +28,7 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
     //All Complete Order data fetch
     @Query(
             value = "SELECT * FROM project_team_approval " +
-                    "WHERE project_team_action_time IS NOT NULL " +
+                    "WHERE action_by IS NOT NULL " +
                     "ORDER BY project_team_action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
@@ -38,7 +38,7 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
 
     @Query("""
     SELECT aa FROM ProjectTeamApproval aa
-    WHERE aa.projectTeamActionTime IS NOT NULL
+    WHERE aa.actionBy IS NOT NULL
       AND aa.projectTeamActionTime BETWEEN :start AND :end
     ORDER BY aa.projectTeamActionTime DESC
 """)
@@ -54,7 +54,7 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
        SELECT a FROM ProjectTeamApproval a
        JOIN a.order o
        JOIN a.actionBy u
-       WHERE a.projectTeamActionTime IS NOT NULL
+       WHERE a.actionBy IS NOT NULL
        AND (
             CAST(u.userId AS string) LIKE CONCAT('%', :keyword, '%')
          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')

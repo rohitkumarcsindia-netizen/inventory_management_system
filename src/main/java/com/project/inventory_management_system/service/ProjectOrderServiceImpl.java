@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.Department;
@@ -378,6 +379,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         ProjectTeamApproval amispEmailId = new ProjectTeamApproval();
         amispEmailId.setOrder(order);
         amispEmailId.setActionBy(user);
+        amispEmailId.setProjectTeamActionTime(LocalDateTime.now());
         amispEmailId.setAmispEmailId(projectTeamApproval.getAmispEmailId());
         projectTeamApprovalRepository.save(amispEmailId);
 
@@ -385,7 +387,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!mailsent)
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            return ResponseEntity.ok("Mail Not Sent");
         }
 
         return ResponseEntity.ok("Notification sent for Amisp");
@@ -413,12 +415,12 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("AMISP > PRE PDI"))
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("PROJECT TEAM > SCM RECHECK PENDING");
+        order.setStatus("PROJECT TEAM > SCM READY FOR DISPATCH");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
@@ -427,7 +429,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!mailsent)
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            return ResponseEntity.ok("Mail Not Sent");
         }
 
         return ResponseEntity.ok("Notification sent for SCM");
@@ -470,7 +472,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         if (!mailsent)
         {
-            return ResponseEntity.status(500).body("Mail Not Sent");
+            return ResponseEntity.ok("Mail Not Sent");
         }
 
         return ResponseEntity.ok("Notification sent for SCM");
@@ -595,6 +597,116 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         return ResponseEntity.ok("Order Submit Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> postDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only project team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for project approval");
+        }
+
+        //project team table update
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        projectTeamApproval.setAmispPdiType("Post-Delivery PDI");
+        projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
+        projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
+        projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        projectTeamApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        projectTeamApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        projectTeamApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        projectTeamApprovalRepository.save(projectTeamApproval);
+
+        //Order table status update
+        order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.ok("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification Sent For Project Team");
+    }
+
+
+
+    @Override
+    public ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only project team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING"))
+        {
+            return ResponseEntity.status(403).body("Order is not pending for project approval");
+        }
+
+        //project team table update
+        ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        projectTeamApproval.setAmispPdiType("Pri-Delivery PDI");
+        projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
+        projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
+        projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
+        projectTeamApproval.setDocumentUrl(pdiDetails.getDocumentUrl());
+        projectTeamApproval.setDispatchDetails(pdiDetails.getDispatchDetails());
+        projectTeamApproval.setPdiLocation(pdiDetails.getPdiLocation());
+        projectTeamApprovalRepository.save(projectTeamApproval);
+
+        //Order table status update
+        order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.ok("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification Sent For Project Team");
     }
 
 }
