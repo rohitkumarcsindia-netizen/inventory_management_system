@@ -89,7 +89,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > RMA QC PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -104,7 +104,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA QC PASS > SCM PENDING");
+        order.setStatus("RMA QC PASS > SCM ORDER RELEASE PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");
@@ -140,7 +140,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > RMA QC PENDING"))
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -156,7 +156,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA QC FAIL > SYRMA PENDING");
+        order.setStatus("RMA QC FAIL > SYRMA RE-PROD/TEST PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SYRMA");

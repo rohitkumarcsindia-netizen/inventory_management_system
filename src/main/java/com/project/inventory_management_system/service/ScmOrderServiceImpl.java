@@ -62,7 +62,8 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "FINANCE APPROVED > SCM PENDING",
                 "CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING",
                 "SYRMA PROD/TEST DONE > SCM ACTION PENDING",
-                "DISPATCH ORDER IS READY",
+                "RMA QC PASS > SCM ORDER RELEASE PENDING",
+                "SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING",
                 "PROJECT TEAM > SCM LOCATION SENT",
                 "FINANCE > SCM RECHECK PENDING"
         );
@@ -262,7 +263,10 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM PENDING"))
+        String status = order.getStatus();
+        boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
+
+        if (!allowed)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -280,7 +284,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(scmApproval);
 
 
-        order.setStatus("SYRMA PENDING");
+        order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
@@ -318,7 +322,10 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SYRMA PROD/TEST DONE > SCM ACTION PENDING"))
+        String status = order.getStatus();
+        boolean allowed = status.equalsIgnoreCase("SYRMA PROD/TEST DONE > SCM ACTION PENDING") || status.equalsIgnoreCase("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
+
+        if (!allowed)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }

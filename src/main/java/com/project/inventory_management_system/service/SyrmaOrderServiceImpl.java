@@ -52,7 +52,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         // Allowed Finance statuses (priority order)
         List<String> syrmaStatuses = List.of(
                 "SCM JIRA TICKET CLOSURE > SYRMA PENDING",
-                "RMA QC FAIL > SYRMA PENDING"
+                "RMA QC FAIL > SYRMA RE-PROD/TEST PENDING"
         );
 
         List<Orders> ordersList = orderRepository.findBySyrmaStatusWithLimitOffset(syrmaStatuses, offset, limit);
@@ -361,21 +361,21 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC FAIL > SYRMA PENDING")) {
+        if (!order.getStatus().equalsIgnoreCase("RMA QC FAIL > SYRMA RE-PROD/TEST PENDING")) {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
         SyrmaApproval syrmaApproval = syrmaApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         syrmaApproval.setOrder(order);
-        syrmaApproval.setSyrmaAction("Re-Work-Completed");
+        syrmaApproval.setSyrmaAction("RE-PROD/TEST-Completed");
         syrmaApproval.setActionTime(LocalDateTime.now());
         syrmaApproval.setActionDoneBy(user);
         syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA > SCM PENDING");
+        order.setStatus("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SCM");

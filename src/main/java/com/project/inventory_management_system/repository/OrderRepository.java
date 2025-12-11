@@ -99,8 +99,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
                 WHEN status = 'FINANCE APPROVED > SCM PENDING' THEN 6
                 WHEN status = 'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING' THEN 5
                 WHEN status = 'SYRMA PROD/TEST DONE > SCM ACTION PENDING' THEN 4
-                WHEN status = 'DISPATCH ORDER IS READY' THEN 3
-                WHEN status = 'PROJECT TEAM > SCM LOCATION SENT' THEN 2
+                WHEN status = 'RMA QC PASS > SCM ORDER RELEASE PENDING' THEN 3
+                WHEN status = 'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING' THEN 2
                 WHEN status = 'FINANCE > SCM RECHECK PENDING' THEN 1
                 ELSE 5
             END,
@@ -382,7 +382,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         ORDER BY 
             CASE 
                 WHEN status = 'SCM JIRA TICKET CLOSURE > SYRMA PENDING' THEN 1
-                WHEN status = 'RMA QC FAIL > SYRMA PENDING' THEN 2
+                WHEN status = 'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING' THEN 2
                 ELSE 5
             END,
             order_id DESC
