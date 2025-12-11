@@ -103,6 +103,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
                 WHEN status = 'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING' THEN 2
                 WHEN status = 'PROJECT TEAM > SCM READY FOR DISPATCH' THEN 1
                 WHEN status = 'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS' THEN 8
+                WHEN status = 'FINANCE > SCM PLAN TO DISPATCH' THEN 9
+                 WHEN status = 'FINANCE CLOSURE DONE > SCM CLOSURE PENDING' THEN 9
                 ELSE 5
             END,
             order_id DESC

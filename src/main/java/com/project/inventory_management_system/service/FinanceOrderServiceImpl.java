@@ -443,7 +443,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("FINANCE > SCM RECHECK PENDING");
+            order.setStatus("FINANCE > SCM PLAN TO DISPATCH");
             orderRepository.save(order);
 
 
@@ -470,7 +470,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
-            order.setStatus("FINANCE > SCM RECHECK PENDING");
+            order.setStatus("FINANCE > SCM PLAN TO DISPATCH");
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentname("SCM");
@@ -479,7 +479,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
             if (!mailsent)
             {
-                return ResponseEntity.status(500).body("Mail Not Sent");
+                return ResponseEntity.ok("Mail Not Sent");
             }
         }
 
@@ -525,7 +525,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("FINANCE REJECTED");
+            order.setStatus("FINANCE TEAM REJECTED");
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
@@ -551,7 +551,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
-            order.setStatus("FINANCE REJECTED");
+            order.setStatus("FINANCE TEAM REJECTED");
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
@@ -603,7 +603,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("ORDER COMPLETED");
+            order.setStatus("FINANCE CLOSURE DONE > SCM CLOSURE PENDING");
             orderRepository.save(order);
 
 

@@ -65,7 +65,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "RMA QC PASS > SCM ORDER RELEASE PENDING",
                 "SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING",
                 "PROJECT TEAM > SCM READY FOR DISPATCH",
-                "PROJECT TEAM NOTIFY > SCM LOCATION DETAILS"
+                "PROJECT TEAM NOTIFY > SCM LOCATION DETAILS",
+                "FINANCE > SCM PLAN TO DISPATCH",
+                "FINANCE CLOSURE DONE > SCM CLOSURE PENDING"
         );
 
         List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);
@@ -499,7 +501,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("FINANCE > SCM RECHECK PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("FINANCE > SCM PLAN TO DISPATCH"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Scm action");
         }
