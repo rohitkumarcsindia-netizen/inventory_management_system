@@ -735,4 +735,46 @@ public class ScmOrderServiceImpl implements ScmOrderService
                 "records", scmOrdersDtoList
         ));
     }
+
+    @Override
+    public ResponseEntity<?> scmOrderCompleted(String username, Long orderId)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        {
+            return ResponseEntity.status(403).body("Only Scm team can view complete orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (!order.getStatus().equalsIgnoreCase("FINANCE CLOSURE DONE > SCM CLOSURE PENDING"))
+        {
+            return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
+        }
+
+        order.setStatus("COMPLETED");
+        orderRepository.save(order);
+
+        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+
+        boolean mailsent = emailService.sendMailOrderCompletedForProjectTeam(department.getDepartmentEmail(), order);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.ok("Mail Not Sent");
+        }
+
+        return ResponseEntity.ok("Notification sent for Project Team");
+    }
 }

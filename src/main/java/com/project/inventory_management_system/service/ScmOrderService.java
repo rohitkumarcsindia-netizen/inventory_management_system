@@ -42,4 +42,6 @@ public interface ScmOrderService
     ResponseEntity<?> getScmCompleteOrdersFilterStatus(String username, String status, int page, int size);
 
     ResponseEntity<?> getScmCompleteOrdersFilterSearch(String username, String keyword, int page, int size);
+
+    ResponseEntity<?> scmOrderCompleted(String username, Long orderId);
 }

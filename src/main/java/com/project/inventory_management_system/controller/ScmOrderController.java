@@ -275,4 +275,16 @@ public class ScmOrderController
         return scmOrderService.getScmCompleteOrdersFilterSearch(userDetails.getUsername(), keyword, page, size);
 
     }
+
+    @PutMapping("/completed/{orderId}")
+    public ResponseEntity<?> scmOrderCompleted(HttpServletRequest request, @PathVariable Long orderId)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+        return scmOrderService.scmOrderCompleted(userDetails.getUsername(), orderId);
+    }
 }

@@ -416,46 +416,6 @@ public class EmailService
     }
 
     //Project notify Amisp Team Mail send Method
-    public boolean sendMailNotifyAmisp(String departmentEmail, Long orderId)
-    {
-
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-
-            message.setFrom(SENDERMAIL);
-            message.setTo(departmentEmail);
-            message.setSubject("Order #" + orderId + " – Build Ready (Request for AMISP Dispatch Coordination)");
-
-            String mailBody = ""
-                    + "Dear AMISP Team,\n\n"
-                    + "This is to inform you that the build for the below-mentioned order has been completed and is now "
-                    + "ready for dispatch. All internal processes including Production, Testing, QC, RMA closure, and "
-                    + "Project Team confirmation have been successfully completed.\n\n"
-                    + "ORDER DETAILS\n"
-                    + "-------------\n"
-                    + "Order ID         : " + orderId + "\n"
-                    + "Current Status   : Ready for Dispatch\n\n"
-                    + "Kindly proceed with AMISP-level coordination including shipment readiness, dispatch planning, "
-                    + "and serial number documentation.\n"
-                    + "Once dispatch arrangements are finalized, please share the details so SCM can execute shipment "
-                    + "and update IMS.\n\n"
-                    + "Thanks & Regards,\n"
-                    + "Project Team\n"
-                    + "IMS Portal";
-
-            message.setText(mailBody);
-
-            mailSender.send(message);
-            System.out.println("Mail sent successfully to " + departmentEmail);
-            return true;
-        } catch (Exception e) {
-            System.out.println("Mail sending failed: " + e.getMessage());
-            return false;
-        }
-    }
-
-
-    //Project notify Amisp Team Mail send Method
     public boolean sendMailNotifyAmispPdiType(String departmentEmail, Orders order)
     {
 
@@ -790,6 +750,75 @@ public class EmailService
                             "Regards,\n" +
                             "SCM Team\n\n" +
                             "*** This is an auto-generated email from IMS Workflow System ***";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailOrderCompletedForProjectTeam(String departmentEmail, Orders order)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Order Completion Notification – Order ID: " + order.getOrderId());
+
+            String mailBody =
+                            "Dear Project Team,\n\n" +
+                            "We are pleased to inform you that the following order has been successfully completed:\n\n" +
+                            "• Order ID: " + order.getOrderId() + "\n" +
+                            "• Project Name: " + order.getProject() + "\n" +
+                            "• Product Type: " + order.getProductType() + "\n" +
+                            "• Total Quantity: " + order.getProposedBuildPlanQty() + "\n\n" +
+                            "All required processes including dispatch, delivery confirmation, and final approvals have been completed.\n" +
+                            "No further action is required from your side.\n\n" +
+                            "Thank you for your support and coordination throughout the process.\n\n" +
+                            "Regards,\n" +
+                            "SCM Team";
+
+            message.setText(mailBody);
+
+            mailSender.send(message);
+            System.out.println("Mail sent successfully to " + departmentEmail);
+            return true;
+        }
+        catch (Exception e)
+        {
+            System.out.println("Mail sending failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean sendMailDocumentCloseForScm(String departmentEmail, Orders order)
+    {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+
+            message.setFrom(SENDERMAIL);
+            message.setTo(departmentEmail);
+            message.setSubject("Financial Document Closure – Action Required for Order ID: " + order.getOrderId());
+
+            String mailBody =
+                            "Dear SCM Team,\n\n" +
+                            "This is to inform you that the Finance Team has successfully completed and closed the financial document review for the following order:\n\n" +
+                            "• Order ID: " + order.getOrderId() + "\n" +
+                            "• Project Name: " + order.getProject() + "\n" +
+                            "• Product Type: " + order.getProductType() + "\n" +
+                            "• Approved Amount / GST/FOC Status: Completed\n\n" +
+                            "You may now proceed with the next steps as per the SCM workflow.\n\n" +
+                            "Please take the necessary action at your earliest convenience.\n\n" +
+                            "Regards,\n" +
+                            "Finance Team";
 
             message.setText(mailBody);
 

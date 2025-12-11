@@ -606,6 +606,14 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             order.setStatus("FINANCE CLOSURE DONE > SCM CLOSURE PENDING");
             orderRepository.save(order);
 
+        Department department = departmentRepository.findByDepartmentname("SCM");
+
+        boolean mailsent = emailService.sendMailDocumentCloseForScm(department.getDepartmentEmail(), order);
+
+        if (!mailsent)
+        {
+            return ResponseEntity.ok("Mail Not Sent");
+        }
 
         return ResponseEntity.ok("Order Document Closure Successfully");
     }
