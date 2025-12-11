@@ -367,12 +367,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC PASS > SCM PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("RMA QC PASS > SCM ORDER RELEASE PENDING"))
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM > PROJECT TEAM BUILD IS READY");
+        order.setStatus("SCM Notify > PROJECT TEAM BUILD IS READY");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
