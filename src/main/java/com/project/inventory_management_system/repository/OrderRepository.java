@@ -381,7 +381,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
         WHERE status IN (:statuses)
         ORDER BY 
             CASE 
-                WHEN status = 'SYRMA PENDING' THEN 1
+                WHEN status = 'SCM JIRA TICKET CLOSURE > SYRMA PENDING' THEN 1
                 WHEN status = 'RMA QC FAIL > SYRMA PENDING' THEN 2
                 ELSE 5
             END,

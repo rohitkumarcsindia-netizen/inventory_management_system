@@ -204,7 +204,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("CLOUD > SCM PENDING"))
+        if (!order.getStatus().equalsIgnoreCase("CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING"))
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -224,7 +224,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(jiraDetailsUpdate);
 
 
-        order.setStatus("SYRMA PENDING");
+        order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentname("SYRMA");

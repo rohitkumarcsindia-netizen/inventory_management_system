@@ -51,7 +51,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
 
         // Allowed Finance statuses (priority order)
         List<String> syrmaStatuses = List.of(
-                "SYRMA PENDING",
+                "SCM JIRA TICKET CLOSURE > SYRMA PENDING",
                 "RMA QC FAIL > SYRMA PENDING"
         );
 

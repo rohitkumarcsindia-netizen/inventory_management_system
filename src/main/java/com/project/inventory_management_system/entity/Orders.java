@@ -44,7 +44,7 @@ public class Orders
     @Column(name = "initiator", length = 100)
     private String initiator;
 
-    @Column(name = "status", length = 50)
+    @Column(name = "status", length = 225)
     private String status;
 
     @Column(name = "pms_remarks", columnDefinition = "TEXT")
