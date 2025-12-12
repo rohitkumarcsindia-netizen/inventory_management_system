@@ -561,7 +561,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             order.setOrderType(ordersDto.getOrderType());
             order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
             order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
-            order.setInitiator(ordersDto.getInitiator());
+            order.setInitiator(user.getUsername());
             order.setPmsRemarks(ordersDto.getPmsRemarks());
             order.setStatus("PROJECT TEAM > SCM PENDING");
 
