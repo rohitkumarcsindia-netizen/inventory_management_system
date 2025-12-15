@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import httpService from "../service/httpService";
 import { motion } from "framer-motion";
-import {removeToken } from "../service/cookieService";
+import {removeToken, getUsernameFromToken } from "../service/cookieService";
 
 import { useRouter } from "next/navigation";
 
@@ -20,10 +20,10 @@ export default function OrderInitiation() {
     formState: { errors },
   } = useForm();
 
-  // useEffect(() => {
-  //   const name = getUsernameFromToken();
-  //   setUsername(name || "");
-  // }, []);
+  useEffect(() => {
+    const name = getUsernameFromToken();
+    setUsername(name || "");
+  }, []);
 
  
 
