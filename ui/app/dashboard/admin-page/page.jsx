@@ -11,7 +11,9 @@ import { useRouter } from "next/navigation";
 const normalizeRecord = (o) => ({
   orderId: o.orderId,
   createAt: o.createAt,
+  expectedOrderDate: o.expectedOrderDate,
   project: o.project,
+  reasonForBuildRequest: o.reasonForBuildRequest,
   initiator: o.initiator || "-",
   productType: o.productType,
   proposedBuildPlanQty: o.proposedBuildPlanQty,

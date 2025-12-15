@@ -44,6 +44,90 @@ export default function AdminTable({
     },
   ];
 
+   const ExpandedOrderDetails = ({ data }) => {
+ const Field = ({ label, value, type = "text" }) => {
+  let formattedValue = value;
+
+  // DATE formatting (safe)
+  if (type === "date") {
+    if (!value) {
+      formattedValue = "-";
+    } else {
+      formattedValue = value.includes("T")
+        ? value.split("T")[0]
+        : value;
+    }
+  }
+
+  // TEXT fallback
+  if (type !== "date") {
+    formattedValue =
+      value === null || value === undefined || value === ""
+        ? "-"
+        : value;
+  }
+
+  return (
+    <div>
+      <label className="text-xs font-semibold text-gray-600">
+        {label}
+      </label>
+
+      {/* 🔥 ALWAYS TEXT INPUT */}
+      <input
+        type="text"
+        value={formattedValue}
+        readOnly
+        className="w-full mt-1 px-3 py-2 rounded-md border 
+                   bg-gray-100 text-gray-800 text-sm 
+                   cursor-not-allowed"
+      />
+    </div>
+  );
+};
+
+
+
+
+  return (
+    <div className="p-5 bg-gray-50 rounded-lg border border-gray-200">
+      <div className="grid grid-cols-2 gap-4">
+
+        <Field label="Order ID" value={data.orderId} />
+        <Field label="Order Type" value={data.orderType} />
+        <Field label="Product Type" value={data.productType} />
+
+        <Field
+          label="Expected Date"
+          value={data.expectedOrderDate}
+          type="date"
+        />
+        <Field
+          label="Created At"
+          value={data.createAt}
+          type="date"
+        />
+
+        <Field
+          label="Quantity"
+          value={data.proposedBuildPlanQty}
+        />
+
+        <Field label="Project" value={data.project} />
+        <Field label="Reason" value={data.reasonForBuildRequest} />
+        <Field
+          label="Initiator"
+          value={data.users?.username || data.initiator}
+        />
+
+          <Field label="Status" value={data.status} />
+        
+
+      </div>
+    </div>
+  );
+};
+
   return (
     <div>
 
@@ -131,6 +215,10 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
         pagination
         paginationServer
         paginationTotalRows={filteredCount > 0 ? filteredCount : totalOrders}
+
+        expandableRows 
+        expandableRowsComponent={ExpandedOrderDetails} 
+        expandableRowsHideExpander={false} 
         paginationPerPage={ordersPerPage}
         paginationDefaultPage={currentPage}
         onChangePage={(p) => setCurrentPage(p)}
