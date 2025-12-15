@@ -166,8 +166,29 @@ export default function AdminCompletedOrders() {
     setIsDateApplied(false);
   };
 
+    const handleLogout = () => {
+    removeToken();
+    router.push("/login");
+  };
+
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10">
+
+      {/* TOP RIGHT */}
+      <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-5 py-2 rounded-lg border border-[#cce7ff]">
+        <span className="text-lg font-semibold text-[#003b66]">👤 {username}</span>
+
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-4 py-1.5 rounded-md hover:bg-red-600 transition font-medium"
+        >
+          Logout
+        </button>
+      </div>
+
+       <div className="absolute top-4 left-6">
+        <img src="/cyanconnode-logo.png" className="w-60 opacity-90" />
+      </div>
 
       <div className="flex items-center gap-3 mb-4 mt-5">
         <Cpu className="w-10 h-10 text-[#02A3EE]" />
