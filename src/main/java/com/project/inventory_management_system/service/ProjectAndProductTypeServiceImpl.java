@@ -38,6 +38,7 @@ public class ProjectAndProductTypeServiceImpl implements ProjectAndProductTypeSe
 
         //Dto to Entity
         ProjectAndProductType projectAndProductType = projectAndProductTypeMappers.toEntity(projectAndProductTypeDto);
+        projectAndProductType.setUsers(user);
         projectAndProductTypeRepository.save(projectAndProductType);
 
         return ResponseEntity.ok("Saved Successfully");

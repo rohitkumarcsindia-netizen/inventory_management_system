@@ -11,4 +11,6 @@ public class ProjectAndProductTypeDto
     private String projectType;
 
     private String productType;
+
+    private UserDto createdBy;
 }

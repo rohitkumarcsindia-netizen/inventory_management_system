@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ProjectAndProductTypeMappers
 {
+    private final UserMapper userMapper;
+
     //Dto to Entity
     public ProjectAndProductType toEntity(ProjectAndProductTypeDto projectAndProductTypeDto)
     {
@@ -17,6 +19,7 @@ public class ProjectAndProductTypeMappers
         ProjectAndProductType projectAndProductType = new ProjectAndProductType();
         projectAndProductType.setProjectType(projectAndProductTypeDto.getProjectType().toUpperCase());
         projectAndProductType.setProductType(projectAndProductTypeDto.getProductType().toUpperCase());
+        projectAndProductType.setUsers(userMapper.toEntity(projectAndProductTypeDto.getCreatedBy()));
 
         return projectAndProductType;
     }
@@ -30,6 +33,7 @@ public class ProjectAndProductTypeMappers
         projectAndProductTypeDto.setId(projectAndProductType.getId());
         projectAndProductTypeDto.setProjectType(projectAndProductType.getProjectType());
         projectAndProductTypeDto.setProductType(projectAndProductType.getProductType());
+        projectAndProductTypeDto.setCreatedBy(userMapper.toDto(projectAndProductType.getUsers()));
 
         return projectAndProductTypeDto;
     }
