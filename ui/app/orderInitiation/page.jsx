@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import httpService from "../service/httpService";
 import { motion } from "framer-motion";
-import {removeToken, getUsernameFromToken } from "../service/cookieService";
+import { removeToken, getUsernameFromToken } from "../service/cookieService";
 
 import { useRouter } from "next/navigation";
 
 export default function OrderInitiation() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
+  const today = new Date().toISOString().split("T")[0];
 
   const router = useRouter();
 
@@ -24,10 +25,6 @@ export default function OrderInitiation() {
     const name = getUsernameFromToken();
     setUsername(name || "");
   }, []);
-
- 
-
-
 
   //  -----SUBMIT-----
   const handleOnSubmit = async (order) => {
@@ -49,7 +46,6 @@ export default function OrderInitiation() {
   const handleOnSave = async (order) => {
     setLoading(true);
 
-
     try {
       await httpService.postWithAuth("/api/orders/project/save", order);
       alert("✅ Order saved!");
@@ -62,7 +58,7 @@ export default function OrderInitiation() {
     }
   };
 
-   // LOGOUT
+  // LOGOUT
   const handleLogout = () => {
     removeToken();
     router.push("/login");
@@ -70,7 +66,6 @@ export default function OrderInitiation() {
 
   return (
     <div className="min-h-screen bg-[#e3f3ff] flex justify-center items-center p-4 relative overflow-hidden">
-
       {/* 🔹 SAME USERNAME + LOGOUT WHITE BOX (GLOBAL STYLE) */}
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-4 py-2 rounded-lg border border-[#cce7ff] z-50">
         <span className="text-lg font-semibold text-[#003b66]">
@@ -87,7 +82,11 @@ export default function OrderInitiation() {
 
       {/* Logo */}
       <div className="absolute top-6 left-6 z-20">
-        <img src="/cyanconnode-logo.png" alt="Logo" className="w-60 opacity-90" />
+        <img
+          src="/cyanconnode-logo.png"
+          alt="Logo"
+          className="w-60 opacity-90"
+        />
       </div>
 
       <motion.div
@@ -102,84 +101,168 @@ export default function OrderInitiation() {
 
         <form onSubmit={handleSubmit(handleOnSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
             {/* Order Date */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Expected Date</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Expected Date
+              </label>
               <input
                 type="date"
-                {...register("expectedOrderDate", { required: true })}
+                min={today}
+                {...register("expectedOrderDate", {
+                  required: "Expected date is required",
+                  validate: (v) => v >= today || "Past date is not allowed",
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
               />
+              {errors.expectedOrderDate && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.expectedOrderDate.message}
+                </p>
+              )}
             </div>
 
             {/* Project */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Project</label>
-              <input
-                type="text"
-                {...register("project", { required: true })}
-                placeholder="Enter Project Name"
+              <label className="block text-sm text-gray-600 mb-1">
+                Project
+              </label>
+              <select
+                {...register("project", { required: "Project is required" })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              />
+              >
+                <option value="">Select Project</option>
+                <option value="SBPDCL1">SBPDCL1</option>
+                <option value="SBPDCL2">SBPDCL2</option>
+                <option value="APDCL">APDCL</option>
+                <option value="MPWZ4">MPWZ4</option>
+                <option value="MPWZ1">MPWZ1</option>
+                <option value="MPWZ2">MPWZ2</option>
+                <option value="TANGEDCO">TANGEDCO</option>
+                <option value="JVVNL">JVVNL</option>
+                <option value="HPSEB">HPSEB</option>
+                <option value="MSEDCL-Nagpur">MSEDCL-Nagpur</option>
+                <option value="GED">GED</option>
+              </select>
+              {errors.project && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.project.message}
+                </p>
+              )}
             </div>
 
             {/* Product Type */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Product Type</label>
-              <input
-                type="text"
-                {...register("productType", { required: true })}
-                placeholder="Enter Product Type"
+              <label className="block text-sm text-gray-600 mb-1">
+                Product Type
+              </label>
+              <select
+                {...register("productType", {
+                  required: "Product type is required",
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              />
+              >
+                <option value="">Select Product</option>
+                <option value="Node">NODE</option>
+                <option value="GW200">GW200</option>
+                <option value="GW7">GW7</option>
+                <option value="IPA3A">IPA3A</option>
+                <option value="IPA3B">IPA3B</option>
+              </select>
+              {errors.productType && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.productType.message}
+                </p>
+              )}
             </div>
 
             {/* Quantity */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Proposed Build Plan Qty</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Proposed Build Plan Qty
+              </label>
               <input
                 type="number"
-                {...register("proposedBuildPlanQty", { required: true })}
-                placeholder="Enter Quantity"
+                {...register("proposedBuildPlanQty", {
+                  required: "Quantity is required",
+                  min: { value: 1, message: "Quantity must be at least 1" },
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
               />
+              {errors.proposedBuildPlanQty && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.proposedBuildPlanQty.message}
+                </p>
+              )}
             </div>
 
             {/* Reason */}
             <div className="sm:col-span-2">
-              <label className="block text-sm text-gray-600 mb-1">Reason for Build Request</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Reason for Build Request
+              </label>
               <textarea
                 rows="2"
-                {...register("reasonForBuildRequest", { required: true })}
-                placeholder="Write Reason..."
+                {...register("reasonForBuildRequest", {
+                  required: "Reason is required",
+                  minLength: {
+                    value: 10,
+                    message: "Minimum 10 characters required",
+                  },
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              ></textarea>
+              />
+              {errors.reasonForBuildRequest && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.reasonForBuildRequest.message}
+                </p>
+              )}
             </div>
 
             {/* ORDER TYPE */}
             <div>
-              <label className="block text-sm text-gray-600 mb-1">Order Type</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                Order Type
+              </label>
               <select
-                {...register("orderType", { required: true })}
+                {...register("orderType", {
+                  required: "Order type is required",
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
               >
+                <option value="">Select Order Type</option>
                 <option value="purchase">Purchase</option>
                 <option value="free of cost">Free of Cost</option>
               </select>
+              {errors.orderType && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.orderType.message}
+                </p>
+              )}
             </div>
 
             {/* PMS Remarks */}
             <div className="sm:col-span-2">
-              <label className="block text-sm text-gray-600 mb-1">PM's Remarks</label>
+              <label className="block text-sm text-gray-600 mb-1">
+                PM's Remarks
+              </label>
               <textarea
                 rows="2"
-                {...register("pmsRemarks", { required: true })}
-                placeholder="Write PM's Remarks..."
+                {...register("pmsRemarks", {
+                  required: "PM remarks are required",
+                  minLength: {
+                    value: 5,
+                    message: "Minimum 5 characters required",
+                  },
+                })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              ></textarea>
+              />
+              {errors.pmsRemarks && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.pmsRemarks.message}
+                </p>
+              )}
             </div>
-
           </div>
 
           {/* Buttons */}
@@ -196,7 +279,9 @@ export default function OrderInitiation() {
               type="submit"
               disabled={loading}
               className={`px-8 py-3 rounded-lg text-white shadow-lg 
-                ${loading ? "bg-[#8ad4f9]" : "bg-[#02A3EE] hover:bg-[#008ac5]"}`}
+                ${
+                  loading ? "bg-[#8ad4f9]" : "bg-[#02A3EE] hover:bg-[#008ac5]"
+                }`}
             >
               {loading ? "Submitting..." : "Submit"}
             </button>
