@@ -462,14 +462,20 @@ const notifyScm = async (orderId) => {
         ]
 
   const ExpandedOrderDetails = ({ data }) => {
-  const Field = ({ label, value, type = "text" }) => (
+  const Field = ({ label, value, type = "text" }) => {
+  const formattedValue =
+    type === "date" && value
+      ? value.split("T")[0] // 👈 YYYY-MM-DD
+      : value || "-";
+
+  return (
     <div>
       <label className="text-xs font-semibold text-gray-600">
         {label}
       </label>
       <input
         type={type}
-        value={value || "-"}
+        value={formattedValue}
         readOnly
         className="w-full mt-1 px-3 py-2 rounded-md border 
                    bg-gray-100 text-gray-800 text-sm 
@@ -477,6 +483,8 @@ const notifyScm = async (orderId) => {
       />
     </div>
   );
+};
+
 
   return (
     <div className="p-5 bg-gray-50 rounded-lg border border-gray-200">
@@ -484,6 +492,7 @@ const notifyScm = async (orderId) => {
 
         <Field label="Order ID" value={data.orderId} />
         <Field label="Order Type" value={data.orderType} />
+        <Field label="Product Type" value={data.productType} />
 
         <Field
           label="Expected Date"
@@ -492,7 +501,7 @@ const notifyScm = async (orderId) => {
         />
         <Field
           label="Created At"
-          value={data.expectedOrderDate}
+          value={data.createAt}
           type="date"
         />
 
@@ -502,14 +511,14 @@ const notifyScm = async (orderId) => {
         />
 
         <Field label="Project" value={data.project} />
+        <Field label="Reason" value={data.reasonForBuildRequest} />
         <Field
           label="Initiator"
           value={data.users?.username || data.initiator}
         />
 
-        <div className="col-span-2">
           <Field label="Status" value={data.status} />
-        </div>
+        
 
       </div>
     </div>
