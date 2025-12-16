@@ -38,6 +38,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     private final ScmApprovalRepository scmApprovalRepository;
     private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
     private final ScmOrderMapper scmOrderMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
 
 
@@ -56,21 +57,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        // Allowed SCM statuses (priority order)
-        List<String> scmStatuses = List.of(
-                "PROJECT TEAM > SCM PENDING",
-                "FINANCE APPROVED > SCM PENDING",
-                "CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING",
-                "SYRMA PROD/TEST DONE > SCM ACTION PENDING",
-                "RMA QC PASS > SCM ORDER RELEASE PENDING",
-                "SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING",
-                "PROJECT TEAM > SCM READY FOR DISPATCH",
-                "PROJECT TEAM NOTIFY > SCM LOCATION DETAILS",
-                "FINANCE > SCM PLAN TO DISPATCH",
-                "FINANCE CLOSURE DONE > SCM CLOSURE PENDING"
-        );
+        List<String> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
 
-        List<Orders> ordersList = orderRepository.findOrdersForScm(scmStatuses, offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(scmStatuses, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -84,7 +73,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countOrdersForScm(scmStatuses),
+                "ordersCount", orderRepository.countByStatus(scmStatuses),
                 "orders", ordersDtoList
         ));
     }

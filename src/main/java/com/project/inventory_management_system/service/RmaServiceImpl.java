@@ -34,6 +34,7 @@ public class RmaServiceImpl implements RmaService
     private final EmailService emailService;
     private final RmaOrdersMapper rmaOrdersMapper;
     private final OrdersCompleteMapper ordersCompleteMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
     @Override
     public ResponseEntity<?> getPendingOrdersForRma(String username, int offset, int limit)
@@ -50,7 +51,9 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only Rma team can view pending orders");
         }
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset("SCM NOTIFY > RMA QC PENDING", offset, limit);
+        List<String> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
+
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(rmaStatuses, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -63,7 +66,7 @@ public class RmaServiceImpl implements RmaService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM NOTIFY > RMA QC PENDING"),
+                "ordersCount", orderRepository.countByStatus(rmaStatuses),
                 "orders", ordersDtoList
         ));
     }

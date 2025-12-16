@@ -37,6 +37,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     private final EmailService emailService;
     private final CloudApprovalRepository cloudApprovalRepository;
     private final CloudOrderMapper cloudOrderMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
     //Cloud Team getOrders Method
     @Override
@@ -54,7 +55,9 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM CREATED TICKET > CLOUD PENDING", offset, limit);
+        List<String> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
+
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(cloudStatuses, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -68,7 +71,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM CREATED TICKET > CLOUD PENDING"),
+                "ordersCount", orderRepository.countByStatus(cloudStatuses),
                 "orders", ordersDtoList
         ));
     }

@@ -15,7 +15,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Orders, Long>
 {
-    List<Orders> findByUsers(Users users);
 
     Orders findByOrderIdAndUsers(Long orderId, Users user);
 
@@ -30,78 +29,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
             @Param("limit") int limit);
 
 
-    // Orders find Using status
-    @Query(
-            value = "SELECT * FROM orders WHERE status = :status ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
-            nativeQuery = true
-    )
-    List<Orders> findByStatusWithLimitOffset(
-            @Param("status")String status,
-            @Param("offset") int offset,
-            @Param("limit") int limit);
-
-    @Query(value = """
-        SELECT * FROM orders
-        WHERE status IN (
-            'PROJECT TEAM > FINANCE PRE APPROVAL PENDING',
-            'SCM > FINANCE POST APPROVAL PENDING',
-            'LOGISTIC > FINANCE CLOSURE PENDING'
-        )
-        ORDER BY order_id DESC
-        LIMIT :limit OFFSET :offset
-        """, nativeQuery = true)
-    List<Orders> findByFinanceStatusWithLimitOffset(@Param("statuses") List<String> statuses,
+    @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset",
+            nativeQuery = true)
+    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses,
                                                  @Param("offset") int offset,
                                                  @Param("limit") int limit);
-
-    @Query(value = """
-        SELECT * FROM orders
-        WHERE status IN (
-            'SCM > LOGISTIC PENDING',
-            'DELIVERY PENDING',
-            'PDI PENDING'
-        )
-        ORDER BY order_id DESC
-        LIMIT :limit OFFSET :offset
-        """, nativeQuery = true)
-    List<Orders> findByLogisticStatusWithLimitOffset(@Param("statuses") List<String> statuses,
-                                                    @Param("offset") int offset,
-                                                    @Param("limit") int limit);
-
-    @Query(value = """
-        SELECT * FROM orders
-        WHERE status IN (
-            'PDI PENDING',
-            'SCM > AMISP RECHECK PENDING'
-        )
-        ORDER BY order_id DESC
-        LIMIT :limit OFFSET :offset
-        """, nativeQuery = true)
-    List<Orders> findByStatusListWithLimitOffset(@Param("statuses") List<String> statuses,
-                                                 @Param("offset") int offset,
-                                                 @Param("limit") int limit);
-
-    @Query(value = """
-        SELECT * FROM orders
-        WHERE status IN (
-            'PROJECT TEAM > SCM PENDING',
-            'FINANCE APPROVED > SCM PENDING',
-            'CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING',
-            'SYRMA PROD/TEST DONE > SCM ACTION PENDING',
-            'RMA QC PASS > SCM ORDER RELEASE PENDING',
-            'SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING',
-            'PROJECT TEAM > SCM READY FOR DISPATCH',
-            'PROJECT TEAM NOTIFY > SCM LOCATION DETAILS',
-            'FINANCE > SCM PLAN TO DISPATCH',
-            'FINANCE CLOSURE DONE > SCM CLOSURE PENDING'
-        )
-        ORDER BY order_id DESC
-        LIMIT :limit OFFSET :offset
-        """, nativeQuery = true)
-    List<Orders> findOrdersForScm(@Param("statuses") List<String> statuses,
-                                  @Param("offset") int offset,
-                                  @Param("limit") int limit);
-
 
 
     // Order Count using userId
@@ -109,32 +41,16 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Long countByUserId(@Param("userId") long userId);
 
     // Order Count using status
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status = :status", nativeQuery = true)
-    Long countByStatus(@Param("status") String status);
-
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
-    long countOrdersForScm(@Param("statuses") List<String> statuses);
-
-    // Order Count using status
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:financeStatuses)", nativeQuery = true)
-    Long countByStatusList(@Param("financeStatuses") List<String> financeStatuses);
-
-    // Order Count using status
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:amispStatuses)", nativeQuery = true)
-    Long countByAmispStatusList(@Param("amispStatuses") List<String> amispStatuses);
-
+    long countByStatus(@Param("statuses") List<String> statuses);
 
 
     //Search filter Query
     //Date filter
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE o.createAt BETWEEN :start AND :end
-      AND o.users.userId = :userId
-""")
+    @Query("SELECT o FROM Orders o WHERE o.createAt BETWEEN :startDate AND :endDate AND o.users.userId = :userId")
     Page<Orders> findByOrderDateBetweenAndUser(
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
             Long userId,
             Pageable pageable
     );
@@ -142,7 +58,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     //status filter
     @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.users.userId = :userId")
     Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
-
 
 
     //Universal search query for project team
@@ -272,35 +187,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
     Page<Orders> searchRma(@Param("keyword") String keyword, Pageable pageable);
 
 
-    //Status searching query for amisp pending button
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE o.status IN ('AMISP PENDING', 'SCM > AMISP RECHECK PENDING')
-      AND o.createAt BETWEEN :start AND :end
-""")
-    Page<Orders> findByDateRangeForAmisp(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
-
-
-    //status filter amisp pending
-    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatusForAmisp(@Param("status") String status, Pageable pageable);
-
-    //Universal searching query for amisp pending button
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE
-        o.status IN ('AMISP PENDING', 'SCM > AMISP RECHECK PENDING') AND
-        (
-             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
-        )
-""")
-    Page<Orders> searchAmisp(@Param("keyword") String keyword, Pageable pageable);
-
     //Status searching query for logistic pending button
     @Query("""
     SELECT o FROM Orders o
@@ -372,19 +258,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>
 """)
     Page<Orders> searchScm(@Param("keyword") String keyword, Pageable pageable);
 
-    //syrma pending data fetch
-    @Query(value = """
-        SELECT * FROM orders
-        WHERE status IN (
-            'SCM JIRA TICKET CLOSURE > SYRMA PENDING',
-            'RMA QC FAIL > SYRMA RE-PROD/TEST PENDING'
-        )
-        ORDER BY order_id DESC
-        LIMIT :limit OFFSET :offset
-        """, nativeQuery = true)
-    List<Orders> findBySyrmaStatusWithLimitOffset(@Param("statuses") List<String> statuses,
-                                                    @Param("offset") int offset,
-                                                    @Param("limit") int limit);
 
 
     // Order Count using status for syrma

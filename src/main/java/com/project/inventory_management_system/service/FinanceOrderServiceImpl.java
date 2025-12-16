@@ -39,6 +39,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
     private final EmailService emailService;
     private final FinanceApprovalRepository financeApprovalRepository;
     private final FinanceOrderMapper financeOrderMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
 
     @Override
@@ -56,14 +57,9 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Only finance team can view pending orders");
         }
 
-        // Allowed Finance statuses (priority order)
-        List<String> financeStatuses = List.of(
-                "PROJECT TEAM > FINANCE PRE APPROVAL PENDING",
-                "SCM > FINANCE POST APPROVAL PENDING",
-                "LOGISTIC > FINANCE CLOSURE PENDING"
-        );
+        List<String> financeStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
 
-        List<Orders> orders = orderRepository.findByFinanceStatusWithLimitOffset(financeStatuses, offset, limit);
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(financeStatuses, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -76,7 +72,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatusList(financeStatuses),
+                "ordersCount", orderRepository.countByStatus(financeStatuses),
                 "orders", ordersDtoList
         ));
     }

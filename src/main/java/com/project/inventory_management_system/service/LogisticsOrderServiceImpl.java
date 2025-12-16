@@ -35,6 +35,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final LogisticOrderMapper logisticOrderMapper;
     private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
 
     @Override
@@ -51,15 +52,9 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         {
             return ResponseEntity.status(403).body("Only logistic team can view pending orders");
         }
+        List<String> logisticStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
 
-        // Allowed Finance statuses (priority order)
-        List<String> logisticStatuses = List.of(
-                "SCM > LOGISTIC PENDING",
-                "DELIVERY PENDING",
-                "PDI PENDING"
-        );
-
-        List<Orders> orders = orderRepository. findByLogisticStatusWithLimitOffset(logisticStatuses, offset, limit);
+        List<Orders> orders = orderRepository. findByStatusWithLimitOffset(logisticStatuses, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -72,7 +67,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatusList(logisticStatuses),
+                "ordersCount", orderRepository.countByStatus(logisticStatuses),
                 "orders", ordersDtoList
         ));
     }

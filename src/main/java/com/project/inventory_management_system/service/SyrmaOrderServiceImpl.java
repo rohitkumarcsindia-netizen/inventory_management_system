@@ -35,6 +35,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final SyrmaApprovalRepository syrmaApprovalRepository;
     private final SyrmaOrdersMapper syrmaOrdersMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
 
     @Override
@@ -49,13 +50,9 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        // Allowed Finance statuses (priority order)
-        List<String> syrmaStatuses = List.of(
-                "SCM JIRA TICKET CLOSURE > SYRMA PENDING",
-                "RMA QC FAIL > SYRMA RE-PROD/TEST PENDING"
-        );
+        List<String> syrmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
 
-        List<Orders> ordersList = orderRepository.findBySyrmaStatusWithLimitOffset(syrmaStatuses, offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(syrmaStatuses, offset, limit);
 
         if (ordersList.isEmpty()) {
             return ResponseEntity.ok("No Orders found");
