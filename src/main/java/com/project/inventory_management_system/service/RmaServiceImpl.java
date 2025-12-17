@@ -224,8 +224,10 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForRma(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");

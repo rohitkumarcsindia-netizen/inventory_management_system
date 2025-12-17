@@ -51,9 +51,9 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<String> syrmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(syrmaStatuses, offset, limit);
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statuses, offset, limit);
 
         if (ordersList.isEmpty()) {
             return ResponseEntity.ok("No Orders found");
@@ -66,7 +66,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countBySyrmaStatusList(syrmaStatuses),
+                "ordersCount", orderRepository.countByStatus(statuses),
                 "orders", ordersDtoList
         ));
     }
@@ -159,8 +159,10 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForSyrma(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
         if (ordersPage.isEmpty()) {
             return ResponseEntity.ok("No orders found");
         }
@@ -191,7 +193,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByStatusForSyrma(status, pageable);
+        Page<Orders> ordersPage = orderRepository.findByStatus(status, pageable);
 
         if (ordersPage.isEmpty()) {
             return ResponseEntity.ok("No orders found");

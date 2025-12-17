@@ -527,8 +527,10 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForScm(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
@@ -563,7 +565,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatusForScm(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(status, pageable);
 
         if (ordersPage.isEmpty())
         {
