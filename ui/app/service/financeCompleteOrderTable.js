@@ -31,13 +31,43 @@ export default function FinanceCompleteOrderTable({
       ? filteredData
       : orders;
 
+      const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
+
   const columns = [
     { name: "ORDER ID", selector: row => row.orderId || "-", 
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
      },
     { name: "ORDER DATE", selector: row => row.createAt || "-" },
-    { name: "PROJECT", selector: row => row.project || "-" },
-    { name: "PRODUCT TYPE", selector: row => row.productType || "-", grow: 1.1 },
+    { name: "PROJECT", selector: row => row.project || "-",
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
+    { name: "PRODUCT TYPE", selector: row => row.productType || "-", grow: 1.1,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: row => row.proposedBuildPlanQty || "-" },
     { name: "ACTION", selector: row => row.financeAction || "-",
        grow: 1.5,

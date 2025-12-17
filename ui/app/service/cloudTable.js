@@ -33,15 +33,21 @@ export default function CloudTable({
 
   // POPUP STATES
   const [popupOrderId, setPopupOrderId] = useState(null);
-  const [ticketData, setTicketData] = useState({
-    jiraDescription: "",
-    priority: "",
-    cloudComments: ""
-  });
+ 
 
-  const handleInput = (e) => {
-    setTicketData({ ...ticketData, [e.target.name]: e.target.value });
-  };
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
     // REACT HOOK FORM
   // -------------------------
@@ -105,9 +111,25 @@ export default function CloudTable({
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt, sortable: true },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "REASON", selector: (row) => row.reasonForBuildRequest },
 

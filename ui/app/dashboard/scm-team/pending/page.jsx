@@ -253,10 +253,10 @@ const notifyLogistic = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/orders/scm/dispatch/${orderId}`,
-      {}   // ❗ no body required
+      {}   //no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+    alert(res);   // backend response text alert me show hoga
     fetchOrders(); // UI refresh
   } catch (error) {
     console.error("Notify Error:", error);

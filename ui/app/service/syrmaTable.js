@@ -26,10 +26,6 @@ export default function SyrmaTable({
   searchText,
   applySearchFilter,
   searchFilteredData,
-  setSearchText,
-  setSearchFilteredData,
-  isStatusApplied,
-  SetIsStatusApplied,
   statusFilter,
 
   applyStatusFilter,
@@ -40,13 +36,26 @@ export default function SyrmaTable({
 
   // POPUP STATE
   const [popupOrderId, setPopupOrderId] = useState(null);
-  const [syrmaComment, setSyrmaComment] = useState("");
   const [actionType, setActionType] = useState("");
    
   // VALIDATION
   const syrmaSchema = yup.object().shape({
   syrmaComments: yup.string().required("Syrma Comment is required"),
 });
+
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
 // REACT HOOK FORM
 const {
@@ -123,9 +132,25 @@ const {
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "REASON", selector: (row) => row.reasonForBuildRequest },
     { name: "STATUS", selector: (row) => row.status,

@@ -20,12 +20,8 @@ export default function OrdersTable({
   setCurrentPage,
   ordersPerPage,
   setOrdersPerPage,
-  
-  
-  notifyLocScm,
   searchText,
   applySearchFilter,
-
   startDate,
   endDate,
   setStartDate,
@@ -49,22 +45,25 @@ const [showPostPopup, setShowPostPopup] = useState(false);
 
   //Notify to AMISP POPUP
   const [popupOrderId, setPopupOrderId] = useState(null);
-  const [amispEmailId, setAmispEmailId] = useState("");
 
   
 //Send Location ProjectTeam to Scm Team
 const [locationPopupOrderId, setLocationPopupOrderId] = useState(null);
-const [locationDetails, setLocationDetails] = useState("");
 
 
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
 
-  const [postData, setPostData] = useState({
-    projectTeamComment: "",
-    serialNumbers: "",
-    documentUrl: "",
-    dispatchDetails: "",
-    pdiLocation: ""
-  });
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
   const fieldLabels = {
   projectTeamComment: "Project Team Comment",
@@ -322,10 +321,34 @@ const notifyScm = async (orderId) => {
           },
           { name: "ORDER DATE", selector: (row) => row.createAt, sortable: true, grow: 1.3 },
           { name: "EXPECTED DATE", selector: (row) => row.expectedOrderDate, sortable: true, grow: 1.4 },
-          { name: "PROJECT", selector: (row) => row.project, grow: 0.7 },
+          { name: "PROJECT", selector: (row) => row.project, grow: 0.7,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+           },
           // { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator, grow: 0.7 },
-          { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 1.1 },
-          { name: "ORDER TYPE", selector: (row) => row.orderType, grow: 1},
+          { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 1.1,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+           },
+          { name: "ORDER TYPE", selector: (row) => row.orderType, grow: 1,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.orderType),
+      }}
+    />
+  ),
+          },
           { name: "QTY", selector: (row) => row.proposedBuildPlanQty, grow: 0.1 },
           {
   name: "STATUS",

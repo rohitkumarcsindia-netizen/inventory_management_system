@@ -26,10 +26,6 @@ export default function LogisticTable({
   searchText,
   applySearchFilter,
   searchFilteredData,
-  setSearchText,
-  setSearchFilteredData,
-  isStatusApplied,
-  SetIsStatusApplied,
   statusFilter,
 
   applyStatusFilter,
@@ -55,11 +51,19 @@ export default function LogisticTable({
   // NEW Delivered Popup State
   const [deliveredPopupId, setDeliveredPopupId] = useState(null);
 
-  const [deliveredDetails, setDeliveredDetails] = useState({
-    deliveredStatus: "",
-    logisticsComment: "",
-    actualDeliveryDate: "",
-  });
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
   // ---------- NEW: PDI Popup ----------
   const [pdiPopup, setPdiPopup] = useState({
@@ -67,18 +71,11 @@ export default function LogisticTable({
     type: null, // pass / fail
   });
 
-  const [pdiDetails, setPdiDetails] = useState({
-    logisticsPdiComment: "",
-  });
 
-  // Input handlers
-  const updateField = (field, value) => {
-    setShippingDetails((prev) => ({ ...prev, [field]: value }));
-  };
 
-  const updateDeliveredField = (field, value) => {
-    setDeliveredDetails((prev) => ({ ...prev, [field]: value }));
-  };
+
+
+
 
 // SHIPPING VALIDATION 
 const shippingSchema = yup.object().shape({
@@ -231,12 +228,28 @@ const {
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt, sortable: true },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     {
       name: "INITIATOR",
       selector: (row) => row.users?.username || row.initiator,
     },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "STATUS", selector: (row) => row.status,
        grow: 1.5,

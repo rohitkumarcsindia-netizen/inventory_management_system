@@ -27,10 +27,6 @@ export default function FinanceTable({
   searchText,
   applySearchFilter,
   searchFilteredData,
-  setSearchText,
-  setSearchFilteredData,
-  isStatusApplied,
-  SetIsStatusApplied,
   statusFilter,
 
   applyStatusFilter,
@@ -38,7 +34,6 @@ export default function FinanceTable({
   const [showPopup, setShowPopup] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [actionType, setActionType] = useState("");
-  const [reason, setReason] = useState("");
 
   // 🔥 FINAL APPROVAL POPUP STATES
   const [showFinalPopup, setShowFinalPopup] = useState(false);
@@ -49,10 +44,20 @@ export default function FinanceTable({
   // 🔥 NEW CLOSURE POPUP STATES
   const [showClosurePopup, setShowClosurePopup] = useState(false);
   const [closureOrderId, setClosureOrderId] = useState(null);
-  const [closureDetails, setClosureDetails] = useState({
-    financeApprovalDocumentUrl: "",
-    financeClosureStatus: "",
-  });
+
+  const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
   // open approve / reject popup
   const openPopup = (type, id) => {
@@ -237,9 +242,25 @@ const {
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "REASON", selector: (row) => row.reasonForBuildRequest },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "STATUS", selector: (row) => row.status,
@@ -285,10 +306,6 @@ const {
               className="px-5 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
               onClick={() => {
                 setClosureOrderId(row.orderId);
-                setClosureDetails({
-                  financeApprovalDocumentUrl: "",
-                  financeClosureStatus: "",
-                });
                 setShowClosurePopup(true);
               }}
             >

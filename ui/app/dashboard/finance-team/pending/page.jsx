@@ -188,20 +188,7 @@ export default function FinanceTeamPage() {
       fetchOrders();
     }
   }, [searchText]);
-  // MAIN LOGGER
-  // useEffect(() => {
-  //   if (isSearchApplied) {
-  //     applySearchFilter();
-  //     return;
-  //   }
 
-  //   if (isDateApplied) {
-  //     applyDateFilter();
-  //     return;
-  //   }
-
-  //   fetchOrders();
-  // }, [currentPage, ordersPerPage]);
 
   
 

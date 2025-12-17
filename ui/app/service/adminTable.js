@@ -31,12 +31,42 @@ export default function AdminTable({
       ? filteredData
       : orders;
 
+    const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
+
   const columns = [
     { name: "Order ID", selector: row => row.orderId, cell: row => <b>{row.orderId}</b> },
     { name: "ORDER DATE", selector: row => row.createAt },
-    { name: "PROJECT", selector: row => row.project },
+    { name: "PROJECT", selector: row => row.project,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: row => row.initiator },
-    { name: "PRODUCT TYPE", selector: row => row.productType },
+    { name: "PRODUCT TYPE", selector: row => row.productType,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: row => row.proposedBuildPlanQty },
     { name: "ORDER TYPE", selector: row => row.orderType },
     { name: "STATUS", selector: row => row.status, grow:1.5,
@@ -197,7 +227,7 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
           />
           {searchText && (
             <button onClick={() => applySearchFilter("")}
-              className="absolute right-2 top-2 text-gray-600">
+              className="absolute right-2 top-2 text-gray-600 hover:text-red-500 text-lg">
               ✖
             </button>
           )}

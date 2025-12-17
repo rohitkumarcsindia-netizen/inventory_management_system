@@ -31,10 +31,6 @@ export default function ScmTable({
   searchText,
   applySearchFilter,
   searchFilteredData,
-  setSearchText,
-  setSearchFilteredData,
-  isStatusApplied,
-  SetIsStatusApplied,
   statusFilter,
 
   applyStatusFilter,
@@ -49,29 +45,20 @@ export default function ScmTable({
   //  NEW POPUP FOR JIRA CLOSURE
   const [closurePopupId, setClosurePopupId] = useState(null);
 
-  
 
-  // Jira details popup form
-  const [jiraData, setJiraData] = useState({
-    jiraTicketNumber: "",
-    jiraSummary: "",
-    jiraStatus: "",
-    scmComments: "",
-  });
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
 
-  // Closure popup fields
-  const [closureData, setClosureData] = useState({
-    jiraStatus: "",
-    scmComments: "",
-  });
+  // convert everything to string safely
+  const safeText = String(text);
 
-  const handleInputChange = (e) => {
-    setJiraData({ ...jiraData, [e.target.name]: e.target.value });
-  };
+  const regex = new RegExp(`(${searchText})`, "gi");
 
-  const handleClosureChange = (e) => {
-    setClosureData({ ...closureData, [e.target.name]: e.target.value });
-  };
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
   //  VALIDATION NEW/OLD POPUP
   const jiraSchema = yup.object().shape({
@@ -222,9 +209,25 @@ const financeApproval = async (orderId) => {
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt },
-    { name: "PROJECT", selector: (row) => row.project, grow: 0.5, },
+    { name: "PROJECT", selector: (row) => row.project, grow: 0.5,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator, grow: 0.5 },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 0.7 },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 0.7,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "Qty", selector: (row) => row.proposedBuildPlanQty, grow: 0.1 },
     { name: "REASON", selector: (row) => row.reasonForBuildRequest, wrap: true },
     { name: "STATUS", selector: (row) => row.status,

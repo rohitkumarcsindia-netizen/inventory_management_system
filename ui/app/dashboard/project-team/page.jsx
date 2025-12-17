@@ -185,23 +185,7 @@ export default function GetOrders() {
       fetchOrders();
     }
   }, [searchText]);
-
-
-    //  NOTIFY SCM API CALL
-const notifyScm = async (orderId) => {
-  try {
-    const res = await httpService.updateWithAuth(
-      `/api/orders/project/notify-scm/${orderId}`,
-      {}   // ❗ no body required
-    );
-
-    alert(res);   // 👈 backend response text alert me show hoga
-    fetchOrders(); // UI refresh
-  } catch (error) {
-    console.error("Notify Error:", error);
-    alert("Notification failed!");
-  }
-};
+  
     //  NOTIFY LOCATION SCM API CALL
 const notifyLocScm = async (orderId) => {
   try {

@@ -143,20 +143,6 @@ export default function CloudTeamPage() {
       fetchOrders();
     }
   }, [searchText]);
-  // MAIN LOGGER
-  useEffect(() => {
-    if (isSearchApplied) {
-      applySearchFilter();
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
-    fetchOrders();
-  }, [currentPage, ordersPerPage]);
 
   const handleLogout = () => {
     removeToken();

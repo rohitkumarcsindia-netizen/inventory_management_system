@@ -189,20 +189,6 @@ export default function SyrmaTeamPage() {
       fetchOrders();
     }
   }, [searchText]);
-  // MAIN LOGGER
-  useEffect(() => {
-    if (isSearchApplied) {
-      applySearchFilter();
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
-    fetchOrders();
-  }, [currentPage, ordersPerPage]);
 
    // LOGOUT
   const handleLogout = () => {

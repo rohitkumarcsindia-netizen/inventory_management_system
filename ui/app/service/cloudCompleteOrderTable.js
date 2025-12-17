@@ -29,14 +29,44 @@ export default function CloudCompleteOrderTable({
     ? filteredData
     : orders;
 
+    const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
+
   const columns = [
     { name: "Order ID", selector: (row) => row.orderId,
       cell: (row) => <span className="font-bold">{row.orderId}</span>
      },
     { name: "ORDER DATE", selector: (row) => row.createAt },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "INITIATOR", selector: (row) => row.initiator || "-" },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 1.1 },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 1.1,
+          cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "ACTION", selector: (row) => row.cloudAction,
        grow: 1.5,

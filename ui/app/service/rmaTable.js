@@ -33,11 +33,9 @@ export default function RmaTable({
 
   // PASS popup
   const [popupOrderId, setPopupOrderId] = useState(null);
-  const [rmaComment, setRmaComment] = useState("");
 
   // FAIL popup
   const [failPopupOrderId, setFailPopupOrderId] = useState(null);
-  const [failComment, setFailComment] = useState("");
 
   //VALIDATION
   const passSchema = yup.object().shape({
@@ -47,6 +45,20 @@ export default function RmaTable({
 const failSchema = yup.object().shape({
   failComment: yup.string().required("RMA Fail Comment is required"),
 });
+
+const highlightText = (text) => {
+  if (!searchText || text === null || text === undefined) return text;
+
+  // convert everything to string safely
+  const safeText = String(text);
+
+  const regex = new RegExp(`(${searchText})`, "gi");
+
+  return safeText.replace(
+    regex,
+    `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
+  );
+};
 
   //REACT HOOK FORM
   const {
@@ -131,9 +143,25 @@ const {
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
     },
     { name: "ORDER DATE", selector: (row) => row.createAt, sortable: true },
-    { name: "PROJECT", selector: (row) => row.project },
+    { name: "PROJECT", selector: (row) => row.project,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.project),
+      }}
+    />
+  ),
+    },
     { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator },
-    { name: "PRODUCT TYPE", selector: (row) => row.productType },
+    { name: "PRODUCT TYPE", selector: (row) => row.productType,
+             cell: (row) => (
+    <span
+      dangerouslySetInnerHTML={{
+        __html: highlightText(row.productType),
+      }}
+    />
+  ),
+     },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
     { name: "REASON", selector: (row) => row.reasonForBuildRequest },
 
