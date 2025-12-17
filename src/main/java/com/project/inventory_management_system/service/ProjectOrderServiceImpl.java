@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.data.jpa.domain.Specification;
 
 
 import java.time.LocalDateTime;
@@ -36,6 +37,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
     private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
+    private final OrderSpecification orderSpecification;
 
     //Project Team Order Created Method
     @Override
@@ -325,8 +328,10 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.status(403).body("Only project team can view this");
         }
 
+        Specification<Orders> spec = Specification.allOf(OrderSpecification.hasUser(user.getUserId())).and(OrderSpecification.keywordSearch(keyword));
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findBySearchOrders(keyword, user.getUserId(),pageable);
+        Page<Orders> ordersPage =  orderRepository.findAll(spec,pageable);
 
         if (ordersPage.isEmpty())
         {

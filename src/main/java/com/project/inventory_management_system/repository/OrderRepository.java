@@ -5,6 +5,7 @@ import com.project.inventory_management_system.entity.Users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,24 +14,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Orders, Long>
+public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecificationExecutor<Orders>
 {
 
     Orders findByOrderIdAndUsers(Long orderId, Users user);
 
 
     //Orders find using UserId
-    @Query(
-            value = "SELECT * FROM orders WHERE user_id = :userId ORDER BY order_id DESC LIMIT :limit OFFSET :offset",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE user_id = :userId ORDER BY order_id DESC LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Orders> findOrdersByUserWithLimitOffset(
             @Param("userId") Long userId,
             @Param("offset") int offset,
             @Param("limit") int limit);
 
 
-    @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses,
                                                  @Param("offset") int offset,
                                                  @Param("limit") int limit);
