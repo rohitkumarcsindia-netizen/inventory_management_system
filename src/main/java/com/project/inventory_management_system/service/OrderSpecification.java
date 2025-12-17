@@ -2,11 +2,9 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.entity.Orders;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public class OrderSpecification
 {
     public static Specification<Orders> hasUser(Long userId)
@@ -17,7 +15,7 @@ public class OrderSpecification
                         : cb.equal(root.get("users").get("userId"), userId);
     }
 
-    // status filter
+
     public static Specification<Orders> statusIn(List<String> statuses)
     {
         return (root, query, cb) ->
@@ -26,8 +24,9 @@ public class OrderSpecification
                         : root.get("status").in(statuses);
     }
 
-    // keyword search
-    public static Specification<Orders> keywordSearch(String keyword) {
+
+    public static Specification<Orders> keywordSearch(String keyword)
+    {
         return (root, query, cb) ->
         {
 

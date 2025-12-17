@@ -58,22 +58,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
     Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
 
 
-    //Universal search query for project team
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE o.users.userId = :userId
-      AND (
-            LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
-      )
-""")
-    Page<Orders> findBySearchOrders(@Param("keyword") String keyword, @Param("userId") Long userId,Pageable pageable);
-
-
     //Universal searching query for finance pending button
     @Query("""
     SELECT o FROM Orders o

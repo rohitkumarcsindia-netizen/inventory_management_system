@@ -37,8 +37,6 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
     private final EmailService emailService;
     private final DepartmentRepository departmentRepository;
     private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
-    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
-    private final OrderSpecification orderSpecification;
 
     //Project Team Order Created Method
     @Override
