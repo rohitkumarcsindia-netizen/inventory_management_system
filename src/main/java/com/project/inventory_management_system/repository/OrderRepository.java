@@ -58,23 +58,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
     Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
 
 
-    //Universal searching query for finance pending button
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE
-        o.status IN ('PROJECT TEAM > FINANCE PRE APPROVAL PENDING', 'SCM > FINANCE POST APPROVAL PENDING','LOGISTIC > FINANCE CLOSURE PENDING') AND
-        (
-             LOWER(o.project) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.productType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.orderType) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.initiator) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR LOWER(o.reasonForBuildRequest) LIKE LOWER(CONCAT('%', :keyword, '%'))
-          OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
-        )
-""")
-    Page<Orders> searchFinance(@Param("keyword") String keyword, Pageable pageable);
-
-
     //status filter finance pending
     @Query("SELECT o FROM Orders o WHERE o.status = :status ")
     Page<Orders> findByStatusForFinance(@Param("status") String status, Pageable pageable);
