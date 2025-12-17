@@ -222,7 +222,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
     //Search filter method
     @Override
-    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end,int page,int size)
+    public ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime startDate, LocalDateTime endDate,int page,int size)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -236,8 +236,10 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForFinance(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(startDate, endDate, statuses, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
@@ -635,7 +637,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         }
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatusForFinance(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(status, pageable);
 
         if (ordersPage.isEmpty())
         {

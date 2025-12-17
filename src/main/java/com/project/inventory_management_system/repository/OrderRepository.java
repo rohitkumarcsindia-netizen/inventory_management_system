@@ -27,24 +27,8 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
             @Param("offset") int offset,
             @Param("limit") int limit);
 
-
-    @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset", nativeQuery = true)
-    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses,
-                                                 @Param("offset") int offset,
-                                                 @Param("limit") int limit);
-
-
-    // Order Count using userId
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE user_id = :userId", nativeQuery = true)
-    Long countByUserId(@Param("userId") long userId);
-
-    // Order Count using status
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
-    long countByStatus(@Param("statuses") List<String> statuses);
-
-
     //Search filter Query
-    //Date filter
+    //Date filter using userId
     @Query("SELECT o FROM Orders o WHERE o.createAt BETWEEN :startDate AND :endDate AND o.users.userId = :userId")
     Page<Orders> findByOrderDateBetweenAndUser(
             @Param("startDate") LocalDateTime startDate,
@@ -53,25 +37,38 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
             Pageable pageable
     );
 
-    //status filter
+    // Order Count using userId
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE user_id = :userId", nativeQuery = true)
+    Long countByUserId(@Param("userId") long userId);
+
+
+    //status filter using userId
     @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.users.userId = :userId")
     Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
 
 
+    // Order filter using status
+    @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset", nativeQuery = true)
+    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses,
+                                                 @Param("offset") int offset,
+                                                 @Param("limit") int limit);
+
+    // Order Count using status
+    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
+    long countByStatus(@Param("statuses") List<String> statuses);
+
+
     //status filter finance pending
     @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatusForFinance(@Param("status") String status, Pageable pageable);
+    Page<Orders> findByStatus(@Param("status") String status, Pageable pageable);
 
 
     //Status searching query for finance pending button
-    @Query("""
-    SELECT o FROM Orders o
-    WHERE o.status IN ('PROJECT TEAM > FINANCE PRE APPROVAL PENDING', 'SCM > FINANCE POST APPROVAL PENDING','LOGISTIC > FINANCE CLOSURE PENDING')
-      AND o.createAt BETWEEN :start AND :end
-""")
-    Page<Orders> findByDateRangeForFinance(
+    @Query("SELECT o FROM Orders o WHERE o.status IN (:statuses) AND o.createAt BETWEEN :start AND :end")
+    Page<Orders> findByDateRange(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
+            List<String> statuses,
             Pageable pageable
     );
 
@@ -161,12 +158,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
                                  @Param("endDate") LocalDateTime endDate,
                                  Pageable pageable);
 
-
-    @Query("""
-       SELECT o FROM Orders o
-       WHERE o.status = :status
-       """)
-    Page<Orders> findByStatus(@Param("status") String status, Pageable pageable);
+//
+//    @Query("""
+//       SELECT o FROM Orders o
+//       WHERE o.status = :status
+//       """)
+//    Page<Orders> findByStatus(@Param("status") String status, Pageable pageable);
 
     @Query("""
        SELECT o FROM Orders o
