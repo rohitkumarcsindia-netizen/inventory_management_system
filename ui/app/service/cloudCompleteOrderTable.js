@@ -62,7 +62,7 @@ export default function CloudCompleteOrderTable({
           cell: (row) => (
     <span
       dangerouslySetInnerHTML={{
-        __html: highlightText(row.project),
+        __html: highlightText(row.productType),
       }}
     />
   ),
