@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<String> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
+        List<String> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(scmStatuses, offset, limit);
 
@@ -597,8 +598,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+
+        Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.searchScm(keyword.trim(), pageable);
+        Page<Orders> ordersPage = orderRepository.findAll(spec, pageable);
 
         if (ordersPage.isEmpty())
         {

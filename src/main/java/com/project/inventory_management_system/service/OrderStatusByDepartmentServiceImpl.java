@@ -45,7 +45,7 @@ public class OrderStatusByDepartmentServiceImpl implements OrderStatusByDepartme
                     "FINANCE CLOSURE DONE > SCM CLOSURE PENDING"
                     );
 
-            case ("CLOUD")
+            case ("CLOUD TEAM")
                     -> List.of
                     (
                 "SCM CREATED TICKET > CLOUD PENDING"

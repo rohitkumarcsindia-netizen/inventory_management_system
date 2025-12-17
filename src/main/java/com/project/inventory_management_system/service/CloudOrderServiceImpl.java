@@ -56,7 +56,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<String> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
+        List<String> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(cloudStatuses, offset, limit);
 
