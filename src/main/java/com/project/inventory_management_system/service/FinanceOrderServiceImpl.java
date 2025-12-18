@@ -53,12 +53,12 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view pending orders");
         }
 
-        List<String> financeStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentname());
+        List<String> financeStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentName());
 
         List<Orders> orders = orderRepository.findByStatusWithLimitOffset(financeStatuses, offset, limit);
 
@@ -88,7 +88,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view complete orders");
         }
@@ -124,7 +124,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can approve orders");
         }
@@ -153,7 +153,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         order.setStatus("FINANCE APPROVED > SCM PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
 
@@ -177,7 +177,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can reject orders");
         }
@@ -208,7 +208,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         order.setStatus("FINANCE TEAM REJECTED");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+        Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailOrderReject(financeApproval.getFinanceReason(), department.getDepartmentEmail(), order.getOrderId());
 
@@ -231,12 +231,12 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(startDate, endDate, statuses, pageable);
@@ -269,12 +269,12 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -310,7 +310,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
@@ -346,7 +346,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
@@ -381,7 +381,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
@@ -417,7 +417,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can approve orders");
         }
@@ -450,7 +450,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             orderRepository.save(order);
 
 
-            Department department = departmentRepository.findByDepartmentname("SCM");
+            Department department = departmentRepository.findByDepartmentName("SCM");
 
             boolean mailsent = emailService.sendFinanceApprovalMailToSCM(department.getDepartmentEmail(), order, findOrder);
 
@@ -476,7 +476,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             order.setStatus("FINANCE > SCM PLAN TO DISPATCH");
             orderRepository.save(order);
 
-            Department department = departmentRepository.findByDepartmentname("SCM");
+            Department department = departmentRepository.findByDepartmentName("SCM");
 
             boolean mailsent = emailService.sendFinanceApprovalMailToSCM(department.getDepartmentEmail(), order, financeApproval);
 
@@ -499,7 +499,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can approve orders");
         }
@@ -531,7 +531,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             order.setStatus("FINANCE TEAM REJECTED");
             orderRepository.save(order);
 
-            Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+            Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
             boolean mailsent = emailService.sendFinanceRejectedMailToSCM(department.getDepartmentEmail(), order, findOrder);
 
@@ -557,7 +557,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             order.setStatus("FINANCE TEAM REJECTED");
             orderRepository.save(order);
 
-            Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+            Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
             boolean mailsent = emailService.sendFinanceRejectedMailToSCM(department.getDepartmentEmail(), order, financeApproval);
 
@@ -580,7 +580,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can approve orders");
         }
@@ -609,7 +609,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             order.setStatus("FINANCE CLOSURE DONE > SCM CLOSURE PENDING");
             orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailDocumentCloseForScm(department.getDepartmentEmail(), order);
 
@@ -631,7 +631,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }

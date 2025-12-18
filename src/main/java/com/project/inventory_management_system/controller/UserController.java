@@ -4,81 +4,73 @@ package com.project.inventory_management_system.controller;
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("api/admin/users")
 @RequiredArgsConstructor
 public class UserController
 {
 
     private final UserService userService;
 
-    @PostMapping("/data")
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto)
+    @PostMapping("/create")
+    public ResponseEntity<?> createUser(HttpServletRequest request, @RequestBody UserDto userDto)
     {
-        try
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
         {
-            UserDto user = userService.createUser(userDto);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.status(401).body("Unauthorized");
         }
-        catch (Exception e)
-        {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+        return userService.createUser(userDetails.getUsername(), userDto);
     }
 
-    @PutMapping("/dataupdate")
-    public ResponseEntity<?> updateUser(@RequestBody Users user)
+    @PutMapping("/details-update/{userId}")
+    public ResponseEntity<?> updateUserDetails(HttpServletRequest request, @PathVariable Long  userId, @RequestBody UserDto userDto)
     {
-        Users updateUser = userService.updateUserData(user);
-        if (updateUser != null)
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
         {
-            return ResponseEntity.ok("User Details Updated Successfully "+updateUser);
+            return ResponseEntity.status(401).body("Unauthorized");
         }
-        else
-            return ResponseEntity.badRequest().body("User Details not Updated");
+
+        return userService.updateUserDetails(userDetails.getUsername(), userId, userDto);
     }
 
-    @DeleteMapping("/delete")
-    private ResponseEntity<?> deleteUser(@RequestBody Users user)
+    @DeleteMapping("/delete/{userId}")
+    private ResponseEntity<?> deleteUserDetails(HttpServletRequest request,  @PathVariable Long  userId)
     {
-       Users deleteUser = userService.deleteUser(user);
-        if (deleteUser != null)
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
         {
-            return ResponseEntity.ok("User delete Successfully "+deleteUser);
+            return ResponseEntity.status(401).body("Unauthorized");
         }
-        else
-            return ResponseEntity.badRequest().body("User Not Delete");
+
+        return userService.deleteUserDetails(userDetails.getUsername(), userId);
     }
 
-    @GetMapping("/findall")
-    public ResponseEntity<?> findAllUser()
+    @GetMapping
+    public ResponseEntity<?> getUsers(HttpServletRequest request, @RequestParam(defaultValue = "10") int limit,
+                                      @RequestParam(defaultValue = "0") int offset)
     {
-        List<Users> allUsers =  userService.findAllUsers();
-        if (allUsers != null)
-        {
-            return ResponseEntity.ok("User Details "+allUsers);
-        }
-        else
-            return ResponseEntity.badRequest().body("..........");
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
-    }
-
-    @GetMapping("/find")
-    public ResponseEntity<?> findUser(@RequestBody UserDto user)
-    {
-        Users findUser = userService.findUsers(user);
-        if (findUser != null)
+        if (userDetails == null)
         {
-            return ResponseEntity.ok("User Details "+findUser);
+            return ResponseEntity.status(401).body("Unauthorized");
         }
-        else
-            return ResponseEntity.badRequest().body("User Details Not Found");
+
+        return userService.getUsers(userDetails.getUsername(), limit, offset);
     }
 
 }

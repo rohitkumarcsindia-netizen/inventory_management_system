@@ -47,11 +47,11 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statuses, offset, limit);
 
@@ -79,7 +79,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view complete orders");
         }
 
@@ -105,7 +105,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         order.setStatus("SYRMA PROD/TEST DONE > SCM ACTION PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailProductionAndTestingComplete(department.getDepartmentEmail(), order.getOrderId());
 
@@ -125,7 +125,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only Syrma team can view complete orders");
         }
 
@@ -155,11 +155,11 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -188,7 +188,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
@@ -220,11 +220,11 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -256,7 +256,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
@@ -287,7 +287,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
@@ -320,7 +320,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA")) {
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA")) {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
@@ -353,7 +353,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SYRMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SYRMA"))
         {
             return ResponseEntity.status(403).body("Only syrma team can view complete orders");
         }
@@ -382,7 +382,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         order.setStatus("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailProductionAndTestingComplete(department.getDepartmentEmail(), order.getOrderId());
 

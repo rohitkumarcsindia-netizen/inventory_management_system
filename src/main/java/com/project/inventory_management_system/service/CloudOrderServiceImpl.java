@@ -51,12 +51,12 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<String> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(cloudStatuses, offset, limit);
 
@@ -87,7 +87,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view complete orders");
         }
@@ -121,7 +121,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only Cloud team can update jira ticket details");
         }
@@ -151,7 +151,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         orderRepository.save(order);
 
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailCertificateGenerate(department.getDepartmentEmail(), order.getOrderId());
 
@@ -175,12 +175,12 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -212,13 +212,13 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
 
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -253,7 +253,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
@@ -288,7 +288,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
@@ -324,7 +324,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }

@@ -1,8 +1,7 @@
 package com.project.inventory_management_system.controller;
 
-
-import com.project.inventory_management_system.dto.ProjectAndProductTypeDto;
-import com.project.inventory_management_system.service.ProjectAndProductTypeService;
+import com.project.inventory_management_system.dto.ProductTypeDto;
+import com.project.inventory_management_system.service.ProductTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/project-product-types")
-public class ProjectAndProductTypeController
+@RequestMapping("/api/admin/product-types")
+public class ProductTypeController 
 {
-    private final ProjectAndProductTypeService projectAndProductTypeService;
+    private final ProductTypeService productTypeService;
 
     @PostMapping
-    public ResponseEntity<?> addProjectAndProductType(HttpServletRequest request, @RequestBody ProjectAndProductTypeDto projectAndProductTypeDto)
+    public ResponseEntity<?> addProductType(HttpServletRequest request, @RequestBody ProductTypeDto productTypeDto)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -26,12 +25,12 @@ public class ProjectAndProductTypeController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectAndProductTypeService.addProjectAndProductType(userDetails.getUsername(), projectAndProductTypeDto);
+        return productTypeService.addProductType(userDetails.getUsername(), productTypeDto);
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProjectAndProductType(HttpServletRequest request, @PathVariable Long id, @RequestBody ProjectAndProductTypeDto projectAndProductTypeDto)
+    public ResponseEntity<?> updateProductType(HttpServletRequest request, @PathVariable Long id, @RequestBody ProductTypeDto productTypeDto)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -39,11 +38,11 @@ public class ProjectAndProductTypeController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectAndProductTypeService.updateProjectAndProductType(userDetails.getUsername(), id, projectAndProductTypeDto);
+        return productTypeService.updateProductType(userDetails.getUsername(), id, productTypeDto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProjectAndProductType(HttpServletRequest request, @PathVariable Long id)
+    public ResponseEntity<?> deleteProductType(HttpServletRequest request, @PathVariable Long id)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -51,11 +50,11 @@ public class ProjectAndProductTypeController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectAndProductTypeService.deleteProjectAndProductType(userDetails.getUsername(), id);
+        return productTypeService.deleteProductType(userDetails.getUsername(), id);
     }
 
     @GetMapping
-    public ResponseEntity<?> getProjectAndProductType(HttpServletRequest request)
+    public ResponseEntity<?> getProductType(HttpServletRequest request)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
 
@@ -63,6 +62,6 @@ public class ProjectAndProductTypeController
         {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return projectAndProductTypeService.getProjectAndProductType(userDetails.getUsername());
+        return productTypeService.getProductType(userDetails.getUsername());
     }
 }

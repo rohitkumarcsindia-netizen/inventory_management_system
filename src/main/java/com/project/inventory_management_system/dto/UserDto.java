@@ -11,6 +11,7 @@ public class UserDto
     private String email;
     private String password;
     private Long departmentId;
+    private String departmentName;
 
 }
 

@@ -47,12 +47,12 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only Rma team can view pending orders");
         }
 
-        List<String> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> orders = orderRepository.findByStatusWithLimitOffset(rmaStatuses, offset, limit);
 
@@ -82,7 +82,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only Rma team can approve orders");
         }
@@ -111,7 +111,7 @@ public class RmaServiceImpl implements RmaService
         order.setStatus("RMA QC PASS > SCM ORDER RELEASE PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailNotifyScm(department.getDepartmentEmail(), order.getOrderId());
 
@@ -133,7 +133,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("Rma"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("Rma"))
         {
             return ResponseEntity.status(403).body("Only Rma team can reject orders");
         }
@@ -163,7 +163,7 @@ public class RmaServiceImpl implements RmaService
         order.setStatus("RMA QC FAIL > SYRMA RE-PROD/TEST PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SYRMA");
+        Department department = departmentRepository.findByDepartmentName("SYRMA");
 
         boolean mailsent = emailService.sendMailNotifySyrma(department.getDepartmentEmail(), order.getOrderId());
 
@@ -185,7 +185,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view complete orders");
         }
@@ -219,12 +219,12 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -256,12 +256,12 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -296,7 +296,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
@@ -331,7 +331,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
@@ -367,7 +367,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("RMA"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("RMA"))
         {
             return ResponseEntity.status(403).body("Only rma team can view this");
         }

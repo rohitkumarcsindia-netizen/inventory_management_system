@@ -53,12 +53,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only SCM team can view approved orders");
         }
 
-        List<String> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(scmStatuses, offset, limit);
 
@@ -89,7 +89,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -123,7 +123,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -159,7 +159,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM CREATED TICKET > CLOUD PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
+        Department department = departmentRepository.findByDepartmentName("CLOUD TEAM");
 
         boolean mailsent = emailService.sendMailCreateJiraTicket(department.getDepartmentEmail(), order.getOrderId());
 
@@ -185,7 +185,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -220,7 +220,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SYRMA");
+        Department department = departmentRepository.findByDepartmentName("SYRMA");
 
         boolean mailsent = emailService.sendMailProdbackGenerate(department.getDepartmentEmail(), order.getOrderId());
 
@@ -243,7 +243,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -279,7 +279,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("CLOUD TEAM");
+        Department department = departmentRepository.findByDepartmentName("CLOUD TEAM");
 
         boolean mailsent = emailService.sendMailOrderApprove(department.getDepartmentEmail(), order.getOrderId());
 
@@ -302,7 +302,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -325,7 +325,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM NOTIFY > RMA QC PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("RMA");
+        Department department = departmentRepository.findByDepartmentName("RMA");
 
         boolean mailsent = emailService.sendMailNotifyRma(department.getDepartmentEmail(), order.getOrderId());
 
@@ -347,7 +347,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -367,7 +367,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM NOTIFY > PROJECT TEAM BUILD IS READY");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+        Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailNotifyProjectTeam(department.getDepartmentEmail(), order.getOrderId());
 
@@ -389,7 +389,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -434,7 +434,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -455,7 +455,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM > FINANCE POST APPROVAL PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("FINANCE");
+        Department department = departmentRepository.findByDepartmentName("FINANCE");
 
 
         boolean mailsent = emailService.sendMailScmToFinanceApproval(department.getDepartmentEmail(), order, projectTeamApproval);
@@ -478,7 +478,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -499,7 +499,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("SCM > LOGISTIC PENDING");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("LOGISTIC");
+        Department department = departmentRepository.findByDepartmentName("LOGISTIC");
 
 
         boolean mailsent = emailService.sendMailScmToLogisticTeam(department.getDepartmentEmail(), order, projectTeamApproval);
@@ -522,12 +522,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -559,7 +559,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
@@ -595,12 +595,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -635,7 +635,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
@@ -670,7 +670,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
@@ -706,7 +706,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
@@ -742,7 +742,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("SCM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("SCM"))
         {
             return ResponseEntity.status(403).body("Only Scm team can view complete orders");
         }
@@ -762,7 +762,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         order.setStatus("COMPLETED");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+        Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailOrderCompletedForProjectTeam(department.getDepartmentEmail(), order);
 

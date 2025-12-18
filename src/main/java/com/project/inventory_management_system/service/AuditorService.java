@@ -4,10 +4,10 @@ import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
 
-public interface AdminService
+public interface AuditorService
 {
 
-    ResponseEntity<?> getOrdersByAdmin(String username, int offset, int limit);
+    ResponseEntity<?> getOrdersByAuditor(String username, int offset, int limit);
 
     ResponseEntity<?> getOrdersFilterDate(String username, LocalDateTime start, LocalDateTime end, int page, int size);
 

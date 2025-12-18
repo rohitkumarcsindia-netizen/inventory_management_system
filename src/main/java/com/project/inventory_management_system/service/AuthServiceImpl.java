@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService
 //                return ResponseEntity.ok(token);
                 return ResponseEntity.ok(Map.of(
                         "token", token,
-                        "department", user.getDepartment().getDepartmentname()
+                        "department", user.getDepartment().getDepartmentName()
                 ));
             }
             else

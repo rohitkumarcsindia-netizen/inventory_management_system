@@ -65,26 +65,6 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
             Pageable pageable
     );
 
-    //status filter syrma pending
-    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatusForSyrma(@Param("status") String status, Pageable pageable);
-
-
-    //status filter logistic pending
-    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatusForLogistic(@Param("status") String status, Pageable pageable);
-
-
-    //status filter scm pending
-    @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatusForScm(@Param("status") String status, Pageable pageable);
-
-
-    // Order Count using status for syrma
-    @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:syrmaStatuses)", nativeQuery = true)
-    Long countBySyrmaStatusList(@Param("syrmaStatuses") List<String> syrmaStatuses);
-
-
     //All orders data fetch query
     @Query(value = "SELECT * FROM orders ORDER BY order_id DESC LIMIT :limit OFFSET :offset", nativeQuery = true)
     List<Orders> findAllOrders(@Param("offset") int offset, @Param("limit") int limit);

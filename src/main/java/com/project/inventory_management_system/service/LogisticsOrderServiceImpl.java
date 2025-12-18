@@ -49,11 +49,11 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view pending orders");
         }
-        List<String> logisticStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> logisticStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> orders = orderRepository. findByStatusWithLimitOffset(logisticStatuses, offset, limit);
 
@@ -83,7 +83,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -133,7 +133,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -197,7 +197,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -239,7 +239,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -281,7 +281,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view complete orders");
         }
@@ -315,12 +315,12 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -352,7 +352,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
@@ -388,12 +388,12 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentname());
+        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
@@ -428,7 +428,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
@@ -463,7 +463,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
@@ -499,7 +499,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }

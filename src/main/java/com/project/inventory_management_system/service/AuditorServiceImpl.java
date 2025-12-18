@@ -21,14 +21,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService
+public class AuditorServiceImpl implements AuditorService
 {
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
     private final OrderMapper orderMapper;
 
     @Override
-    public ResponseEntity<?> getOrdersByAdmin(String username, int offset, int limit)
+    public ResponseEntity<?> getOrdersByAuditor(String username, int offset, int limit)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -37,7 +37,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -71,7 +71,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -107,7 +107,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }
@@ -143,7 +143,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }

@@ -18,7 +18,7 @@ public class Department
     private Long id;
 
     @Column(name = "department_name",unique = true)
-    private  String departmentname;
+    private  String departmentName;
 
     @Column(name = "department_email", unique = true)
     private String departmentEmail;

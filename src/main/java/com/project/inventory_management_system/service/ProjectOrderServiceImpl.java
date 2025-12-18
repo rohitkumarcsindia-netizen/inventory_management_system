@@ -50,7 +50,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname()
+        if (!user.getDepartment().getDepartmentName()
                 .equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("This User not allowed create orders");
@@ -77,7 +77,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
                 Orders saved = orderRepository.save(orders);
 
-                Department scmTeam = departmentRepository.findByDepartmentname("SCM");
+                Department scmTeam = departmentRepository.findByDepartmentName("SCM");
 
                 //sending mail
                 boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(scmTeam.getDepartmentEmail(), saved.getOrderId());
@@ -102,7 +102,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
             Orders saved = orderRepository.save(orders);
 
-            Department financeTeam = departmentRepository.findByDepartmentname("FINANCE");
+            Department financeTeam = departmentRepository.findByDepartmentName("FINANCE");
 
             //sending mail
             boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
@@ -136,7 +136,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can view pending orders");
         }
@@ -172,7 +172,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can update orders");
         }
@@ -218,7 +218,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can delete orders");
         }
@@ -249,7 +249,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can view pending orders");
         }
@@ -285,7 +285,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can view this");
         }
@@ -321,7 +321,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can view this");
         }
@@ -359,7 +359,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only Project team can view complete orders");
         }
@@ -406,7 +406,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only Project team can view complete orders");
         }
@@ -426,7 +426,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setStatus("PROJECT TEAM > SCM READY FOR DISPATCH");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailNotifyToScmDispatchOrderIsReady(department.getDepartmentEmail(), order.getOrderId());
 
@@ -448,7 +448,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only Project Team can send location details");
         }
@@ -480,7 +480,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setStatus("PROJECT TEAM NOTIFY > SCM LOCATION DETAILS");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailNotifyProjectTeamSentLocationForScm(department.getDepartmentEmail(), order, projectTeamApproval);
 
@@ -503,7 +503,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("This User not allowed save orders");
         }
@@ -539,7 +539,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can submit orders");
         }
@@ -570,7 +570,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
             Orders saved = orderRepository.save(order);
 
-            Department scmTeam = departmentRepository.findByDepartmentname("SCM");
+            Department scmTeam = departmentRepository.findByDepartmentName("SCM");
 
             //sending mail
             boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(scmTeam.getDepartmentEmail(), saved.getOrderId());
@@ -598,7 +598,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         Orders saved = orderRepository.save(order);
 
-        Department financeTeam = departmentRepository.findByDepartmentname("FINANCE");
+        Department financeTeam = departmentRepository.findByDepartmentName("FINANCE");
 
         //sending mail
         boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
@@ -623,7 +623,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can approve orders");
         }
@@ -655,7 +655,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+        Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
 
@@ -679,7 +679,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only project team can approve orders");
         }
@@ -711,7 +711,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
         orderRepository.save(order);
 
-        Department department = departmentRepository.findByDepartmentname("PROJECT TEAM");
+        Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
 
         boolean mailsent = emailService.sendMailNotifyAmispToProjectTeam(department.getDepartmentEmail(), order.getOrderId(), projectTeamApproval);
 

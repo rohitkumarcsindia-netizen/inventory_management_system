@@ -8,18 +8,15 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class ProjectAndProductType
+public class ProjectType
 {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(name = "projectType", nullable = false, length = 50)
+    @Column(name = "name", nullable = false, length = 50, unique = true)
     private String projectType;
-
-    @Column(name = "productType", nullable = false, length = 50)
-    private String productType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
