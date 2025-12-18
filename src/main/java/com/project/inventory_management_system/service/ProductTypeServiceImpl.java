@@ -109,7 +109,7 @@ public class ProductTypeServiceImpl implements ProductTypeService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if(!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        if(!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN") && !user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("Only Admin can Delete Product Type");
         }
