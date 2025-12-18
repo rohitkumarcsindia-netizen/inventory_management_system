@@ -266,7 +266,7 @@ const highlightText = (text) => {
               </h2>
 
               <p className="text-gray-600 text-center mb-4">
-                Order ID: <b>{popupOrderId}</b>
+                <b>Order ID:</b> <b>{popupOrderId}</b>
               </p>
 
               {/* FORM */}
