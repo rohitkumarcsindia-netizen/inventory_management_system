@@ -35,6 +35,7 @@ public class LogisticOrdersHistoryDto
     private String shipmentDocumentUrl;
     private LocalDateTime actionTime;
     private Long actionBy;
+    private String actionByUserName;
 
     private UserDto users;
 }

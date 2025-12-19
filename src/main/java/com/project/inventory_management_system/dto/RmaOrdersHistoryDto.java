@@ -26,6 +26,7 @@ public class RmaOrdersHistoryDto
     private String rmaComment;
 
     private Long rmaApprovedBy;
+    private String rmaApprovedByUserName;
 
     private UserDto users;
 }

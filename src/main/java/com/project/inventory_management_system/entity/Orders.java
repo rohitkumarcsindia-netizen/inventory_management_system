@@ -35,10 +35,10 @@ public class Orders
     @Column(name = "order_type", nullable = false, length = 100)
     private String orderType;
 
-    @Column(name = "proposed_build_plan_qty")
+    @Column(name = "quantity")
     private Integer proposedBuildPlanQty;
 
-    @Column(name = "reason_for_build_request", columnDefinition = "TEXT")
+    @Column(name = "reason", columnDefinition = "TEXT")
     private String reasonForBuildRequest;
 
     @Column(name = "initiator", length = 100)
@@ -47,7 +47,7 @@ public class Orders
     @Column(name = "status", length = 225)
     private String status;
 
-    @Column(name = "pms_remarks", columnDefinition = "TEXT")
+    @Column(name = "remarks", columnDefinition = "TEXT")
     private String pmsRemarks;
 
     @OneToMany(mappedBy = "order")

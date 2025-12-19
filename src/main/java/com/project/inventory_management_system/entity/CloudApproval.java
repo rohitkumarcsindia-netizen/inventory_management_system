@@ -26,10 +26,13 @@ public class CloudApproval
 
     private String priority;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comments", columnDefinition = "TEXT")
     private String cloudComments;
 
+    @Column(name = "action")
     private String cloudAction;
+
+    @Column(name = "action_time")
     private LocalDateTime actionTime;
 
     @ManyToOne

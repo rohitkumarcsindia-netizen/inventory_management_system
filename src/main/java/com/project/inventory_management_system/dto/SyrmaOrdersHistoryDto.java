@@ -25,6 +25,7 @@ public class SyrmaOrdersHistoryDto
     private LocalDateTime actionTime;
     private String syrmaComments;
     private Long actionDoneBy;
+    private String actionDoneByUserName;
 
     private UserDto users;
 

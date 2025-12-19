@@ -17,10 +17,10 @@ public class Department
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "department_name",unique = true)
+    @Column(name = "name",unique = true)
     private  String departmentName;
 
-    @Column(name = "department_email", unique = true)
+    @Column(name = "email", unique = true)
     private String departmentEmail;
 
     @OneToMany(mappedBy = "department")

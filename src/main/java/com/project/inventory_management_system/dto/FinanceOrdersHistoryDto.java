@@ -28,6 +28,7 @@ public class FinanceOrdersHistoryDto
 
     private String financeReason;
     private Long financeApprovedBy;
+    private String approvedByUserName;
 
     private UserDto users;
 }

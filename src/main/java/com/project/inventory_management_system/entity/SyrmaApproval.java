@@ -19,13 +19,16 @@ public class SyrmaApproval
     @JoinColumn(name = "order_id")
     private Orders order;
 
+    @Column(name = "action")
     private String syrmaAction;
+
+    @Column(name = "action_time")
     private LocalDateTime actionTime;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comments",columnDefinition = "TEXT")
     private String syrmaComments;
 
     @ManyToOne
-    @JoinColumn(name = "action_done_by")
+    @JoinColumn(name = "action_by")
     private Users actionDoneBy;
 }

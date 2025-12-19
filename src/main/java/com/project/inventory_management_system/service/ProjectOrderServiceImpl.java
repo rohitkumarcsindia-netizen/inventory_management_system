@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.ProductTypeDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
@@ -89,11 +90,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                     return ResponseEntity.ok("Order submitted but mail failed to send");
                 }
 
-                // Return Dto
-                OrdersDto saveOrder = orderMapper.toDto(saved);
 
-
-                return ResponseEntity.ok(saveOrder);
+                return ResponseEntity.ok("Order Created Successfully Submit");
             }
 
 
@@ -114,13 +112,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                 return ResponseEntity.ok("Order submitted but mail failed to send");
             }
 
-            // Return Dto
-            OrdersDto saveOrder = orderMapper.toDto(saved);
 
-
-            return ResponseEntity.ok(saveOrder);
-
-
+            return ResponseEntity.ok("Order Created Successfully Submit");
     }
 
 
@@ -192,7 +185,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
         order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
         order.setProject(ordersDto.getProject());
-        order.setProductType(ordersDto.getProductType());
+        order.setProductType(String.valueOf(ordersDto.getProductType()));
         order.setOrderType(ordersDto.getOrderType());
         order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
@@ -560,7 +553,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
             order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
             order.setProject(ordersDto.getProject());
-            order.setProductType(ordersDto.getProductType());
+            order.setProductType(String.valueOf(ordersDto.getProductType()));
             order.setOrderType(ordersDto.getOrderType());
             order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
             order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
@@ -588,7 +581,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
         order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
         order.setProject(ordersDto.getProject());
-        order.setProductType(ordersDto.getProductType());
+        order.setProductType(String.valueOf(ordersDto.getProductType()));
         order.setOrderType(ordersDto.getOrderType());
         order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());

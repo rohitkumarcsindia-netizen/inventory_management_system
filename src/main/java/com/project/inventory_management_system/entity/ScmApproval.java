@@ -25,11 +25,14 @@ public class ScmApproval
     private String jiraStatus;
 
 
+    @Column(name = "action")
     private String scmAction;
+
+    @Column(name = "action_time")
     private LocalDateTime actionTime;
 
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comments",columnDefinition = "TEXT")
     private String scmComments;
 
     @ManyToOne
