@@ -147,6 +147,12 @@ const highlightText = (text) => {
     },
   ];
 
+  const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+
   return (
     <>
       <div className="w-full">
@@ -275,9 +281,11 @@ const highlightText = (text) => {
                 {/* Jira Description */}
                 <div>
                   <textarea
-                    {...register("jiraDescription", { required: "Description is required" })}
+                    {...register("jiraDescription", { required: "Description is required",
+                      setValueAs: (value) => capitalizeWords(value),
+                     })}
                     placeholder="Jira Description"
-                    className={`border p-2 rounded h-20 w-full ${errors.jiraDescription ? "border-red-500" : ""}`}
+                    className={`capitalize border p-2 rounded h-20 w-full ${errors.jiraDescription ? "border-red-500" : ""}`}
                   />
                   {errors.jiraDescription && (
                     <p className="text-red-500 text-sm">{errors.jiraDescription.message}</p>
@@ -287,9 +295,11 @@ const highlightText = (text) => {
                 {/* Priority */}
                 <div>
                   <input
-                    {...register("priority", { required: "Priority is required" })}
+                    {...register("priority", { required: "Priority is required",
+                      setValueAs: (value) => capitalizeWords(value),
+                     })}
                     placeholder="Priority"
-                    className={`border p-2 rounded w-full ${errors.priority ? "border-red-500" : ""}`}
+                    className={`capitalize border p-2 rounded w-full ${errors.priority ? "border-red-500" : ""}`}
                   />
                   {errors.priority && (
                     <p className="text-red-500 text-sm">{errors.priority.message}</p>
@@ -299,9 +309,11 @@ const highlightText = (text) => {
                 {/* Cloud Comments */}
                 <div>
                   <textarea
-                    {...register("cloudComments", { required: "Comments required" })}
+                    {...register("cloudComments", { required: "Comments required",
+                      setValueAs: (value) => capitalizeWords(value),
+                     })}
                     placeholder="Cloud Comments"
-                    className={`border p-2 rounded h-20 w-full ${errors.cloudComments ? "border-red-500" : ""}`}
+                    className={`capitalize border p-2 rounded h-20 w-full ${errors.cloudComments ? "border-red-500" : ""}`}
                   />
                   {errors.cloudComments && (
                     <p className="text-red-500 text-sm">{errors.cloudComments.message}</p>

@@ -484,6 +484,11 @@ const notifyScm = async (orderId) => {
     },
         ]
 
+    const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
   const ExpandedOrderDetails = ({ data }) => {
   const Field = ({ label, value, type = "text" }) => {
   const formattedValue =
@@ -940,8 +945,10 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
 
             <input
               type="text"
-              {...registerPdi(key)}
-              className={`w-full px-3 py-2 rounded-md text-black border ${
+              {...registerPdi(key,{
+                setValueAs: (value) => capitalizeWords(value)
+              })}
+              className={`capitalize w-full px-3 py-2 rounded-md text-black border ${
                 pdiErrors[key] ? "border-red-500" : "border-gray-400"
               }`}
             />
@@ -998,8 +1005,10 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
 
         <textarea
           placeholder="Enter Location"
-          {...registerLocation("locationDetails")}
-          className={`border p-2 rounded h-28 w-full text-black ${
+          {...registerLocation("locationDetails",{
+            setValueAs: (value) => capitalizeWords(value)
+          })}
+          className={`capitalize border p-2 rounded h-28 w-full text-black ${
             locationErrors.locationDetails ? "border-red-500" : ""
           }`}
         />

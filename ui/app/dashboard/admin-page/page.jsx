@@ -48,23 +48,37 @@ export default function SyrmaMenu() {
         ADMIN LOGIN
       </h1>
 
-      {/* ===== Buttons Section ===== */}
-      <div className="flex gap-12">
-        <button
-          onClick={() => router.push("/dashboard/admin-page/userControl")}
-          className="bg-[#02A3EE] text-white px-40 py-6 rounded-xl text-2xl font-semibold shadow-lg hover:bg-[#0288c2]"
-        >
-          Manage Users
-        </button>
+     {/* ===== Buttons Section ===== */}
+<div className="flex flex-col items-center gap-10 mt-10">
 
-        <button
-          onClick={() => router.push("/dashboard/admin-page/projectAndProductControl")}
-          className="bg-[#003b66] text-white px-12 py-6 rounded-xl text-2xl font-semibold shadow-lg hover:bg-[#022f52]"
-        >
-          Project and Product Configuration
-        </button>
-      </div>
+  {/* Top Two Buttons Horizontal */}
+  <div className="flex gap-12">
+    <button
+      onClick={() => router.push("/dashboard/admin-page/userControl")}
+      className="bg-[#02A3EE] text-white px-12 py-6 rounded-xl text-2xl font-semibold shadow-lg hover:bg-[#0288c2]"
+    >
+      Manage Users
+    </button>
+
+    <button
+      onClick={() => router.push("/dashboard/admin-page/projectControl")}
+      className="bg-[#003b66] text-white px-12 py-6 rounded-xl text-2xl font-semibold shadow-lg hover:bg-[#022f52]"
+    >
+      Manage Project
+    </button>
+  </div>
+
+  {/* Third Button Center Underneath */}
+  <button
+    onClick={() => router.push("/dashboard/admin-page/productControl")}
+    className="bg-[#005a99] text-white px-12 py-6 rounded-xl text-2xl font-semibold shadow-lg hover:bg-[#024c7c]"
+  >
+    Manage Product
+  </button>
+
+</div>
 
     </div>
+    
   );
 }

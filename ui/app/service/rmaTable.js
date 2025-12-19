@@ -43,7 +43,7 @@ export default function RmaTable({
 });
 
 const failSchema = yup.object().shape({
-  failComment: yup.string().required("RMA Fail Comment is required"),
+  rmaComment: yup.string().required("RMA Fail Comment is required"),
 });
 
 const highlightText = (text) => {
@@ -188,6 +188,11 @@ const {
     },
   ];
 
+    const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <>
       <div className="w-full">
@@ -308,9 +313,11 @@ const {
       <form onSubmit={handlePassSubmit(submitPass)} className="flex flex-col gap-3">
 
         <textarea
-          {...registerPass("rmaComment")}
+          {...registerPass("rmaComment",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
           placeholder="Enter RMA Comment"
-          className={`border p-2 rounded h-28 w-full text-black ${
+          className={`capitalize border p-2 rounded h-28 w-full text-black ${
             passErrors.rmaComment ? "border-red-500" : ""
           }`}
         />
@@ -362,9 +369,11 @@ const {
       <form onSubmit={handleFailSubmit(submitFail)} className="flex flex-col gap-3">
 
         <textarea
-          {...registerFail("failComment")}
+          {...registerFail("rmaComment",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
           placeholder="Enter RMA Comment"
-          className={`border p-2 rounded h-28 w-full text-black ${
+          className={`capitalize border p-2 rounded h-28 w-full text-black ${
             failErrors.rmaComment ? "border-red-500" : ""
           }`}
         />

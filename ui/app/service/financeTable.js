@@ -335,6 +335,11 @@ const {
     },
   ];
 
+   const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <div className="w-full relative text-black">
       
@@ -474,8 +479,10 @@ const {
         <input
           type="text"
           placeholder="Enter Reason"
-          {...registerReason("reason")}
-          className={`w-full border px-4 py-3 rounded-lg text-black ${
+          {...registerReason("reason",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
+          className={`capitalize w-full border px-4 py-3 rounded-lg text-black ${
             reasonErrors.reason ? "border-red-500" : ""
           }`}
         />
@@ -529,8 +536,10 @@ const {
 
         <textarea
           placeholder="Enter Finance Reason"
-          {...registerFinal("financeRemark")}
-          className={`w-full border px-3 py-2 rounded-lg text-black h-20 ${
+          {...registerFinal("financeRemark",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
+          className={`capitalize w-full border px-3 py-2 rounded-lg text-black h-20 ${
             finalErrors.financeRemark ? "border-red-500" : ""
           }`}
         />
@@ -540,8 +549,10 @@ const {
 
         <textarea
           placeholder="Enter Final Remark"
-          {...registerFinal("finalRemark")}
-          className={`w-full border px-3 py-2 rounded-lg text-black h-20 ${
+          {...registerFinal("finalRemark",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
+          className={`capitalize w-full border px-3 py-2 rounded-lg text-black h-20 ${
             finalErrors.finalRemark ? "border-red-500" : ""
           }`}
         />
@@ -595,8 +606,10 @@ const {
         <label className="text-sm font-semibold">Finance Document URL</label>
         <input
           type="text"
-          {...registerClosure("financeApprovalDocumentUrl")}
-          className={`border px-3 py-2 rounded-lg w-full ${
+          {...registerClosure("financeApprovalDocumentUrl",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
+          className={`capitalize border px-3 py-2 rounded-lg w-full ${
             closureErrors.financeApprovalDocumentUrl ? "border-red-500" : ""
           }`}
         />
@@ -607,8 +620,10 @@ const {
         <label className="text-sm font-semibold mt-3">Closure Status</label>
         <input
           type="text"
-          {...registerClosure("financeClosureStatus")}
-          className={`border px-3 py-2 rounded-lg w-full ${
+          {...registerClosure("financeClosureStatus",{
+            setValueAs: (value) => capitalizeWords(value),
+          })}
+          className={`capitalize border px-3 py-2 rounded-lg w-full ${
             closureErrors.financeClosureStatus ? "border-red-500" : ""
           }`}
         />

@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import ProjectAndProductControlTable from "../../../service/projectAndProductControlTable";
+import ProjectControlTable from "../../../service/projectControlTable";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import {
+  getUsernameFromToken,
+  removeToken,
+} from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -18,9 +21,7 @@ export default function ProjectAndProductControl() {
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {
     try {
-      const data = await httpService.get(
-        "/api/admin/project-product-types"
-      );
+      const data = await httpService.get("/api/admin/project-types");
       setOrders(data || []);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -53,8 +54,8 @@ export default function ProjectAndProductControl() {
         productType: data.productType,
       };
 
-     const res = await httpService.postWithAuth(
-        "/api/admin/project-product-types",
+      const res = await httpService.postWithAuth(
+        "/api/admin/project-types",
         body
       );
 
@@ -70,7 +71,6 @@ export default function ProjectAndProductControl() {
 
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
-
       {/* ---------------- TOP RIGHT ---------------- */}
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-5 py-2 rounded-lg">
         <span className="text-black font-semibold">👤 {username}</span>
@@ -91,24 +91,24 @@ export default function ProjectAndProductControl() {
       <div className="flex items-center gap-3 mb-4 mt-5">
         <Cpu className="w-10 h-10 text-[#02A3EE]" />
         <h1 className="text-4xl font-bold text-[#02A3EE]">
-          PROJECT AND PRODUCT TYPES
+          PROJECT TYPES
         </h1>
       </div>
 
       {/* ---------------- TABLE ---------------- */}
       <div className="w-[95%] bg-white shadow-xl rounded-xl p-6">
-        <ProjectAndProductControlTable orders={orders} />
+        <ProjectControlTable orders={orders} />
       </div>
 
       {/* ---------------- ADD BUTTON ---------------- */}
       <button
-        onClick={() => {setShowPopup(true)
-          reset()
+        onClick={() => {
+          setShowPopup(true);
+          reset();
         }}
         className="fixed bottom-8 left-8 bg-[#02A3EE] text-white px-6 py-4 rounded-2xl shadow-xl"
       >
         Add New Project
-        <div className="text-sm opacity-70">And Product Type</div>
       </button>
 
       {/* ================= POPUP ================= */}
@@ -124,7 +124,7 @@ export default function ProjectAndProductControl() {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="bg-white w-[420px] rounded-xl shadow-2xl p-6">
               <h2 className="text-xl font-bold text-center text-[#02A3EE] mb-5">
-                Add Project & Product Type
+                Add Project
               </h2>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -147,32 +147,14 @@ export default function ProjectAndProductControl() {
                   )}
                 </div>
 
-                {/* PRODUCT TYPE */}
-                <div>
-                  <label className="block text-black font-semibold mb-1">
-                    Product Type
-                  </label>
-                  <input
-                    {...register("productType", {
-                      required: "Product Type is required",
-                    })}
-                    placeholder="Enter Product Type"
-                    className="w-full px-3 text-black py-2 border rounded-md"
-                  />
-                  {errors.productType && (
-                    <p className="text-red-500 text-xs mt-1">
-                      {errors.productType.message}
-                    </p>
-                  )}
-                </div>
-
                 {/* ACTIONS */}
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     type="button"
-                    onClick={() =>{
+                    onClick={() => {
                       reset();
-                     setShowPopup(false)}}
+                      setShowPopup(false);
+                    }}
                     className="px-4 py-2 border bg-red-500 text-white rounded-md"
                   >
                     ✖

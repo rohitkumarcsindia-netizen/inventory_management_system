@@ -197,6 +197,11 @@ const {
 
   ];
 
+  const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <>
       <div className="w-full">
@@ -335,9 +340,11 @@ const {
         {/* Textarea + error */}
         <div>
           <textarea
-            {...register("syrmaComments")}
+            {...register("syrmaComments",{
+              setValueAs: (value) => capitalizeWords(value),
+            })}
             placeholder="SYRMA Comment"
-            className={`border p-2 rounded h-24 w-full text-black ${
+            className={`capitalize border p-2 rounded h-24 w-full text-black ${
               errors.syrmaComments ? "border-red-500" : ""
             }`}
           />

@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useForm } from "react-hook-form";
-import httpService from "../service/httpService";
+import httpService from "./httpService";
 
-export default function ProjectAndProductControlTable({ orders }) {
+export default function ProductControlTable({ orders }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -23,7 +23,6 @@ export default function ProjectAndProductControlTable({ orders }) {
     setSelectedRow(row);
     setIsEditMode(false);
     reset({
-      projectType: row.projectType,
       productType: row.productType,
     });
     setShowPopup(true);
@@ -32,8 +31,8 @@ export default function ProjectAndProductControlTable({ orders }) {
   /* ---------------- UPDATE ---------------- */
   const onUpdate = async (data) => {
     try {
-     const res = await httpService.updateWithAuth(
-        `/api/admin/project-product-types/${selectedRow.id}`,
+      const res = await httpService.updateWithAuth(
+        `/api/admin/product-types/${selectedRow.id}`,
         data
       );
 
@@ -49,13 +48,11 @@ export default function ProjectAndProductControlTable({ orders }) {
   /* ---------------- DELETE ---------------- */
   const onDelete = async () => {
     try {
-      const confirmDelete = confirm(
-        "Are you sure you want to delete?"
-      );
+      const confirmDelete = confirm("Are you sure you want to delete?");
       if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
-        `/api/admin/project-product-types/${selectedRow.id}`
+        `/api/admin/product-types/${selectedRow.id}`
       );
 
       alert(res);
@@ -75,11 +72,7 @@ export default function ProjectAndProductControlTable({ orders }) {
       cell: (row) => <b>{row.id}</b>,
     },
     {
-      name: "PROJECT",
-      selector: (row) => row.projectType,
-    },
-    {
-      name: "PRODUCT TYPE",
+      name: "PRODUCT",
       selector: (row) => row.productType,
     },
     {
@@ -138,70 +131,50 @@ export default function ProjectAndProductControlTable({ orders }) {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="bg-white w-[420px] rounded-xl shadow-2xl p-6">
               <h2 className="text-xl font-bold text-center text-[#02A3EE] mb-5">
-                Project & Product Type
+             Product Type
               </h2>
 
-               <p className="text-gray-600 text-center mb-4">
+              <p className="text-gray-600 text-center mb-4">
                 <b>Order ID:</b> <b>{selectedRow.id}</b>
               </p>
 
-              <form
-                onSubmit={handleSubmit(onUpdate)}
-                className="space-y-4"
-              >
+              <form onSubmit={handleSubmit(onUpdate)} className="space-y-4">
                 {/* PROJECT */}
                 <div>
                   <label className="block text-black font-semibold mb-1">
-                    Project
+                    Product
                   </label>
                   <input
-                    {...register("projectType", {
+                    {...register("productType", {
                       required: "Project is required",
                     })}
                     disabled={!isEditMode}
                     className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
                   />
-                  {errors.projectType && (
+                  {errors.productType && (
                     <p className="text-red-500 text-xs">
                       {errors.projectType.message}
                     </p>
                   )}
                 </div>
 
-                {/* PRODUCT TYPE */}
-                <div>
-                  <label className="block text-black font-semibold mb-1">
-                    Product Type
-                  </label>
-                  <input
-                    {...register("productType", {
-                      required: "Product Type is required",
-                    })}
-                    disabled={!isEditMode}
-                    className="w-full px-3 py-2 text-black border rounded-md disabled:bg-gray-100"
-                  />
-                  {errors.productType && (
-                    <p className="text-red-500 text-xs">
-                      {errors.productType.message}
-                    </p>
-                  )}
-                </div>
+                
 
                 {/* ACTION BUTTONS */}
                 <div className="flex justify-end gap-3 pt-4">
                   {!isEditMode ? (
                     <>
-                     <button
-                    type="button"
-                    onClick={() => {
-                      reset();
-                      setShowPopup(false);
-                    }}
-                    className="px-4 py-2 bg-red-500 text-white border rounded-md"
-                  >
-                    ✖
-                  </button>
-                  
+                      <button
+                        type="button"
+                        onClick={() => {
+                          reset();
+                          setShowPopup(false);
+                        }}
+                        className="px-4 py-2 bg-red-500 text-white border rounded-md"
+                      >
+                        ✖
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => setIsEditMode(true)}
@@ -226,8 +199,6 @@ export default function ProjectAndProductControlTable({ orders }) {
                       Update
                     </button>
                   )}
-
-                 
                 </div>
               </form>
             </div>

@@ -12,6 +12,12 @@ export default function OrderInitiation() {
   const [username, setUsername] = useState("");
   const today = new Date().toISOString().split("T")[0];
 
+  const [projects, setProjects] = useState([]);
+const [products, setProducts] = useState([]);
+const [projectLoaded, setProjectLoaded] = useState(false);
+const [productLoaded, setProductLoaded] = useState(false);
+
+
   const router = useRouter();
 
   const {
@@ -57,6 +63,44 @@ export default function OrderInitiation() {
       setLoading(false);
     }
   };
+
+const fetchProjects = async () => {
+  if (projectLoaded) return;
+
+  try {
+    const res = await httpService.get(
+      "/api/admin/project-types"
+    );
+
+    setProjects(res); // assume array of strings
+    setProjectLoaded(true);
+  } catch (err) {
+    console.error("Failed to load projects", err);
+  }
+};
+
+const fetchProducts = async () => {
+  if (productLoaded) return;
+
+  try {
+    const res = await httpService.get(
+      "/api/admin/product-types"
+    );
+
+    setProducts(res); // assume array of strings
+    setProductLoaded(true);
+  } catch (err) {
+    console.error("Failed to load products", err);
+  }
+};
+
+
+ const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
+  
 
   // LOGOUT
   const handleLogout = () => {
@@ -127,23 +171,22 @@ export default function OrderInitiation() {
               <label className="block text-sm text-gray-600 mb-1">
                 Project
               </label>
-              <select
-                {...register("project", { required: "Project is required" })}
-                className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              >
-                <option value="">Select Project</option>
-                <option value="SBPDCL1">SBPDCL1</option>
-                <option value="SBPDCL2">SBPDCL2</option>
-                <option value="APDCL">APDCL</option>
-                <option value="MPWZ4">MPWZ4</option>
-                <option value="MPWZ1">MPWZ1</option>
-                <option value="MPWZ2">MPWZ2</option>
-                <option value="TANGEDCO">TANGEDCO</option>
-                <option value="JVVNL">JVVNL</option>
-                <option value="HPSEB">HPSEB</option>
-                <option value="MSEDCL-Nagpur">MSEDCL-Nagpur</option>
-                <option value="GED">GED</option>
-              </select>
+           <select
+  {...register("project", { required: "Project is required" })}
+  onFocus={fetchProjects}
+  className="w-full border border-gray-300 rounded-lg p-2 text-black"
+>
+  <option value="">Select Project</option>
+
+  {projects.map((project) => (
+    <option key={project.id} value={project.projectType}>
+      {project.projectType}
+    </option>
+  ))}
+</select>
+
+
+
               {errors.project && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.project.message}
@@ -156,19 +199,24 @@ export default function OrderInitiation() {
               <label className="block text-sm text-gray-600 mb-1">
                 Product Type
               </label>
-              <select
-                {...register("productType", {
-                  required: "Product type is required",
-                })}
-                className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              >
-                <option value="">Select Product</option>
-                <option value="Node">NODE</option>
-                <option value="GW200">GW200</option>
-                <option value="GW7">GW7</option>
-                <option value="IPA3A">IPA3A</option>
-                <option value="IPA3B">IPA3B</option>
-              </select>
+          <select
+  {...register("productType", {
+    required: "Product type is required",
+  })}
+  onFocus={fetchProducts}
+  className="w-full border border-gray-300 rounded-lg p-2 text-black"
+>
+  <option value="">Select Product</option>
+
+  {products.map((product) => (
+    <option key={product.id} value={product.productType}>
+      {product.productType}
+    </option>
+  ))}
+</select>
+
+
+
               {errors.productType && (
                 <p className="text-red-500 text-sm mt-1">
                   {errors.productType.message}
@@ -205,12 +253,13 @@ export default function OrderInitiation() {
                 rows="2"
                 {...register("reasonForBuildRequest", {
                   required: "Reason is required",
+                  setValueAs: (value) => capitalizeWords(value),
                   minLength: {
                     value: 10,
                     message: "Minimum 10 characters required",
                   },
                 })}
-                className="w-full border border-gray-300 rounded-lg p-2 text-black"
+                className="capitalize w-full border border-gray-300 rounded-lg p-2 text-black"
               />
               {errors.reasonForBuildRequest && (
                 <p className="text-red-500 text-sm mt-1">
@@ -227,6 +276,7 @@ export default function OrderInitiation() {
               <select
                 {...register("orderType", {
                   required: "Order type is required",
+                  setValueAs: (value) => capitalizeWords(value),
                 })}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
               >
@@ -250,12 +300,13 @@ export default function OrderInitiation() {
                 rows="2"
                 {...register("pmsRemarks", {
                   required: "PM remarks are required",
+                  setValueAs: (value) => capitalizeWords(value),
                   minLength: {
                     value: 5,
                     message: "Minimum 5 characters required",
                   },
                 })}
-                className="w-full border border-gray-300 rounded-lg p-2 text-black"
+                className="capitalize w-full border border-gray-300 rounded-lg p-2 text-black"
               />
               {errors.pmsRemarks && (
                 <p className="text-red-500 text-sm mt-1">

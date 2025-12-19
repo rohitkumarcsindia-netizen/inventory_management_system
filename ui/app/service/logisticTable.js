@@ -308,7 +308,10 @@ const {
     },
   ];
 
- 
+  const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
     <>
@@ -461,10 +464,12 @@ const {
 
                 <input
                   type={isDateField ? "date" : "text"}
-                  className={`border px-2 py-2 rounded w-full ${
+                  className={`capitalize border px-2 py-2 rounded w-full ${
                     shippingErrors[field] ? "border-red-500" : ""
                   }`}
-                  {...registerShipping(field)}
+                  {...registerShipping(field,{
+                    setValueAs: (value) => capitalizeWords(value),
+                  })}
                   defaultValue={shippingDetails[field]}
                 />
 
@@ -528,8 +533,10 @@ const {
             <label className="text-sm font-semibold">Delivered Status</label>
             <input
               type="text"
-              {...registerDelivered("deliveredStatus")}
-              className={`border px-2 py-2 rounded w-full ${
+              {...registerDelivered("deliveredStatus",{
+                setValueAs: (value) => capitalizeWords(value),
+              })}
+              className={`capitalize border px-2 py-2 rounded w-full ${
                 deliveredErrors.deliveredStatus ? "border-red-500" : ""
               }`}
             />
@@ -545,8 +552,10 @@ const {
             <label className="text-sm font-semibold">Logistics Comment</label>
             <input
               type="text"
-              {...registerDelivered("logisticsComment")}
-              className={`border px-2 py-2 rounded w-full ${
+              {...registerDelivered("logisticsComment",{
+                setValueAs: (value) => capitalizeWords(value),
+              })}
+              className={`capitalize border px-2 py-2 rounded w-full ${
                 deliveredErrors.logisticsComment ? "border-red-500" : ""
               }`}
             />

@@ -355,6 +355,11 @@ const financeApproval = async (orderId) => {
     },
   ];
 
+  const capitalizeWords = (text = "") =>
+  text
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+
   return (
     <>
      <div className="scale-[1] origin-top">
@@ -521,36 +526,44 @@ const financeApproval = async (orderId) => {
 
             <div className="flex flex-col gap-3">
               <input
-  {...register("jiraTicketNumber")}
+  {...register("jiraTicketNumber",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="Jira Ticket Number"
-  className={`border p-2 rounded text-black ${
+  className={`capitalize border p-2 rounded text-black ${
     errors.jiraTicketNumber ? "border-red-500" : ""
   }`}
 />
 <p className="text-red-500 text-sm">{errors.jiraTicketNumber?.message}</p>
 
 <textarea
-  {...register("jiraSummary")}
+  {...register("jiraSummary",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="Jira Summary"
-  className={`border p-2 rounded h-20 text-black ${
+  className={`capitalize border p-2 rounded h-20 text-black ${
     errors.jiraSummary ? "border-red-500" : ""
   }`}
 />
 <p className="text-red-500 text-sm">{errors.jiraSummary?.message}</p>
 
 <input
-  {...register("jiraStatus")}
+  {...register("jiraStatus",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="Jira Status"
-  className={`border p-2 rounded text-black ${
+  className={`capitalize border p-2 rounded text-black ${
     errors.jiraStatus ? "border-red-500" : ""
   }`}
 />
 <p className="text-red-500 text-sm">{errors.jiraStatus?.message}</p>
 
 <textarea
-  {...register("scmComments")}
+  {...register("scmComments",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="SCM Comments"
-  className={`border p-2 rounded h-20 text-black ${
+  className={`capitalize border p-2 rounded h-20 text-black ${
     errors.scmComments ? "border-red-500" : ""
   }`}
 />
@@ -597,18 +610,22 @@ const financeApproval = async (orderId) => {
 
             <div className="flex flex-col gap-3">
               <input
-  {...registerClosure("jiraStatus")}
+  {...registerClosure("jiraStatus",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="Jira Status"
-  className={`border p-2 rounded text-black ${
+  className={`capitalize border p-2 rounded text-black ${
     closureErrors.jiraStatus ? "border-red-500" : ""
   }`}
 />
 <p className="text-red-500 text-sm">{closureErrors.jiraStatus?.message}</p>
 
 <textarea
-  {...registerClosure("scmComments")}
+  {...registerClosure("scmComments",{
+    setValueAs: (value) => capitalizeWords(value),
+  })}
   placeholder="SCM Comments"
-  className={`border p-2 rounded h-20 text-black ${
+  className={`capitalize border p-2 rounded h-20 text-black ${
     closureErrors.scmComments ? "border-red-500" : ""
   }`}
 />
