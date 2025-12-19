@@ -11,17 +11,6 @@ import { useRouter } from "next/navigation";
 const normalizeFinanceRecord = (rec) => {
   const o = rec.order || rec;
 
-  let approved = rec.financeApprovedBy || o.financeApprovedBy;
-  let approvedUserId = null;
-
-  if (typeof approved === "number") {
-    approvedUserId = approved;
-  }
-
-  if (approved && typeof approved === "object") {
-    approvedUserId = approved.userId;
-  }
-
   return {
     orderId: o.orderId,
     createAt: o.createAt,
@@ -29,10 +18,14 @@ const normalizeFinanceRecord = (rec) => {
     initiator: o.initiator,
     productType: o.productType,
     proposedBuildPlanQty: o.proposedBuildPlanQty,
+
     financeAction: rec.financeAction || o.financeAction,
     financeActionTime: rec.financeActionTime || o.financeActionTime,
     financeReason: rec.financeReason || o.financeReason,
-    financeApprovedByUserId: approvedUserId,
+
+    approvedByUserName:
+      rec.financeApprovedBy?.username || o.approvedByUserName || "-",
+
     users: o.users
   };
 };

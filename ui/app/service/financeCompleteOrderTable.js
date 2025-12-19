@@ -45,11 +45,50 @@ export default function FinanceCompleteOrderTable({
   );
 };
 
+const formatOrderDateTime = (dateString) => {
+  if (!dateString) return { date: "-", time: "-" };
+
+  const date = new Date(dateString);
+
+  // DATE PART → 19-Dec-25
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const year = String(date.getFullYear()).slice(-2);
+
+  // TIME PART → 12:34 PM
+  const time = date.toLocaleString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return {
+    date: `${day}-${month}-${year}`,
+    time,
+  };
+};
+
+
   const columns = [
     { name: "ORDER ID", selector: row => row.orderId || "-", 
       cell: (row) => <span className="font-bold">{row.orderId}</span>,
      },
-    { name: "ORDER DATE", selector: row => row.createAt || "-" },
+    { name: "ORDER DATE", selector: row => row.createAt || "-", 
+         cell: (row) => {
+    const { date, time } = formatOrderDateTime(row.createAt);
+
+    return (
+      <div className="leading-tight">
+        <div className="font-medium text-black">
+          {date}
+        </div>
+        <div className="text-xs text-gray-500">
+          {time}
+        </div>
+      </div>
+    );
+  },
+    },
     { name: "PROJECT", selector: row => row.project || "-",
           cell: (row) => (
     <span
@@ -71,21 +110,25 @@ export default function FinanceCompleteOrderTable({
     { name: "QTY", selector: row => row.proposedBuildPlanQty || "-" },
     { name: "ACTION", selector: row => row.financeAction || "-",
        grow: 1.5,
-  cell: (row) => (
-    <span className="font-bold">
-      {row.financeAction}
-    </span>
-  ),
      },
     { name: "ACTION TIME", selector: row => row.financeActionTime || "-",
        grow: 1.5,
-  cell: (row) => (
-    <span className="font-bold">
-      {row.financeActionTime}
-    </span>
-  ),
+     cell: (row) => {
+    const { date, time } = formatOrderDateTime(row.financeActionTime);
+
+    return (
+      <div className="leading-tight">
+        <div className="font-medium text-black">
+          {date}
+        </div>
+        <div className="text-xs text-gray-500">
+          {time}
+        </div>
+      </div>
+    );
+  },
      },
-    { name: "APPROVED BY", selector: row => row.financeApprovedByUserId || "-" },
+    { name: "APPROVED BY", selector: row => row.approvedByUserName || "-" },
     { name: "REASON", selector: row => row.financeReason || "-" }
   ];
 
