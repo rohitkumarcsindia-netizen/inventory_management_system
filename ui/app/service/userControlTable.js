@@ -23,7 +23,10 @@ export default function UserControlTable({ orders }) {
     setSelectedRow(row);
     setIsEditMode(false);
     reset({
-      productType: row.productType,
+      username: row.username,
+      email: row.email,
+      password: "",
+      departmentName: row.departmentName,
     });
     setShowPopup(true);
   };
@@ -32,7 +35,7 @@ export default function UserControlTable({ orders }) {
   const onUpdate = async (data) => {
     try {
       const res = await httpService.updateWithAuth(
-        `/api/admin/product-types/${selectedRow.id}`,
+        `/api/admin/users/details-update/${selectedRow.userId}`,
         data
       );
 
@@ -52,7 +55,7 @@ export default function UserControlTable({ orders }) {
       if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
-        `/api/admin/product-types/${selectedRow.id}`
+        `/api/admin/users/delete/${selectedRow.userId}`
       );
 
       alert(res);
@@ -139,29 +142,86 @@ export default function UserControlTable({ orders }) {
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="bg-white w-[420px] rounded-xl shadow-2xl p-6">
               <h2 className="text-xl font-bold text-center text-[#02A3EE] mb-5">
-             Users Control
+             Users Details
               </h2>
 
               <p className="text-gray-600 text-center mb-4">
-                <b>ID:</b> <b>{selectedRow.id}</b>
+                <b>ID:</b> <b>{selectedRow.userId}</b>
               </p>
 
               <form onSubmit={handleSubmit(onUpdate)} className="space-y-4">
-                {/* PROJECT */}
+                {/* USERNAME */}
                 <div>
                   <label className="block text-black font-semibold mb-1">
-                    Product
+                    Username
                   </label>
                   <input
-                    {...register("productType", {
-                      required: "Project is required",
+                    {...register("username", {
+                      required: "username is required",
                     })}
                     disabled={!isEditMode}
                     className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
                   />
-                  {errors.productType && (
+                  {errors.username && (
                     <p className="text-red-500 text-xs">
-                      {errors.projectType.message}
+                      {errors.username.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* EMAIL */}
+                <div>
+                  <label className="block text-black font-semibold mb-1">
+                    Email
+                  </label>
+                  <input
+                    {...register("email", {
+                      required: "email is required",
+                    })}
+                    disabled={!isEditMode}
+                    className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
+                  />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* DEPARTMENT NAME */}
+                <div>
+                  <label className="block text-black font-semibold mb-1">
+                    Department Name
+                  </label>
+                  <input
+                    {...register("departmentName", {
+                      required: "departmentName is required",
+                    })}
+                    disabled={!isEditMode}
+                    className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
+                  />
+                  {errors.departmentName && (
+                    <p className="text-red-500 text-xs">
+                      {errors.departmentName.message}
+                    </p>
+                  )}
+                </div>
+
+                {/* PASSWORD */}
+                <div>
+                  <label className="block text-black font-semibold mb-1">
+                    Password
+                  </label>
+                  <input
+                    {...register("password", {
+                      required: "password is required",
+                    })}
+                    disabled={!isEditMode}
+                    className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs">
+                      {errors.password.message}
                     </p>
                   )}
                 </div>
