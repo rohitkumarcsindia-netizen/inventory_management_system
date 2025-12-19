@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/logistic")
+@RequestMapping("/api/v1/orders/logistic")
 public class LogisticsOrdersController
 {
 

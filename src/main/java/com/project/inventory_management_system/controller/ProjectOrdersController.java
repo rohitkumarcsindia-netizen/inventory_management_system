@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/project")
+@RequestMapping("/api/v1/orders/project")
 public class ProjectOrdersController
 {
     private final ProjectOrderService projectOrderService;

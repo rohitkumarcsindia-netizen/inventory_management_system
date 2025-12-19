@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/cloud")
+@RequestMapping("/api/v1/orders/cloud")
 public class CloudOrderController
 {
     private final CloudOrderService cloudOrderService;

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/product-types")
+@RequestMapping("/api/v1/admin/product-types")
 public class ProductTypeController 
 {
     private final ProductTypeService productTypeService;
