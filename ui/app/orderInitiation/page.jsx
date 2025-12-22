@@ -37,8 +37,8 @@ const [productLoaded, setProductLoaded] = useState(false);
     setLoading(true);
 
     try {
-      await httpService.postWithAuth("/api/v1/orders/project/create", order);
-      alert("✅ Order submitted!");
+      const res = await httpService.postWithAuth("/api/v1/orders/project/create", order);
+      alert(res);
       reset();
     } catch (err) {
       alert("❌ Failed to Submit Order");
@@ -53,8 +53,8 @@ const [productLoaded, setProductLoaded] = useState(false);
     setLoading(true);
 
     try {
-      await httpService.postWithAuth("/api/v1/orders/project/save", order);
-      alert("✅ Order saved!");
+      const res = await httpService.postWithAuth("/api/v1/orders/project/save", order);
+      alert(res);
       reset();
     } catch (err) {
       alert("❌ Failed to Save Order");
@@ -235,6 +235,11 @@ const fetchProducts = async () => {
                   required: "Quantity is required",
                   min: { value: 1, message: "Quantity must be at least 1" },
                 })}
+                 onKeyDown={(e) => {
+    if (["e", "E", "+", "-"].includes(e.key)) {
+      e.preventDefault();
+    }
+  }}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
               />
               {errors.proposedBuildPlanQty && (

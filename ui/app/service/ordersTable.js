@@ -709,13 +709,6 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
         </div>
       </div>
 
-      {/* NO DATA MESSAGE */}
-      {noDataFound && (
-        <div className="text-center text-red-500 font-bold py-5">
-          No Records Found
-        </div>
-      )}
-
       {/* TABLE */}
       <DataTable
         columns={columns}
