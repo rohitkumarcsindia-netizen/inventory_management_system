@@ -70,7 +70,7 @@ export default function CloudCompleteOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/cloud/complete?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/cloud/complete?offset=${offset}&limit=${ordersPerPage}`
       );
 
       const recs = data.records || data.orders || [];
@@ -119,7 +119,7 @@ export default function CloudCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/cloud/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/cloud/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -152,7 +152,7 @@ export default function CloudCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/cloud/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/cloud/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);

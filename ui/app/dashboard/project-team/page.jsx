@@ -39,7 +39,7 @@ export default function GetOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/project/page?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/project/page?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -84,7 +84,7 @@ export default function GetOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/project/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/project/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -120,7 +120,7 @@ export default function GetOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/project/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/project/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -155,7 +155,7 @@ export default function GetOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/project/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/project/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -190,7 +190,7 @@ export default function GetOrders() {
 const notifyLocScm = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/project/notify-scm-location-details/${orderId}`,
+      `/api/v1/orders/project/notify-scm-location-details/${orderId}`,
       {}   // ❗ no body required
     );
 

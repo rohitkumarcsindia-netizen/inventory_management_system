@@ -136,7 +136,7 @@ const {
   // APPROVE ORDER
     const approveOrder = async (orderId, reason) => {
       try {
-        const res = await httpService.postWithAuth(`/api/orders/finance/approve/${orderId}`, { financeReason: reason });
+        const res = await httpService.postWithAuth(`/api/v1/orders/finance/approve/${orderId}`, { financeReason: reason });
         alert(res);
         fetchOrders();
       } catch (err) {
@@ -147,7 +147,7 @@ const {
     // REJECT ORDER
     const rejectOrder = async (orderId, reason) => {
       try {
-        const res = await httpService.postWithAuth(`/api/orders/finance/reject/${orderId}`, { financeReason: reason });
+        const res = await httpService.postWithAuth(`/api/v1/orders/finance/reject/${orderId}`, { financeReason: reason });
         alert(res);
         fetchOrders();
       } catch (err) {
@@ -162,7 +162,7 @@ const {
 
     try {
       const res = await httpService.updateWithAuth(
-        `/api/orders/finance/final/approve/${finalOrderId}`,
+        `/api/v1/orders/finance/final/approve/${finalOrderId}`,
         {
           financeFinalRemark: finalRemark,
           financeReason: financeRemark,
@@ -188,12 +188,12 @@ const {
 
     if (actionType === "APPROVE") {
       res = await httpService.updateWithAuth(
-        `/api/orders/finance/final/approve/${finalOrderId}`,
+        `/api/v1/orders/finance/final/approve/${finalOrderId}`,
         payload
       );
     } else {
       res = await httpService.updateWithAuth(
-        `/api/orders/finance/final/reject/${finalOrderId}`,
+        `/api/v1/orders/finance/final/reject/${finalOrderId}`,
         payload
       );
     }
@@ -212,7 +212,7 @@ const {
   const submitClosureForm = async (data) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/finance/closure-document/${closureOrderId}`,
+      `/api/v1/orders/finance/closure-document/${closureOrderId}`,
       data
     );
 

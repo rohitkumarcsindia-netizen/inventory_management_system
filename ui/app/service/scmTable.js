@@ -135,7 +135,7 @@ const {
   //  SUBMIT CLOSURE API HIT (PUT)
  const submitClosure = async (data) => {
   await httpService.updateWithAuth(
-    `/api/orders/scm/jira-ticket-closure/${closurePopupId}`,
+    `/api/v1/orders/scm/jira-ticket-closure/${closurePopupId}`,
     data
   );
 
@@ -150,7 +150,7 @@ const {
 const notifyAmisp = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/notify-amisp/${orderId}`,
+      `/api/v1/orders/scm/notify-amisp/${orderId}`,
       {}   // ❗ no body required
     );
 
@@ -166,7 +166,7 @@ const notifyAmisp = async (orderId) => {
 const financeApproval = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/approval-request/${orderId}`,
+      `/api/v1/orders/scm/approval-request/${orderId}`,
       {}   // ❗ no body required
     );
 
@@ -182,7 +182,7 @@ const financeApproval = async (orderId) => {
     const orderCompleted = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/completed/${orderId}`,
+      `/api/v1/orders/scm/completed/${orderId}`,
       {}   // ❗ no body required
     );
 

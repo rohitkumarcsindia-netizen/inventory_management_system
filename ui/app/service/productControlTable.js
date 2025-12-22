@@ -32,7 +32,7 @@ export default function ProductControlTable({ orders }) {
   const onUpdate = async (data) => {
     try {
       const res = await httpService.updateWithAuth(
-        `/api/admin/product-types/${selectedRow.id}`,
+        `/api/v1/admin/product-types/${selectedRow.id}`,
         data
       );
 
@@ -52,7 +52,7 @@ export default function ProductControlTable({ orders }) {
       if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
-        `/api/admin/product-types/${selectedRow.id}`
+        `/api/v1/admin/product-types/${selectedRow.id}`
       );
 
       alert(res);

@@ -73,7 +73,7 @@ export default function RmaCompleteOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/rma/complete?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/rma/complete?offset=${offset}&limit=${ordersPerPage}`
       );
 
       const recs = data.records || data.orders || [];
@@ -128,7 +128,7 @@ export default function RmaCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/rma/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/rma/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -156,7 +156,7 @@ export default function RmaCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/rma/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/rma/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -191,7 +191,7 @@ export default function RmaCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/rma/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/rma/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -220,20 +220,6 @@ export default function RmaCompleteOrders() {
       fetchOrders();
     }
   }, [searchText]);
-  // MAIN LOGGER
-  useEffect(() => {
-    if (isSearchApplied) {
-      applySearchFilter();
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
-    fetchOrders();
-  }, [currentPage, ordersPerPage]);
 
   const handleLogout = () => {
     removeToken();

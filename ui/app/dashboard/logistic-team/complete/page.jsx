@@ -73,7 +73,7 @@ export default function AmispCompleteOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/logistic/complete?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/logistic/complete?offset=${offset}&limit=${ordersPerPage}`
       );
 
       const recs = data.records || data.orders || [];
@@ -128,7 +128,7 @@ export default function AmispCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/logistic/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -156,7 +156,7 @@ export default function AmispCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/logistic/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -191,7 +191,7 @@ export default function AmispCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/logistic/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);

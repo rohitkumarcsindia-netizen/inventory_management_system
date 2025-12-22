@@ -148,7 +148,7 @@ const {
     if (!shippingPopupId) return;
 
     const res = await httpService.postWithAuth(
-      `/api/orders/logistic/shipping-details/${shippingPopupId}`,
+      `/api/v1/orders/logistic/shipping-details/${shippingPopupId}`,
       data
     );
 
@@ -170,7 +170,7 @@ const {
     if (!deliveredPopupId) return;
 
     const res = await httpService.updateWithAuth(
-      `/api/orders/logistic/delivery-details/${deliveredPopupId}`,
+      `/api/v1/orders/logistic/delivery-details/${deliveredPopupId}`,
       data
     );
 
@@ -194,8 +194,8 @@ const {
 
     const endpoint =
       pdiPopup.type === "pass"
-        ? `/api/orders/logistic/pdi-pass/${pdiPopup.id}`
-        : `/api/orders/logistic/pdi-fail/${pdiPopup.id}`;
+        ? `/api/v1/orders/logistic/pdi-pass/${pdiPopup.id}`
+        : `/api/v1/orders/logistic/pdi-fail/${pdiPopup.id}`;
 
     const res = await httpService.updateWithAuth(endpoint, data);
 

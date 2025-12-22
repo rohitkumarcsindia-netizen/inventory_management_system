@@ -39,7 +39,7 @@ export default function CloudTeamPage() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/cloud/pending?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/cloud/pending?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -81,7 +81,7 @@ export default function CloudTeamPage() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/cloud/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/cloud/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -114,7 +114,7 @@ export default function CloudTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/cloud/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/cloud/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];

@@ -42,7 +42,7 @@ export default function ScmTeamPage() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/scm/pending?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/scm/pending?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -88,7 +88,7 @@ export default function ScmTeamPage() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/scm/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -122,7 +122,7 @@ export default function ScmTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/scm/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -157,7 +157,7 @@ export default function ScmTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/scm/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -192,7 +192,7 @@ export default function ScmTeamPage() {
   const createJira = async (orderId, jiraPayload) => {
     try {
       await httpService.postWithAuth(
-        `/api/orders/scm/jira/details/${orderId}`,
+        `/api/v1/orders/scm/jira/details/${orderId}`,
         jiraPayload
       );
 
@@ -206,7 +206,7 @@ export default function ScmTeamPage() {
   const createOldJira = async (orderId, jiraPayload) => {
     try {
       await httpService.postWithAuth(
-        `/api/orders/scm/old/jira/details/${orderId}`,
+        `/api/v1/orders/scm/old/jira/details/${orderId}`,
         jiraPayload
       );
 
@@ -220,7 +220,7 @@ export default function ScmTeamPage() {
 const notifyRma = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/notify-rma/${orderId}`,
+      `/api/v1/orders/scm/notify-rma/${orderId}`,
       {}   // ❗ no body required
     );
 
@@ -236,7 +236,7 @@ const notifyRma = async (orderId) => {
 const notifyPT = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/notify-project-team/${orderId}`,
+      `/api/v1/orders/scm/notify-project-team/${orderId}`,
       {}   // ❗ no body required
     );
 
@@ -252,7 +252,7 @@ const notifyPT = async (orderId) => {
 const notifyLogistic = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/scm/dispatch/${orderId}`,
+      `/api/v1/orders/scm/dispatch/${orderId}`,
       {}   //no body required
     );
 

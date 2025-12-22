@@ -43,7 +43,7 @@ export default function FinanceTeamPage() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/finance/pending?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/finance/pending?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -89,7 +89,7 @@ export default function FinanceTeamPage() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/finance/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -123,7 +123,7 @@ export default function FinanceTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/finance/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -158,7 +158,7 @@ export default function FinanceTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/finance/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];

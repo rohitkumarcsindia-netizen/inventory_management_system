@@ -43,7 +43,7 @@ export default function LogisticTeamPage() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/logistic/pending?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/logistic/pending?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -89,7 +89,7 @@ export default function LogisticTeamPage() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/logistic/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -123,7 +123,7 @@ export default function LogisticTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/logistic/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -158,7 +158,7 @@ export default function LogisticTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/logistic/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/logistic/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];

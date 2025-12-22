@@ -63,7 +63,7 @@ export default function FinanceCompleteOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/finance/complete?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/finance/complete?offset=${offset}&limit=${ordersPerPage}`
       );
 
       const recs = data.records || data.orders || [];
@@ -106,7 +106,7 @@ export default function FinanceCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/finance/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -133,7 +133,7 @@ export default function FinanceCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/finance/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -162,7 +162,7 @@ export default function FinanceCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/finance/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/finance/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);

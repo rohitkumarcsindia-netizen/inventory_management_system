@@ -88,7 +88,7 @@ const {
     if (!popupOrderId) return;
 
     const res = await httpService.postWithAuth(
-      `/api/orders/rma/passed/${popupOrderId}`,
+      `/api/v1/orders/rma/passed/${popupOrderId}`,
       data
     );
 
@@ -111,7 +111,7 @@ const {
     if (!failPopupOrderId) return;
 
     const res = await httpService.postWithAuth(
-      `/api/orders/rma/failed/${failPopupOrderId}`,
+      `/api/v1/orders/rma/failed/${failPopupOrderId}`,
       data
     );
 

@@ -35,7 +35,7 @@ export default function UserControlTable({ orders }) {
   const onUpdate = async (data) => {
     try {
       const res = await httpService.updateWithAuth(
-        `/api/admin/users/details-update/${selectedRow.userId}`,
+        `/api/v1/admin/users/details-update/${selectedRow.userId}`,
         data
       );
 
@@ -55,7 +55,7 @@ export default function UserControlTable({ orders }) {
       if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
-        `/api/admin/users/delete/${selectedRow.userId}`
+        `/api/v1/admin/users/delete/${selectedRow.userId}`
       );
 
       alert(res);

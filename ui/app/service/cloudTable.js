@@ -4,8 +4,6 @@ import { useState } from "react";
 import DataTable from "react-data-table-component";
 import httpService from "../service/httpService";   // <-- ADD THIS IMPORT
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 
 
 export default function CloudTable({
@@ -76,7 +74,7 @@ const highlightText = (text) => {
       if (!popupOrderId) return;
 
       const res = await httpService.postWithAuth(
-        `/api/orders/cloud/update-jira-details/${popupOrderId}`,
+        `/api/v1/orders/cloud/update-jira-details/${popupOrderId}`,
         data
       );
 

@@ -37,7 +37,7 @@ const [productLoaded, setProductLoaded] = useState(false);
     setLoading(true);
 
     try {
-      await httpService.postWithAuth("/api/orders/project/create", order);
+      await httpService.postWithAuth("/api/v1/orders/project/create", order);
       alert("✅ Order submitted!");
       reset();
     } catch (err) {
@@ -53,7 +53,7 @@ const [productLoaded, setProductLoaded] = useState(false);
     setLoading(true);
 
     try {
-      await httpService.postWithAuth("/api/orders/project/save", order);
+      await httpService.postWithAuth("/api/v1/orders/project/save", order);
       alert("✅ Order saved!");
       reset();
     } catch (err) {
@@ -69,7 +69,7 @@ const fetchProjects = async () => {
 
   try {
     const res = await httpService.get(
-      "/api/admin/project-types"
+      "/api/v1/admin/project-types"
     );
 
     setProjects(res); // assume array of strings
@@ -84,7 +84,7 @@ const fetchProducts = async () => {
 
   try {
     const res = await httpService.get(
-      "/api/admin/product-types"
+      "/api/v1/admin/product-types"
     );
 
     setProducts(res); // assume array of strings

@@ -83,10 +83,10 @@ const {
     let method = "";
 
     if (actionType === "RE_COMPLETE") {
-      apiUrl = `/api/orders/syrma/re-production-testing/${popupOrderId}`;
+      apiUrl = `/api/v1/orders/syrma/re-production-testing/${popupOrderId}`;
       method = "put";
     } else {
-      apiUrl = `/api/orders/syrma/production-testing/${popupOrderId}`;
+      apiUrl = `/api/v1/orders/syrma/production-testing/${popupOrderId}`;
       method = "post";
     }
 

@@ -33,7 +33,7 @@ export default function ProjectControlTable({ orders }) {
   const onUpdate = async (data) => {
     try {
       const res = await httpService.updateWithAuth(
-        `/api/admin/project-types/${selectedRow.id}`,
+        `/api/v1/admin/project-types/${selectedRow.id}`,
         data
       );
 
@@ -53,7 +53,7 @@ export default function ProjectControlTable({ orders }) {
       if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
-        `/api/admin/project-types/${selectedRow.id}`
+        `/api/v1/admin/project-types/${selectedRow.id}`
       );
 
       alert(res);

@@ -143,8 +143,8 @@ const {
   try {
     const apiUrl =
       pdiMode === "PRE"
-        ? `/api/orders/project/pri-delivery-pdi/${selectedOrderId}`
-        : `/api/orders/project/post-delivery-pdi/${selectedOrderId}`;
+        ? `/api/v1/orders/project/pri-delivery-pdi/${selectedOrderId}`
+        : `/api/v1/orders/project/post-delivery-pdi/${selectedOrderId}`;
 
     const res = await httpService.updateWithAuth(apiUrl, data);
 
@@ -173,7 +173,7 @@ const handleDeleteOrder = async () => {
 
   try {
     await httpService.deleteWithAuth(
-      `/api/orders/project/delete/${selectedOrder.orderId}`
+      `/api/v1/orders/project/delete/${selectedOrder.orderId}`
     );
 
     alert("Order deleted successfully ✅");
@@ -198,7 +198,7 @@ const handleDeleteOrder = async () => {
 
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/project/submit/${selectedOrder.orderId}`,editForm   //  popup ka poora data body me
+      `/api/v1/orders/project/submit/${selectedOrder.orderId}`,editForm   //  popup ka poora data body me
     );
 
     alert(res?.message || "Order submitted successfully ✅");
@@ -224,7 +224,7 @@ const handleDeleteOrder = async () => {
 
   try {
     await httpService.updateWithAuth(
-      `/api/orders/project/update/${selectedOrder.orderId}`, // ✅ FIX
+      `/api/v1/orders/project/update/${selectedOrder.orderId}`, // ✅ FIX
       editForm
     );
 
@@ -249,7 +249,7 @@ const notifyAmisp = async (data) => {
     if (!popupOrderId) return;
 
     const res = await httpService.postWithAuth(
-      `/api/orders/project/convey-amisp/${popupOrderId}`,
+      `/api/v1/orders/project/convey-amisp/${popupOrderId}`,
       data
     );
 
@@ -270,7 +270,7 @@ const notifyAmisp = async (data) => {
 const notifyScm = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
-      `/api/orders/project/notify-scm/${orderId}`,
+      `/api/v1/orders/project/notify-scm/${orderId}`,
       {}   // ❗ no body required
     );
 
@@ -288,7 +288,7 @@ const notifyScm = async (orderId) => {
     if (!locationPopupOrderId) return;
 
     const res = await httpService.updateWithAuth(
-      `/api/orders/project/notify-scm-location-details/${locationPopupOrderId}`,
+      `/api/v1/orders/project/notify-scm-location-details/${locationPopupOrderId}`,
       data
     );
 
@@ -727,14 +727,12 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
         paginationServer
         paginationPerPage={ordersPerPage}
         paginationTotalRows={noDataFound ? 0 : (filteredCount > 0 ? filteredCount : totalOrders)}
-
         expandableRows 
         expandableRowsComponent={ExpandedOrderDetails} 
         expandableRowsHideExpander={false} 
 
         paginationDefaultPage={currentPage}
-        onChangePage={(page) => setCurrentPage(page)}
-        noDataComponent={<div></div>} 
+        onChangePage={(page) => setCurrentPage(page)} 
         onChangeRowsPerPage={(newPerPage) => {
           setOrdersPerPage(newPerPage);
           setCurrentPage(1);

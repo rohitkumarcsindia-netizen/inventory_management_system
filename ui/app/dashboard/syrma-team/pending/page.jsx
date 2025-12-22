@@ -44,7 +44,7 @@ export default function SyrmaTeamPage() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/syrma/pending?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/syrma/pending?offset=${offset}&limit=${ordersPerPage}`
       );
 
       setOrders(data.orders || []);
@@ -90,7 +90,7 @@ export default function SyrmaTeamPage() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/syrma/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/syrma/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -124,7 +124,7 @@ export default function SyrmaTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/syrma/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/syrma/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];
@@ -159,7 +159,7 @@ export default function SyrmaTeamPage() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/syrma/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/syrma/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = data.records || [];

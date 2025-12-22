@@ -21,7 +21,7 @@ export default function UserControl() {
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {
     try {
-      const data = await httpService.get("/api/admin/users");
+      const data = await httpService.get("/api/v1/admin/users");
       setUser(data.users || []);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -58,7 +58,7 @@ export default function UserControl() {
       };
 
       const res = await httpService.postWithAuth(
-        "/api/admin/users/create",
+        "/api/v1/admin/users/create",
         body
       );
 

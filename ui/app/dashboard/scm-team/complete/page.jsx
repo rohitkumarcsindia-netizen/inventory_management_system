@@ -69,7 +69,7 @@ export default function ScmCompleteOrders() {
       const offset = (currentPage - 1) * ordersPerPage;
 
       const data = await httpService.get(
-        `/api/orders/scm/complete?offset=${offset}&limit=${ordersPerPage}`
+        `/api/v1/orders/scm/complete?offset=${offset}&limit=${ordersPerPage}`
       );
 
       const recs = data.records || data.orders || [];
@@ -112,7 +112,7 @@ export default function ScmCompleteOrders() {
     const page = currentPage - 1;
 
     const data = await httpService.get(
-      `/api/orders/scm/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/complete/status-filter?status=${value}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -139,7 +139,7 @@ export default function ScmCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/scm/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/complete/date-filter?startDate=${startDate}&endDate=${endDate}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);
@@ -168,7 +168,7 @@ export default function ScmCompleteOrders() {
 
     const page = currentPage - 1;
     const data = await httpService.get(
-      `/api/orders/scm/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
+      `/api/v1/orders/scm/complete/search?keyword=${text}&page=${page}&size=${ordersPerPage}`
     );
 
     const records = (data.records || []).map(normalizeFinanceRecord);

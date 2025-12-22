@@ -21,8 +21,8 @@ export default function ProjectAndProductControl() {
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {
     try {
-      const data = await httpService.get("/api/admin/product-types");
-      setOrders(data || []);
+      const res = await httpService.get("/api/v1/admin/product-types");
+         setOrders(Array.isArray(res) ? res : []);
     } catch (err) {
       console.error("Fetch Error:", err);
     }
@@ -54,7 +54,7 @@ export default function ProjectAndProductControl() {
       };
 
       const res = await httpService.postWithAuth(
-        "/api/admin/product-types",
+        "/api/v1/admin/product-types",
         body
       );
 
