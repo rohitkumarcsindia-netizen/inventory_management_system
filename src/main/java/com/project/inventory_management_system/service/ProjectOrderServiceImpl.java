@@ -110,9 +110,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                 return ResponseEntity.ok("Order submitted but mail failed to send");
             }
 
-            OrdersDto orders1 = orderMapper.toDto(saved);
-
-            return ResponseEntity.ok(orders1);
+        return ResponseEntity.ok("Order Created Successfully Submit");
     }
 
 
