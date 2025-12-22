@@ -27,7 +27,7 @@ public interface RmaApprovalRepository extends JpaRepository<RmaApproval, Long>
     @Query(
             value = "SELECT * FROM rma_approval " +
                     "WHERE action IS NOT NULL " +
-                    "ORDER BY rma_action_time DESC " +
+                    "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
     )

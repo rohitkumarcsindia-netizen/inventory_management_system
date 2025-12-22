@@ -19,7 +19,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
             value = "SELECT fa.* FROM finance_approval fa " +
                     "JOIN orders o ON o.order_id = fa.order_id " +
                     "WHERE fa.action IS NOT NULL " +
-                    "ORDER BY fa.finance_action_time DESC " +
+                    "ORDER BY fa.action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
     )
