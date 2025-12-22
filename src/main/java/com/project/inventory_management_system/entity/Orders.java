@@ -1,5 +1,6 @@
 package com.project.inventory_management_system.entity;
 
+import com.project.inventory_management_system.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,8 +45,9 @@ public class Orders
     @Column(name = "initiator", length = 100)
     private String initiator;
 
-    @Column(name = "status", length = 225)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 225)
+    private OrderStatus status;
 
     @Column(name = "remarks", columnDefinition = "TEXT")
     private String pmsRemarks;

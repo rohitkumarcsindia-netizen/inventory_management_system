@@ -7,6 +7,7 @@ import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.FinanceOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -135,10 +136,12 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > FINANCE PRE APPROVAL PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
+
 
         //Finance Approval table data save
         FinanceApproval financeApproval = new FinanceApproval();
@@ -150,7 +153,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         financeApprovalRepository.save(financeApproval);
 
         //Order table status update
-        order.setStatus("FINANCE APPROVED > SCM PENDING");
+        order.setStatus(OrderStatus.FINANCE_APPROVED_SCM_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");
@@ -188,7 +191,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > FINANCE PRE APPROVAL PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
@@ -205,7 +209,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         financeApprovalRepository.save(financeApproval);
 
         //Order table status update
-        order.setStatus("FINANCE TEAM REJECTED");
+        order.setStatus(OrderStatus.FINANCE_TEAM_REJECTED);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -429,7 +433,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > FINANCE POST APPROVAL PENDING"))
+
+        if (order.getStatus() != OrderStatus.SCM_FINANCE_POST_APPROVAL_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
@@ -446,7 +451,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("FINANCE > SCM PLAN TO DISPATCH");
+            order.setStatus(OrderStatus.FINANCE_SCM_PLAN_TO_DISPATCH);
             orderRepository.save(order);
 
 
@@ -473,7 +478,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
-            order.setStatus("FINANCE > SCM PLAN TO DISPATCH");
+            order.setStatus(OrderStatus.FINANCE_SCM_PLAN_TO_DISPATCH);
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentName("SCM");
@@ -511,7 +516,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > FINANCE POST APPROVAL PENDING"))
+
+        if (order.getStatus() != OrderStatus.SCM_FINANCE_POST_APPROVAL_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
@@ -528,7 +534,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("FINANCE TEAM REJECTED");
+            order.setStatus(OrderStatus.FINANCE_TEAM_REJECTED);
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -554,7 +560,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(financeApproval);
 
             //Order table status update
-            order.setStatus("FINANCE TEAM REJECTED");
+            order.setStatus(OrderStatus.FINANCE_TEAM_REJECTED);
             orderRepository.save(order);
 
             Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -592,7 +598,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("LOGISTIC > FINANCE CLOSURE PENDING"))
+
+        if (order.getStatus() != OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }
@@ -606,7 +613,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             financeApprovalRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("FINANCE CLOSURE DONE > SCM CLOSURE PENDING");
+            order.setStatus(OrderStatus.FINANCE_CLOSURE_DONE_SCM_CLOSURE_PENDING);
             orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");

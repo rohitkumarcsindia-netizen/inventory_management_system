@@ -24,14 +24,14 @@ public interface ScmApprovalRepository extends JpaRepository<ScmApproval, Long>
 
 
     // Order Count using Scm Action
-    @Query(value = "SELECT COUNT(*) FROM  scm_approval WHERE scm_action IS NOT NULL", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM  scm_approval WHERE action IS NOT NULL", nativeQuery = true)
     Long countByScmAction();
 
 
     // Order get using Scm Action
     @Query(
             value = "SELECT * FROM scm_approval " +
-                    "WHERE scm_action IS NOT NULL " +
+                    "WHERE action IS NOT NULL " +
                     "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true

@@ -1,8 +1,7 @@
 package com.project.inventory_management_system.service;
 
 
-import com.project.inventory_management_system.entity.Orders;
-import org.springframework.data.jpa.domain.Specification;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

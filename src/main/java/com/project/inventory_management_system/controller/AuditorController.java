@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/auditor")
+@RequestMapping("/api/v1/orders/auditor")
 public class AuditorController
 {
     private final AuditorService auditorService;

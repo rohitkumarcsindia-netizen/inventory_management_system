@@ -3,6 +3,7 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.*;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.mapper.RmaOrdersMapper;
@@ -93,7 +94,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > RMA QC PENDING"))
+        if (order.getStatus() != OrderStatus.SCM_NOTIFY_RMA_QC_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -108,7 +109,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA QC PASS > SCM ORDER RELEASE PENDING");
+        order.setStatus(OrderStatus.RMA_QC_PASS_SCM_ORDER_RELEASE_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");
@@ -144,7 +145,8 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > RMA QC PENDING"))
+
+        if (order.getStatus() != OrderStatus.SCM_NOTIFY_RMA_QC_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for Rma approval");
         }
@@ -160,7 +162,7 @@ public class RmaServiceImpl implements RmaService
         rmaApprovalRepository.save(rmaApproval);
 
         //Order table status update
-        order.setStatus("RMA QC FAIL > SYRMA RE-PROD/TEST PENDING");
+        order.setStatus(OrderStatus.RMA_QC_FAIL_SYRMA_RE_PROD_TEST_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SYRMA");

@@ -18,7 +18,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
     @Query(
             value = "SELECT fa.* FROM finance_approval fa " +
                     "JOIN orders o ON o.order_id = fa.order_id " +
-                    "WHERE fa.finance_action IS NOT NULL " +
+                    "WHERE fa.action IS NOT NULL " +
                     "ORDER BY fa.finance_action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
@@ -29,7 +29,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
     //All order Action count only
     @Query(
             value = "SELECT COUNT(*) FROM finance_approval " +
-                    "WHERE finance_approval.finance_action IS NOT NULL",
+                    "WHERE finance_approval.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByAction();

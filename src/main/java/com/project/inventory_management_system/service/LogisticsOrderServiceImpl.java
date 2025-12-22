@@ -4,6 +4,7 @@ import com.project.inventory_management_system.dto.LogisticOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -94,7 +95,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > LOGISTIC PENDING"))
+        if (order.getStatus() != OrderStatus.SCM_LOGISTIC_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -117,7 +118,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
 
 
         //Order table status update
-        order.setStatus("DELIVERY PENDING");
+        order.setStatus(OrderStatus.DELIVERY_PENDING);
         orderRepository.save(order);
 
         return ResponseEntity.ok("Order Shipping Successfully");
@@ -145,7 +146,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("DELIVERY PENDING"))
+        if (order.getStatus() != OrderStatus.DELIVERY_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -165,7 +166,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             logisticsDetailsRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("LOGISTIC > FINANCE CLOSURE PENDING");
+            order.setStatus(OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING);
             orderRepository.save(order);
 
             return ResponseEntity.ok("Order Delivery Successfully");
@@ -181,7 +182,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         logisticsDetailsRepository.save(findOrder);
 
         //Order table status update
-        order.setStatus("PDI PENDING");
+        order.setStatus(OrderStatus.PDI_PENDING);
         orderRepository.save(order);
 
         return ResponseEntity.ok("Order Delivery Successfully");
@@ -209,7 +210,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PDI PENDING"))
+        if (order.getStatus() != OrderStatus.PDI_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -223,7 +224,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         logisticsDetailsRepository.save(findOrder);
 
         //Order table status update
-        order.setStatus("LOGISTIC > FINANCE CLOSURE PENDING");
+        order.setStatus(OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING);
         orderRepository.save(order);
 
         return ResponseEntity.ok("PDI Details Submit Successfully");
@@ -251,7 +252,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PDI PENDING"))
+        if (order.getStatus() != OrderStatus.PDI_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -265,7 +266,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         logisticsDetailsRepository.save(findOrder);
 
         //Order table status update
-        order.setStatus("POST PDI FAIL RETURN AMISP");
+        order.setStatus(OrderStatus.POST_PDI_FAIL_RETURN_AMISP);
         orderRepository.save(order);
 
         return ResponseEntity.ok("PDI Details Submit Successfully");

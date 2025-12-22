@@ -5,6 +5,7 @@ import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ScmOrdersDto;
 import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.mapper.ScmOrderMapper;
@@ -135,7 +136,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = order.getStatus();
+        String status = String.valueOf(order.getStatus());
         boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
 
         if (!allowed)
@@ -156,7 +157,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(scmApproval);
 
 
-        order.setStatus("SCM CREATED TICKET > CLOUD PENDING");
+        order.setStatus(OrderStatus.SCM_CREATED_TICKET_CLOUD_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("CLOUD TEAM");
@@ -197,7 +198,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING"))
+        if (order.getStatus() != OrderStatus.CLOUD_CREATED_CERTIFICATE_SCM_PROD_BACK_CREATION_PENDING)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -217,7 +218,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(jiraDetailsUpdate);
 
 
-        order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
+        order.setStatus(OrderStatus.SCM_JIRA_TICKET_CLOSURE_SYRMA_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SYRMA");
@@ -255,7 +256,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = order.getStatus();
+        String status = String.valueOf(order.getStatus());
         boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
 
         if (!allowed)
@@ -276,7 +277,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApprovalRepository.save(scmApproval);
 
 
-        order.setStatus("SCM JIRA TICKET CLOSURE > SYRMA PENDING");
+        order.setStatus(OrderStatus.SCM_JIRA_TICKET_CLOSURE_SYRMA_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("CLOUD TEAM");
@@ -314,7 +315,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = order.getStatus();
+        String status = String.valueOf(order.getStatus());
         boolean allowed = status.equalsIgnoreCase("SYRMA PROD/TEST DONE > SCM ACTION PENDING") || status.equalsIgnoreCase("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
 
         if (!allowed)
@@ -322,7 +323,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM NOTIFY > RMA QC PENDING");
+        order.setStatus(OrderStatus.SCM_NOTIFY_RMA_QC_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("RMA");
@@ -359,12 +360,13 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC PASS > SCM ORDER RELEASE PENDING"))
+
+        if (order.getStatus() != OrderStatus.RMA_QC_PASS_SCM_ORDER_RELEASE_PENDING)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM NOTIFY > PROJECT TEAM BUILD IS READY");
+        order.setStatus(OrderStatus.SCM_NOTIFY_PROJECT_TEAM_BUILD_IS_READY);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -403,12 +405,13 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > SCM READY FOR DISPATCH"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_SCM_READY_FOR_DISPATCH)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("SCM NOTIFY > AMISP READY FOR DISPATCH");
+        order.setStatus(OrderStatus.SCM_NOTIFY_AMISP_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
 
@@ -447,12 +450,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM NOTIFY > SCM LOCATION DETAILS"))
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_NOTIFY_SCM_LOCATION_DETAILS)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Scm action");
         }
 
-        order.setStatus("SCM > FINANCE POST APPROVAL PENDING");
+        order.setStatus(OrderStatus.SCM_FINANCE_POST_APPROVAL_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("FINANCE");
@@ -491,12 +494,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("FINANCE > SCM PLAN TO DISPATCH"))
+        if (order.getStatus() != OrderStatus.FINANCE_SCM_PLAN_TO_DISPATCH)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Scm action");
         }
 
-        order.setStatus("SCM > LOGISTIC PENDING");
+        order.setStatus(OrderStatus.SCM_LOGISTIC_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("LOGISTIC");
@@ -754,12 +757,13 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("FINANCE CLOSURE DONE > SCM CLOSURE PENDING"))
+
+        if (order.getStatus() != OrderStatus.FINANCE_CLOSURE_DONE_SCM_CLOSURE_PENDING)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
 
-        order.setStatus("COMPLETED");
+        order.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");

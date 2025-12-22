@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.dto;
 
 
+import com.project.inventory_management_system.enums.OrderStatus;
 import lombok.Data;
 import java.time.LocalDateTime;
 

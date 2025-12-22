@@ -4,6 +4,7 @@ import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
 import com.project.inventory_management_system.mapper.SyrmaOrdersMapper;
@@ -89,7 +90,8 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM JIRA TICKET CLOSURE > SYRMA PENDING")) {
+        if (order.getStatus() != OrderStatus.SCM_JIRA_TICKET_CLOSURE_SYRMA_PENDING)
+        {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
@@ -102,7 +104,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA PROD/TEST DONE > SCM ACTION PENDING");
+        order.setStatus(OrderStatus.SYRMA_PROD_TEST_DONE_SCM_ACTION_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");
@@ -365,7 +367,8 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("RMA QC FAIL > SYRMA RE-PROD/TEST PENDING")) {
+        if (order.getStatus() != OrderStatus.RMA_QC_FAIL_SYRMA_RE_PROD_TEST_PENDING)
+        {
             return ResponseEntity.status(403).body("Order is not ready for production start");
         }
 
@@ -379,7 +382,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         syrmaApprovalRepository.save(syrmaApproval);
 
         //Order table status update
-        order.setStatus("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
+        order.setStatus(OrderStatus.SYRMA_RE_PROD_TEST_DONE_SCM_ACTION_PENDING);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");

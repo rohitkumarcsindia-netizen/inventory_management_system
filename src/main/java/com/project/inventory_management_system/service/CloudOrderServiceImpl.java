@@ -4,6 +4,7 @@ import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.CloudOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -132,7 +133,8 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM CREATED TICKET > CLOUD PENDING"))
+
+        if (order.getStatus() != OrderStatus.SCM_CREATED_TICKET_CLOUD_PENDING)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -147,7 +149,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         jiraDetailsUpdate.setUpdatedBy(user);
         cloudApprovalRepository.save(jiraDetailsUpdate);
 
-        order.setStatus("CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING");
+        order.setStatus(OrderStatus.CLOUD_CREATED_CERTIFICATE_SCM_PROD_BACK_CREATION_PENDING);
         orderRepository.save(order);
 
 

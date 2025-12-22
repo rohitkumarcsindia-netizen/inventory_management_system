@@ -1,13 +1,13 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.ProductTypeDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
 import com.project.inventory_management_system.repository.DepartmentRepository;
@@ -73,7 +73,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             if (orders.getOrderType().equalsIgnoreCase("PURCHASE"))
             {
                 orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-                orders.setStatus("PROJECT TEAM > SCM PENDING");
+                orders.setStatus(OrderStatus.PROJECT_TEAM_SCM_PENDING);
 
 
                 Orders saved = orderRepository.save(orders);
@@ -90,14 +90,12 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                     return ResponseEntity.ok("Order submitted but mail failed to send");
                 }
 
-
                 return ResponseEntity.ok("Order Created Successfully Submit");
             }
 
 
             orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-            orders.setStatus("PROJECT TEAM > FINANCE PRE APPROVAL PENDING");
-
+            orders.setStatus(OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING);
             Orders saved = orderRepository.save(orders);
 
             Department financeTeam = departmentRepository.findByDepartmentName("FINANCE");
@@ -112,8 +110,9 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                 return ResponseEntity.ok("Order submitted but mail failed to send");
             }
 
+            OrdersDto orders1 = orderMapper.toDto(saved);
 
-            return ResponseEntity.ok("Order Created Successfully Submit");
+            return ResponseEntity.ok(orders1);
     }
 
 
@@ -176,7 +175,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found or This user is not allowed to update order");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for project team update");
         }
@@ -191,7 +190,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
         order.setInitiator(ordersDto.getInitiator());
         order.setPmsRemarks(ordersDto.getPmsRemarks());
-        order.setStatus("PROJECT TEAM PENDING");
+        order.setStatus(OrderStatus.PROJECT_TEAM_PENDING);
 
         // Save updated order
          orderRepository.save(order);
@@ -222,11 +221,11 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found or This user is not allowed to delete order");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_PENDING)
         {
             return ResponseEntity.status(403).body("This order cannot be deleted because it has already moved to the next department");
         }
-
         orderRepository.delete(order);
 
         return ResponseEntity.ok("Order deleted successfully");
@@ -364,12 +363,13 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > PROJECT TEAM BUILD IS READY"))
+
+        if (order.getStatus() != OrderStatus.SCM_NOTIFY_PROJECT_TEAM_BUILD_IS_READY)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING");
+        order.setStatus(OrderStatus.PROJECT_TEAM_NOTIFY_AMISP_PDI_TYPE_PENDING);
         orderRepository.save(order);
 
         ProjectTeamApproval amispEmailId = new ProjectTeamApproval();
@@ -411,12 +411,13 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for Project team action");
         }
 
-        order.setStatus("PROJECT TEAM > SCM READY FOR DISPATCH");
+        order.setStatus(OrderStatus.PROJECT_TEAM_SCM_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");
@@ -460,7 +461,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Approval details not found for this order");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM NOTIFY > AMISP READY FOR DISPATCH"))
+
+        if (order.getStatus() != OrderStatus.SCM_NOTIFY_AMISP_READY_FOR_DISPATCH)
         {
             return ResponseEntity.status(403).body("Location details can only be submitted when the order is pending for SCM location update");
         }
@@ -470,7 +472,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         projectTeamApproval.setLocationDetails(locationDetails.getLocationDetails());
         projectTeamApprovalRepository.save(projectTeamApproval);
 
-        order.setStatus("PROJECT TEAM NOTIFY > SCM LOCATION DETAILS");
+        order.setStatus(OrderStatus.PROJECT_TEAM_NOTIFY_SCM_LOCATION_DETAILS);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("SCM");
@@ -515,7 +517,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         orders.setUsers(user);
 
         orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-        orders.setStatus("PROJECT TEAM PENDING");
+        orders.setStatus(OrderStatus.PROJECT_TEAM_PENDING);
 
         orderRepository.save(orders);
 
@@ -543,7 +545,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found or This user is not allowed to update order");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for project team update");
         }
@@ -559,7 +562,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
             order.setInitiator(user.getUsername());
             order.setPmsRemarks(ordersDto.getPmsRemarks());
-            order.setStatus("PROJECT TEAM > SCM PENDING");
+            order.setStatus(OrderStatus.PROJECT_TEAM_SCM_PENDING);
+//            order.setStatus("PROJECT TEAM > SCM PENDING");
 
             Orders saved = orderRepository.save(order);
 
@@ -587,7 +591,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
         order.setInitiator(user.getUsername());
         order.setPmsRemarks(ordersDto.getPmsRemarks());
-        order.setStatus("PROJECT TEAM > FINANCE PRE APPROVAL PENDING");
+        order.setStatus(OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING);
 
         Orders saved = orderRepository.save(order);
 
@@ -627,7 +631,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_NOTIFY_AMISP_PDI_TYPE_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for project approval");
         }
@@ -645,7 +650,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         projectTeamApprovalRepository.save(projectTeamApproval);
 
         //Order table status update
-        order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
+        order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -683,7 +688,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING"))
+
+        if (order.getStatus() != OrderStatus.PROJECT_TEAM_NOTIFY_AMISP_PDI_TYPE_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for project approval");
         }
@@ -701,7 +707,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         projectTeamApprovalRepository.save(projectTeamApproval);
 
         //Order table status update
-        order.setStatus("PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH");
+        order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
