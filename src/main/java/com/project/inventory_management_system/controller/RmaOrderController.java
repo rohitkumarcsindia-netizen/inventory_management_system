@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/orders/rma")
 public class RmaOrderController

@@ -18,7 +18,7 @@ public class LogisticOrderMapper
         LogisticOrderDto logisticOrderDto = new LogisticOrderDto();
         logisticOrderDto.setId(logisticsDetails.getId());
         logisticOrderDto.setLogisticsComment(logisticsDetails.getLogisticsComment());
-        logisticOrderDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
+//        logisticOrderDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
         logisticOrderDto.setActionTime(logisticsDetails.getActionTime());
         logisticOrderDto.setCourierName(logisticsDetails.getCourierName());
         logisticOrderDto.setDeliveredStatus(logisticsDetails.getDeliveredStatus());
@@ -27,7 +27,7 @@ public class LogisticOrderMapper
         logisticOrderDto.setActualDeliveryDate(logisticsDetails.getActualDeliveryDate());
         logisticOrderDto.setShippingMode(logisticsDetails.getShippingMode());
         logisticOrderDto.setExpectedDeliveryDate(logisticsDetails.getExpectedDeliveryDate());
-        logisticOrderDto.setPdiAction(logisticsDetails.getPdiAction());
+//        logisticOrderDto.setPdiAction(logisticsDetails.getPdiAction());
         logisticOrderDto.setShipmentDocumentUrl(logisticsDetails.getShipmentDocumentUrl());
         logisticOrderDto.setTrackingNumber(logisticsDetails.getTrackingNumber());
 

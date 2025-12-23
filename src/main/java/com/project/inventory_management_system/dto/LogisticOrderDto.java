@@ -22,8 +22,8 @@ public class LogisticOrderDto
     private String deliveredStatus;
     private String serialNumbers;
     private String logisticsComment;
-    private String logisticsPdiComment;
-    private String pdiAction;
+//    private String logisticsPdiComment;
+//    private String pdiAction;
     private String shipmentDocumentUrl;
 
     private UserDto actionBy;

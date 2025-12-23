@@ -28,4 +28,6 @@ public class ProjectTeamOrderDto
     private String dispatchDetails;
     private String documentUrl;
     private String locationDetails;
+    private String PdiComment;
+    private String pdiAction;
 }

@@ -2,6 +2,7 @@ package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
+import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 
 
 @Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/orders/project")
 public class ProjectOrdersController
@@ -234,5 +236,31 @@ public class ProjectOrdersController
 
         return projectOrderService.submitOrders(userDetails.getUsername(), orderId, ordersDto);
 
+    }
+
+    @PutMapping("/pdi-pass/{orderId}")
+    public ResponseEntity<?> fillPassPdiDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamApproval pdiComments)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.fillPassPdiDetails(userDetails.getUsername(), orderId, pdiComments);
+    }
+
+    @PutMapping("/pdi-fail/{orderId}")
+    public ResponseEntity<?> fillFailPdiDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody ProjectTeamApproval pdiComments)
+    {
+        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
+
+        if (userDetails == null)
+        {
+            return ResponseEntity.status(401).body("Unauthorized");
+        }
+
+        return projectOrderService.fillFailPdiDetails(userDetails.getUsername(), orderId, pdiComments);
     }
 }

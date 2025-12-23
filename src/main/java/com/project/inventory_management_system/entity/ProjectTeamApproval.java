@@ -41,7 +41,7 @@ public class ProjectTeamApproval
     @Column(name = "serial_number")
     private String serialNumbers;
 
-    @Column(name = "despatch_details")
+    @Column(name = "dispatch_details")
     private String dispatchDetails;
 
     @Column(name = "document_url")
@@ -49,4 +49,10 @@ public class ProjectTeamApproval
 
     @Column(name = "location")
     private String locationDetails;
+
+    @Column(columnDefinition = "TEXT")
+    private String PdiComment;
+
+    @Column(name = "pdi_action",columnDefinition = "TEXT")
+    private String pdiAction;
 }

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 
 
 @Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/orders/syrma")
 public class SyrmaOrderController

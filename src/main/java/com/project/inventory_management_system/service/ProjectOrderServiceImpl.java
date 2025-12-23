@@ -3,10 +3,7 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
 import com.project.inventory_management_system.dto.UserDto;
-import com.project.inventory_management_system.entity.ProjectTeamApproval;
-import com.project.inventory_management_system.entity.Department;
-import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
@@ -182,7 +179,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         order.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
         order.setExpectedOrderDate(ordersDto.getExpectedOrderDate());
         order.setProject(ordersDto.getProject());
-        order.setProductType(String.valueOf(ordersDto.getProductType()));
+        order.setProductType(ordersDto.getProductType());
         order.setOrderType(ordersDto.getOrderType());
         order.setProposedBuildPlanQty(ordersDto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(ordersDto.getReasonForBuildRequest());
@@ -705,7 +702,8 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         projectTeamApprovalRepository.save(projectTeamApproval);
 
         //Order table status update
-        order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
+        order.setStatus(OrderStatus.PDI_PENDING);
+//        order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -718,6 +716,103 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         return ResponseEntity.ok("Notification Sent For Project Team");
+    }
+
+    @Override
+    public ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, ProjectTeamApproval pdiComments)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only Project team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (order.getStatus() != OrderStatus.PDI_PENDING)
+        {
+            return ResponseEntity.status(403).body("Order is not pending for Project team approval");
+        }
+
+        ProjectTeamApproval findOrder = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        //pri PDI condition
+        if (findOrder.getAmispPdiType().equalsIgnoreCase("Pri-Delivery PDI"))
+        {
+            findOrder.setPdiAction("PDI PASS");
+            findOrder.setProjectTeamActionTime(LocalDateTime.now());
+            findOrder.setPdiComment(pdiComments.getPdiComment());
+            projectTeamApprovalRepository.save(findOrder);
+            order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
+            orderRepository.save(order);
+
+            return ResponseEntity.ok("PDI Details Submit Successfully");
+        }
+
+        //project team table data update
+        findOrder.setPdiAction("PDI PASS");
+        findOrder.setProjectTeamActionTime(LocalDateTime.now());
+        findOrder.setPdiComment(pdiComments.getPdiComment());
+        projectTeamApprovalRepository.save(findOrder);
+
+        //Order table status update
+        order.setStatus(OrderStatus.PROJECT_TEAM_FINANCE_CLOSURE_PENDING);
+        orderRepository.save(order);
+
+        return ResponseEntity.ok("PDI Details Submit Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, ProjectTeamApproval pdiComments)
+    {
+        Users user = usersRepository.findByUsername(username);
+
+        if (user == null)
+        {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
+        {
+            return ResponseEntity.status(403).body("Only Project team can approve orders");
+        }
+
+        Orders order = orderRepository.findById(orderId).orElse(null);
+
+        if (order == null)
+        {
+            return ResponseEntity.ok("Order not found");
+        }
+
+        if (order.getStatus() != OrderStatus.PDI_PENDING)
+        {
+            return ResponseEntity.status(403).body("Order is not pending for Project team approval");
+        }
+
+        ProjectTeamApproval findOrder = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
+
+        //Logistic Details table data update
+        findOrder.setPdiAction("PDI FAIL");
+        findOrder.setProjectTeamActionTime(LocalDateTime.now());
+        findOrder.setPdiComment(pdiComments.getPdiComment());
+        projectTeamApprovalRepository.save(findOrder);
+
+        //Order table status update
+        order.setStatus(OrderStatus.POST_PDI_FAIL_RETURN_AMISP);
+        orderRepository.save(order);
+
+        return ResponseEntity.ok("PDI Details Submit Successfully");
     }
 
 }

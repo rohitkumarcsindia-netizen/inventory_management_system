@@ -26,7 +26,8 @@ public class OrderStatusByDepartmentServiceImpl implements OrderStatusByDepartme
                     (
                     "PROJECT TEAM > FINANCE PRE APPROVAL PENDING",
                     "SCM > FINANCE POST APPROVAL PENDING",
-                    "LOGISTIC > FINANCE CLOSURE PENDING"
+                    "LOGISTIC > FINANCE CLOSURE PENDING",
+                    "PROJECT TEAM > FINANCE CLOSURE PENDING"
                     );
 
             case ("SCM")
@@ -68,8 +69,8 @@ public class OrderStatusByDepartmentServiceImpl implements OrderStatusByDepartme
                     -> List.of
                     (
                     "SCM > LOGISTIC PENDING",
-                    "DELIVERY PENDING",
-                    "PDI PENDING"
+                    "DELIVERY PENDING"
+//                    "PDI PENDING"
                     );
 
             default -> List.of();

@@ -162,7 +162,6 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             findOrder.setLogisticsComment(deliveryDetails.getLogisticsComment().trim());
             findOrder.setActualDeliveryDate(deliveryDetails.getActualDeliveryDate());
             findOrder.setActionTime(LocalDateTime.now());
-            findOrder.setLogisticsPdiComment("Pdi Already Completed");
             logisticsDetailsRepository.save(findOrder);
 
             //Order table status update
@@ -188,89 +187,89 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         return ResponseEntity.ok("Order Delivery Successfully");
     }
 
-    @Override
-    public ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
-        {
-            return ResponseEntity.status(403).body("Only logistic team can approve orders");
-        }
-
-        Orders order = orderRepository.findById(orderId).orElse(null);
-
-        if (order == null)
-        {
-            return ResponseEntity.ok("Order not found");
-        }
-
-        if (order.getStatus() != OrderStatus.PDI_PENDING)
-        {
-            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
-        }
-
-        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Logistic Details table data update
-        findOrder.setPdiAction("PDI PASS");
-        findOrder.setActionTime(LocalDateTime.now());
-        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
-        logisticsDetailsRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus(OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING);
-        orderRepository.save(order);
-
-        return ResponseEntity.ok("PDI Details Submit Successfully");
-    }
-
-    @Override
-    public ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
-        {
-            return ResponseEntity.status(403).body("Only logistic team can approve orders");
-        }
-
-        Orders order = orderRepository.findById(orderId).orElse(null);
-
-        if (order == null)
-        {
-            return ResponseEntity.ok("Order not found");
-        }
-
-        if (order.getStatus() != OrderStatus.PDI_PENDING)
-        {
-            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
-        }
-
-        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Logistic Details table data update
-        findOrder.setPdiAction("PDI FAIL");
-        findOrder.setActionTime(LocalDateTime.now());
-        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
-        logisticsDetailsRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus(OrderStatus.POST_PDI_FAIL_RETURN_AMISP);
-        orderRepository.save(order);
-
-        return ResponseEntity.ok("PDI Details Submit Successfully");
-    }
+//    @Override
+//    public ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
+//    {
+//        Users user = usersRepository.findByUsername(username);
+//
+//        if (user == null)
+//        {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
+//        {
+//            return ResponseEntity.status(403).body("Only logistic team can approve orders");
+//        }
+//
+//        Orders order = orderRepository.findById(orderId).orElse(null);
+//
+//        if (order == null)
+//        {
+//            return ResponseEntity.ok("Order not found");
+//        }
+//
+//        if (order.getStatus() != OrderStatus.PDI_PENDING)
+//        {
+//            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
+//        }
+//
+//        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
+//
+//        //Logistic Details table data update
+//        findOrder.setPdiAction("PDI PASS");
+//        findOrder.setActionTime(LocalDateTime.now());
+//        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
+//        logisticsDetailsRepository.save(findOrder);
+//
+//        //Order table status update
+//        order.setStatus(OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING);
+//        orderRepository.save(order);
+//
+//        return ResponseEntity.ok("PDI Details Submit Successfully");
+//    }
+//
+//    @Override
+//    public ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
+//    {
+//        Users user = usersRepository.findByUsername(username);
+//
+//        if (user == null)
+//        {
+//            return ResponseEntity.badRequest().body("User not found");
+//        }
+//
+//        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
+//        {
+//            return ResponseEntity.status(403).body("Only logistic team can approve orders");
+//        }
+//
+//        Orders order = orderRepository.findById(orderId).orElse(null);
+//
+//        if (order == null)
+//        {
+//            return ResponseEntity.ok("Order not found");
+//        }
+//
+//        if (order.getStatus() != OrderStatus.PDI_PENDING)
+//        {
+//            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
+//        }
+//
+//        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
+//
+//        //Logistic Details table data update
+//        findOrder.setPdiAction("PDI FAIL");
+//        findOrder.setActionTime(LocalDateTime.now());
+//        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
+//        logisticsDetailsRepository.save(findOrder);
+//
+//        //Order table status update
+//        order.setStatus(OrderStatus.POST_PDI_FAIL_RETURN_AMISP);
+//        orderRepository.save(order);
+//
+//        return ResponseEntity.ok("PDI Details Submit Successfully");
+//    }
 
     @Override
     public ResponseEntity<?> getCompleteOrdersForLogistics(String username, int offset, int limit)

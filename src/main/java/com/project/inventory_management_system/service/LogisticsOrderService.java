@@ -13,9 +13,9 @@ public interface LogisticsOrderService
 
     ResponseEntity<?> fillDeliveryDetails(String username, Long orderId, LogisticsDetails deliveryDetails);
 
-    ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, LogisticsDetails pdiComments);
-
-    ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, LogisticsDetails pdiComments);
+//    ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, LogisticsDetails pdiComments);
+//
+//    ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, LogisticsDetails pdiComments);
 
     ResponseEntity<?> getCompleteOrdersForLogistics(String username, int offset, int limit);
 

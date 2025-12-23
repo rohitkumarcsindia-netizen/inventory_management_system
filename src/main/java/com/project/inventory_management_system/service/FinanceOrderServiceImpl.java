@@ -599,7 +599,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         }
 
 
-        if (order.getStatus() != OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING)
+        if (order.getStatus() != OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING && order.getStatus() != OrderStatus.PROJECT_TEAM_FINANCE_CLOSURE_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for finance approval");
         }

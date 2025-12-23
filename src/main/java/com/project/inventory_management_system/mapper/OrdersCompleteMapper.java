@@ -240,7 +240,7 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
         logisticOrdersHistoryDto.setLogisticsComment(logisticsDetails.getLogisticsComment());
-        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
+//        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
         logisticOrdersHistoryDto.setActionTime(logisticsDetails.getActionTime());
         logisticOrdersHistoryDto.setCourierName(logisticsDetails.getCourierName());
         logisticOrdersHistoryDto.setDeliveredStatus(logisticsDetails.getDeliveredStatus());
@@ -249,7 +249,7 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setActualDeliveryDate(logisticsDetails.getActualDeliveryDate());
         logisticOrdersHistoryDto.setShippingMode(logisticsDetails.getShippingMode());
         logisticOrdersHistoryDto.setExpectedDeliveryDate(logisticsDetails.getExpectedDeliveryDate());
-        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
+//        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
         logisticOrdersHistoryDto.setShipmentDocumentUrl(logisticsDetails.getShipmentDocumentUrl());
         logisticOrdersHistoryDto.setTrackingNumber(logisticsDetails.getTrackingNumber());
 
