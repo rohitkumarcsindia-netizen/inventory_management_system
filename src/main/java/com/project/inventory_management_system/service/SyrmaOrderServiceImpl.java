@@ -52,7 +52,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view approved orders");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statuses, offset, limit);
 
@@ -161,7 +161,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -226,7 +226,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 

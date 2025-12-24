@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.enums.OrderStatus;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public class OrderSpecification
     }
 
 
-    public static Specification<Orders> statusIn(List<String> statuses)
+    public static Specification<Orders> statusIn(List<OrderStatus> statuses)
     {
         return (root, query, cb) ->
                 statuses == null || statuses.isEmpty()

@@ -2,6 +2,7 @@ package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -46,11 +47,11 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
 
     // Order filter using status
     @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset", nativeQuery = true)
-    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses, @Param("offset") int offset, @Param("limit") int limit);
+    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<OrderStatus> statuses, @Param("offset") int offset, @Param("limit") int limit);
 
     // Order Count using status
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
-    long countByStatus(@Param("statuses") List<String> statuses);
+    long countByStatus(@Param("statuses") List<OrderStatus> statuses);
 
 
     //status filter using status
@@ -61,7 +62,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
     //Status searching query for finance pending button
     @Query("SELECT o FROM Orders o WHERE o.status IN (:statuses) AND o.createAt BETWEEN :start AND :end")
     Page<Orders> findByDateRange(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end,
-            List<String> statuses,
+            List<OrderStatus> statuses,
             Pageable pageable
     );
 

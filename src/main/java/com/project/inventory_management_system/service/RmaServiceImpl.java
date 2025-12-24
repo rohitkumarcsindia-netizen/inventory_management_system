@@ -53,7 +53,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only Rma team can view pending orders");
         }
 
-        List<String> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         List<Orders> orders = orderRepository.findByStatusWithLimitOffset(rmaStatuses, offset, limit);
 
@@ -226,7 +226,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
-        List<String> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
         Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
@@ -263,7 +263,7 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
-        List<String> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+        List<OrderStatus> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
         Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
 
