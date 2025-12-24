@@ -16,7 +16,7 @@ export default function CloudMenu() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

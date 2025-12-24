@@ -194,7 +194,7 @@ export default function SyrmaTeamPage() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

@@ -223,7 +223,7 @@ export default function RmaCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

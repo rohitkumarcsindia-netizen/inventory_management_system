@@ -193,7 +193,7 @@ export default function FinanceCompleteOrders() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

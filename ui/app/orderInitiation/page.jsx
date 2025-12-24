@@ -105,7 +105,7 @@ const fetchProducts = async () => {
   // LOGOUT
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

@@ -269,7 +269,7 @@ const notifyLogistic = async (orderId) => {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

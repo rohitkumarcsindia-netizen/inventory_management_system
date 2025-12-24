@@ -36,7 +36,7 @@ export default function UserControl() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   /* ---------------- FORM (POPUP) ---------------- */

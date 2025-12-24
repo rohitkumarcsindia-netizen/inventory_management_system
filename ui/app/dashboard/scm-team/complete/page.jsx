@@ -198,7 +198,7 @@ export default function ScmCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

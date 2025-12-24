@@ -146,7 +146,7 @@ export default function CloudTeamPage() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

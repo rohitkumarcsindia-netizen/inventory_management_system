@@ -184,7 +184,7 @@ export default function CloudCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

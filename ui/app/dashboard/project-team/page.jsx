@@ -206,7 +206,7 @@ const notifyLocScm = async (orderId) => {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

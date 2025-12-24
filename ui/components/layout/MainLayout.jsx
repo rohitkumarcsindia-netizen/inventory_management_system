@@ -23,7 +23,7 @@ export default function MainLayout({ children }) {
 
     const pathname =
       typeof window === "undefined" ? "" : window.location.pathname;
-    const isLoginPage = window.location.pathname.startsWith("/login");
+    const isLoginPage = window.location.pathname.startsWith("/");
 
     if (isLoginPage && token && isTokenValid(token)) {
       if (department === "Project Team") {
@@ -43,13 +43,13 @@ export default function MainLayout({ children }) {
       } else if (department === "Logistic") {
         router.push("/dashboard/logistic-team");
       } else {
-        router.push("/login");
+        router.push("/");
       }
     }
 
     // Example auth guard logic
     if (!isLoginPage && (!token || !isTokenValid(token) )) {
-      router.push("/login");
+      router.push("/");
     }
   }, [isClient, router]);
 

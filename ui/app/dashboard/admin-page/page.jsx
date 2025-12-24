@@ -16,7 +16,7 @@ export default function SyrmaMenu() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (

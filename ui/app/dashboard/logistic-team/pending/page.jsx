@@ -191,7 +191,7 @@ export default function LogisticTeamPage() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

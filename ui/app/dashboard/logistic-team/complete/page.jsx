@@ -224,7 +224,7 @@ export default function AmispCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/login");
+    router.push("/");
   };
 
   return (

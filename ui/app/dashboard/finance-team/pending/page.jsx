@@ -196,7 +196,7 @@ export default function FinanceTeamPage() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/login");
+    router.push("/");
   };
 
   return (
