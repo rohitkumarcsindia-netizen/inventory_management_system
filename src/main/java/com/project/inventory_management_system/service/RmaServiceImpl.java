@@ -55,7 +55,9 @@ public class RmaServiceImpl implements RmaService
 
         List<OrderStatus> rmaStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(rmaStatuses, offset, limit);
+        List<String> statusNames = rmaStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -68,7 +70,7 @@ public class RmaServiceImpl implements RmaService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(rmaStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }

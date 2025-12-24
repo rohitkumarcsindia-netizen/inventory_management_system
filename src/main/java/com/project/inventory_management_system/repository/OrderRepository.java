@@ -47,11 +47,12 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
 
     // Order filter using status
     @Query(value = "SELECT * FROM orders WHERE status IN (:statuses) ORDER BY order_id DESC  LIMIT :limit OFFSET :offset", nativeQuery = true)
-    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<OrderStatus> statuses, @Param("offset") int offset, @Param("limit") int limit);
+    List<Orders> findByStatusWithLimitOffset(@Param("statuses") List<String> statuses, @Param("offset") int offset, @Param("limit") int limit);
+
 
     // Order Count using status
     @Query(value = "SELECT COUNT(*) FROM orders WHERE status IN (:statuses)", nativeQuery = true)
-    long countByStatus(@Param("statuses") List<OrderStatus> statuses);
+    long countByStatus(@Param("statuses") List<String> statuses);
 
 
     //status filter using status

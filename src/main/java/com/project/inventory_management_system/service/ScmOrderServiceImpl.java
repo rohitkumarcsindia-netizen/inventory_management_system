@@ -61,7 +61,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         List<OrderStatus> scmStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(scmStatuses, offset, limit);
+        List<String> statusNames = scmStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -75,7 +77,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(scmStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }

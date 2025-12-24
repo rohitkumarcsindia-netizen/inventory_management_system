@@ -54,7 +54,9 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
 
         List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statuses, offset, limit);
+        List<String> statusNames = statuses.stream().map(Enum::name).toList();
+
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (ordersList.isEmpty()) {
             return ResponseEntity.ok("No Orders found");
@@ -67,7 +69,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(statuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }

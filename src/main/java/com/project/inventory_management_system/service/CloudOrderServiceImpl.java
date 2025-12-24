@@ -59,7 +59,9 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         List<OrderStatus> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(cloudStatuses, offset, limit);
+        List<String> statusNames = cloudStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -73,7 +75,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(cloudStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }

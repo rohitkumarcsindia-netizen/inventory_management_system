@@ -61,7 +61,9 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         List<OrderStatus> financeStatuses = orderStatusByDepartmentService.getStatusesByDepartment( user.getDepartment().getDepartmentName());
 
-        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(financeStatuses, offset, limit);
+        List<String> statusNames = financeStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> orders = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -74,7 +76,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(financeStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }

@@ -56,7 +56,9 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         }
         List<OrderStatus> logisticStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        List<Orders> orders = orderRepository. findByStatusWithLimitOffset(logisticStatuses, offset, limit);
+        List<String> statusNames = logisticStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> orders = orderRepository. findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -69,7 +71,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus(logisticStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }
