@@ -13,17 +13,17 @@ export default function MainLayout({ children }) {
   useEffect(() => {
     // Marks when the component has mounted (so window is defined)
     setIsClient(true);
-  },[]);
+  }, []);
 
   useEffect(() => {
     if (!isClient) return; // Skip on server
-    
+
     const token = getToken();
     const department = localStorage.getItem("department");
 
     const pathname =
       typeof window === "undefined" ? "" : window.location.pathname;
-    const isLoginPage = window.location.pathname.startsWith("/");
+    const isLoginPage = pathname === "/";
 
     if (isLoginPage && token && isTokenValid(token)) {
       if (department === "Project Team") {
@@ -32,7 +32,7 @@ export default function MainLayout({ children }) {
         router.push("/dashboard/finance-team");
       } else if (department === "SCM") {
         router.push("/dashboard/scm-team");
-      }  else if (department === "Cloud Team") {
+      } else if (department === "Cloud Team") {
         router.push("/dashboard/cloud-team");
       } else if (department === "Syrma") {
         router.push("/dashboard/syrma-team");
@@ -48,7 +48,7 @@ export default function MainLayout({ children }) {
     }
 
     // Example auth guard logic
-    if (!isLoginPage && (!token || !isTokenValid(token) )) {
+    if (!isLoginPage && (!token || !isTokenValid(token))) {
       router.push("/");
     }
   }, [isClient, router]);
