@@ -6,6 +6,7 @@ import OrdersTable from "../../service/ordersTable";
 import { useRouter } from "next/navigation";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken, removeToken } from "../../service/cookieService";
+import AlertPopup from "../../../components/layout/AlertPopup";
 
 export default function GetOrders() {
   const [orders, setOrders] = useState([]);
@@ -32,6 +33,12 @@ export default function GetOrders() {
 
   const router = useRouter();
   const [username, setUsername] = useState("");
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   // FETCH ORDERS DEFAULT
   const fetchOrders = async () => {
@@ -194,11 +201,23 @@ const notifyLocScm = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+    
+setAlertPopup({
+  show: true,
+  message: res || "Send Locatio to Scm",
+  type: "success",
+});
+
     fetchOrders(); // UI refresh
   } catch (error) {
     console.error("Notify Error:", error);
-    alert("Notification failed!");
+    
+setAlertPopup({
+  show: true,
+  message: res || "Notification failed!",
+  type: "success",
+});
+
   }
 };
 
@@ -270,6 +289,13 @@ const notifyLocScm = async (orderId) => {
         Create New Order
         <div className="text-sm opacity-70">Start Order Request</div>
       </button>
+
+      <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

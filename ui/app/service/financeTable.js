@@ -6,7 +6,7 @@ import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-
+import AlertPopup from "../../components/layout/AlertPopup";
 
 export default function FinanceTable({
   orders,
@@ -41,9 +41,15 @@ export default function FinanceTable({
   const [financeRemark, setFinanceRemark] = useState("");
   const [finalOrderId, setFinalOrderId] = useState(null);
 
-  // 🔥 NEW CLOSURE POPUP STATES
+  // NEW CLOSURE POPUP STATES
   const [showClosurePopup, setShowClosurePopup] = useState(false);
   const [closureOrderId, setClosureOrderId] = useState(null);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const highlightText = (text) => {
   if (!searchText || text === null || text === undefined) return text;
@@ -137,10 +143,18 @@ const {
     const approveOrder = async (orderId, reason) => {
       try {
         const res = await httpService.postWithAuth(`/api/v1/orders/finance/approve/${orderId}`, { financeReason: reason });
-        alert(res);
+        setAlertPopup({
+  show: true,
+  message: res || "Order Approved",
+  type: "success",
+});
         fetchOrders();
       } catch (err) {
-        console.log("Approve Error:", err);
+        setAlertPopup({
+  show: true,
+  message: res || "Approve Failed",
+  type: "success",
+});
       }
     };
   
@@ -148,33 +162,21 @@ const {
     const rejectOrder = async (orderId, reason) => {
       try {
         const res = await httpService.postWithAuth(`/api/v1/orders/finance/reject/${orderId}`, { financeReason: reason });
-        alert(res);
+        setAlertPopup({
+  show: true,
+  message: res || "Order Rejected",
+  type: "success",
+});
         fetchOrders();
       } catch (err) {
-        console.log("Reject Error:", err);
+        setAlertPopup({
+  show: true,
+  message: res || "Reject Failed",
+  type: "success",
+});
       }
     };
 
-  // FINAL APPROVE API
-  const submitFinalApprove = async () => {
-    if (!finalRemark.trim()) return alert("Please enter final remark!");
-    if (!financeRemark.trim()) return alert("Please enter finance remark!");
-
-    try {
-      const res = await httpService.updateWithAuth(
-        `/api/v1/orders/finance/final/approve/${finalOrderId}`,
-        {
-          financeFinalRemark: finalRemark,
-          financeReason: financeRemark,
-        }
-      );
-      alert(res);
-      setShowFinalPopup(false);
-      fetchOrders();
-    } catch (err) {
-      console.log("Final Approve Error:", err);
-    }
-  };
 
   // FINAL REJECT API
  const submitFinal = async (data) => {
@@ -198,17 +200,25 @@ const {
       );
     }
 
-    alert(res);
+    setAlertPopup({
+  show: true,
+  message: res || "Failed",
+  type: "success",
+});
     resetFinal();
     setShowFinalPopup(false);
     fetchOrders();
   } catch (err) {
-    console.log("Final Approval Error:", err);
+     setAlertPopup({
+  show: true,
+  message: res || "Failed",
+  type: "success",
+});
   }
 };
 
 
-  // 🔥 NEW — Closure API Call
+  // NEW — Closure API Call
   const submitClosureForm = async (data) => {
   try {
     const res = await httpService.updateWithAuth(
@@ -216,12 +226,20 @@ const {
       data
     );
 
-    alert(res);
+     setAlertPopup({
+  show: true,
+  message: res || "Closure Submitted",
+  type: "success",
+});
     resetClosure();
     setShowClosurePopup(false);
     fetchOrders();
   } catch (err) {
-    console.log("Closure Error:", err);
+     setAlertPopup({
+  show: true,
+  message: res || "Failed",
+  type: "success",
+});
   }
 };
 
@@ -341,7 +359,7 @@ const formatOrderDateTime = (dateString) => {
           );
         }
 
-        // 🔥 NEW Closure case
+        //NEW Closure case
         if (row.status === "LOGISTIC > FINANCE CLOSURE PENDING" || row.status ==="PROJECT TEAM > FINANCE CLOSURE PENDING" ) {
           return (
             <button
@@ -430,7 +448,8 @@ const formatOrderDateTime = (dateString) => {
           <option value="">Status</option>
           <option value="PROJECT TEAM > FINANCE PRE APPROVAL PENDING">PROJECT TEAM {'>'} FINANCE PRE APPROVAL PENDING</option>
           <option value="SCM > FINANCE POST APPROVAL PENDING">SCM {'>'} FINANCE POST APPROVAL PENDING</option>
-          <option value="LOGISTIC > FINANCE CLOSURE PENDING">SCM {'>'} LOGISTIC {'>'} FINANCE CLOSURE PENDING</option>
+          <option value="LOGISTIC > FINANCE CLOSURE PENDING">LOGISTIC {'>'} FINANCE CLOSURE PENDING</option>
+          <option value="PROJECT TEAM > FINANCE CLOSURE PENDING">PROJECT TEAM {'>'} FINANCE CLOSURE PENDING</option>
         </select>
 
         {/* LIVE SEARCH BACKEND CALL */}
@@ -700,7 +719,12 @@ const formatOrderDateTime = (dateString) => {
   </div>
 )}
 
-
+ <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

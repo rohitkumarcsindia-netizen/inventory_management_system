@@ -4,6 +4,7 @@ import { useState } from "react";
 import DataTable from "react-data-table-component";
 import httpService from "../service/httpService";   // <-- ADD THIS IMPORT
 import { useForm } from "react-hook-form";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 
 export default function CloudTable({
@@ -31,6 +32,12 @@ export default function CloudTable({
 
   // POPUP STATES
   const [popupOrderId, setPopupOrderId] = useState(null);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
  
 
 const highlightText = (text) => {
@@ -78,15 +85,22 @@ const highlightText = (text) => {
         data
       );
 
-      alert("Cloud ticket submitted successfully!");
+      setAlertPopup({
+  show: true,
+  message: res || "Cloud ticket submitted successfully!",
+  type: "success",
+});
 
       reset();
       setPopupOrderId(null);
       if (refreshData) refreshData();
 
     } catch (err) {
-      console.error(err);
-      alert("Error submitting cloud ticket!");
+      setAlertPopup({
+  show: true,
+  message: "Failed",
+  type: "success",
+});
     }
   };
 
@@ -293,6 +307,12 @@ const highlightText = (text) => {
           },
         }}
         />
+         <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
       </div>
 
       {/* =============================

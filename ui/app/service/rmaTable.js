@@ -6,6 +6,7 @@ import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 
 export default function RmaTable({
@@ -36,6 +37,12 @@ export default function RmaTable({
 
   // FAIL popup
   const [failPopupOrderId, setFailPopupOrderId] = useState(null);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   //VALIDATION
   const passSchema = yup.object().shape({
@@ -92,15 +99,22 @@ const {
       data
     );
 
-    alert(res || "RMA Passed Successfully!");
+    setAlertPopup({
+  show: true,
+  message: res || "Passed",
+  type: "success",
+});
 
     resetPass();         // form reset
     setPopupOrderId(null);
     if (refreshData) refreshData();
 
   } catch (err) {
-    console.error("PASS API ERROR:", err);
-    alert("Error submitting PASS request!");
+    setAlertPopup({
+  show: true,
+  message: "Something went wrong",
+  type: "success",
+});
   }
 };
 
@@ -115,15 +129,22 @@ const {
       data
     );
 
-    alert(res?.message || "RMA Failed Updated!");
+    setAlertPopup({
+  show: true,
+  message: res || "Failed",
+  type: "success",
+});
 
     resetFail();         // reset form
     setFailPopupOrderId(null);
     if (refreshData) refreshData();
 
   } catch (err) {
-    console.error("FAIL API ERROR:", err);
-    alert("Error submitting FAIL request!");
+   setAlertPopup({
+  show: true,
+  message: res || "Something went wrong",
+  type: "success",
+});
   }
 };
 
@@ -333,6 +354,12 @@ const {
             },
           }}
         />
+         <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
       </div>
 
       {/* PASS POPUP */}

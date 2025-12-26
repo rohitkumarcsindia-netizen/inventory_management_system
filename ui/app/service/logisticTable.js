@@ -6,6 +6,7 @@ import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 export default function LogisticTable({
   orders,
@@ -51,6 +52,12 @@ export default function LogisticTable({
   // NEW Delivered Popup State
   const [deliveredPopupId, setDeliveredPopupId] = useState(null);
 
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
+
 const highlightText = (text) => {
   if (!searchText || text === null || text === undefined) return text;
 
@@ -65,11 +72,6 @@ const highlightText = (text) => {
   );
 };
 
-  // ---------- NEW: PDI Popup ----------
-  const [pdiPopup, setPdiPopup] = useState({
-    id: null,
-    type: null, // pass / fail
-  });
 
 
 
@@ -127,19 +129,6 @@ const {
   resolver: yupResolver(deliveredSchema),
 });
 
-// PDI VALIDATION
-const pdiSchema = yup.object().shape({
-  logisticsPdiComment: yup.string().required("Comment is required"),
-});
-
-const {
-  register: registerPdi,
-  handleSubmit: handlePdiSubmit,
-  reset: resetPdi,
-  formState: { errors: pdiErrors },
-} = useForm({
-  resolver: yupResolver(pdiSchema),
-});
 
 
   // Submit Shipping
@@ -152,15 +141,22 @@ const {
       data
     );
 
-    alert(res?.message || "Shipping details submitted!");
+    setAlertPopup({
+  show: true,
+  message: res || "Details Submitted",
+  type: "success",
+});
 
     resetShipping();
     setShippingPopupId(null);
     fetchOrders();
 
   } catch (err) {
-    console.error("Shipping API ERROR:", err);
-    alert("Failed to submit shipping details!");
+    setAlertPopup({
+  show: true,
+  message: "Something went wrong",
+  type: "success",
+});
   }
 };
 
@@ -174,43 +170,24 @@ const {
       data
     );
 
-    alert(res?.message || "Delivery updated!");
+    setAlertPopup({
+  show: true,
+  message: res || "Delivered",
+  type: "success",
+});
 
     resetDelivered();
     setDeliveredPopupId(null);
     fetchOrders();
 
   } catch (err) {
-    console.error("Delivered API ERROR:", err);
-    alert("Failed to update delivery!");
+    setAlertPopup({
+  show: true,
+  message: "Something went wrong",
+  type: "success",
+});
   }
 };
-
-
-  // ---------- NEW: Submit PDI API ----------
-  const submitPDI = async (data) => {
-  try {
-    if (!pdiPopup.id || !pdiPopup.type) return;
-
-    const endpoint =
-      pdiPopup.type === "pass"
-        ? `/api/v1/orders/logistic/pdi-pass/${pdiPopup.id}`
-        : `/api/v1/orders/logistic/pdi-fail/${pdiPopup.id}`;
-
-    const res = await httpService.updateWithAuth(endpoint, data);
-
-    alert(res?.message || "PDI updated successfully!");
-
-    resetPdi();
-    setPdiPopup({ id: null, type: null });
-    fetchOrders();
-
-  } catch (err) {
-    console.error("PDI API ERROR:", err);
-    alert("Failed to update PDI!");
-  }
-};
-
 
       // table data
   const displayedData =
@@ -314,25 +291,6 @@ const {
           );
         }
 
-        if (row.status === "PDI PENDING") {
-          return (
-            <div className="flex gap-3">
-              <button
-                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center"
-                onClick={() => setPdiPopup({ id: row.orderId, type: "pass" })}
-              >
-                PDI Pass
-              </button>
-
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center justify-center"
-                onClick={() => setPdiPopup({ id: row.orderId, type: "fail" })}
-              >
-                PDI Fail
-              </button>
-            </div>
-          );
-        }
 
         return (
           <button
@@ -470,6 +428,12 @@ const {
           },
         }}
         />
+        <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
       </div>
 
       {/* SHIPPING POPUP */}
@@ -638,68 +602,6 @@ const {
           <button
             type="submit"
             className="px-6 py-2 bg-yellow-600 text-white rounded-lg"
-          >
-            OK
-          </button>
-        </div>
-
-      </form>
-
-    </div>
-  </div>
-)}
-
-
-      {/* ---------- NEW: PDI POPUP ---------- */}
-      {pdiPopup.id && (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
-    <div className="bg-white p-6 rounded-lg shadow-2xl w-[550px]">
-
-      <h2 className="text-2xl font-bold text-center text-blue-700 mb-2">
-        {pdiPopup.type === "pass" ? "PDI Pass Confirmation" : "PDI Fail Confirmation"}
-      </h2>
-
-      <p className="text-center text-lg text-gray-600 mb-4">
-        Order ID: <b>{pdiPopup.id}</b>
-      </p>
-
-      <form onSubmit={handlePdiSubmit(submitPDI)}>
-
-        <div className="grid grid-cols-1 gap-3 text-black">
-          <div>
-            <label className="text-sm font-semibold">Logistics PDI Comment</label>
-
-            <input
-              type="text"
-              {...registerPdi("logisticsPdiComment")}
-              className={`border px-2 py-2 rounded w-full ${
-                pdiErrors.logisticsPdiComment ? "border-red-500" : ""
-              }`}
-            />
-
-            {pdiErrors.logisticsPdiComment && (
-              <p className="text-red-500 text-xs mt-1">
-                {pdiErrors.logisticsPdiComment.message}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-4 mt-6">
-          <button
-            type="button"
-            onClick={() => {
-              resetPdi();
-              setPdiPopup({ id: null, type: null });
-            }}
-            className="px-6 py-2 bg-red-500 text-white rounded-lg"
-          >
-            ✖
-          </button>
-
-          <button
-            type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             OK
           </button>

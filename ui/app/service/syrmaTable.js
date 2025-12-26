@@ -6,6 +6,7 @@ import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 
 export default function SyrmaTable({
@@ -41,6 +42,12 @@ export default function SyrmaTable({
   // VALIDATION
   const syrmaSchema = yup.object().shape({
   syrmaComments: yup.string().required("Syrma Comment is required"),
+});
+
+const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
 });
 
 const highlightText = (text) => {
@@ -81,6 +88,7 @@ const {
 
     let apiUrl = "";
     let method = "";
+    let res = "";
 
     if (actionType === "RE_COMPLETE") {
       apiUrl = `/api/v1/orders/syrma/re-production-testing/${popupOrderId}`;
@@ -91,16 +99,16 @@ const {
     }
 
     if (method === "post") {
-      await httpService.postWithAuth(apiUrl, body);
+      res = await httpService.postWithAuth(apiUrl, body);
     } else {
-      await httpService.updateWithAuth(apiUrl, body);
+      res = await httpService.updateWithAuth(apiUrl, body);
     }
 
-    alert(
-      actionType === "RE_COMPLETE"
-        ? "Syrma Re-Completion successfully updated!"
-        : "Syrma completion successfully updated!"
-    );
+   setAlertPopup({
+  show: true,
+  message: res || "Production Cpmpleted",
+  type: "success",
+});
 
     reset();           // FORM RESET
     setPopupOrderId(null);
@@ -109,8 +117,11 @@ const {
     if (refreshData) refreshData();
 
   } catch (err) {
-    console.error("API ERROR:", err);
-    alert("Error while submitting completion!");
+    setAlertPopup({
+  show: true,
+  message: "Re-Production Cpmpleted",
+  type: "success",
+});
   }
 };
 
@@ -357,6 +368,13 @@ const {
           },
         }}
         />
+
+         <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
       </div>
 
       {/* POPUP */}

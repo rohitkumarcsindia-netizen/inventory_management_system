@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import httpService from "../service/httpService";
 import { motion } from "framer-motion";
 import { removeToken, getUsernameFromToken } from "../service/cookieService";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 import { useRouter } from "next/navigation";
 
@@ -17,6 +18,11 @@ const [products, setProducts] = useState([]);
 const [projectLoaded, setProjectLoaded] = useState(false);
 const [productLoaded, setProductLoaded] = useState(false);
 
+const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const router = useRouter();
 
@@ -38,10 +44,18 @@ const [productLoaded, setProductLoaded] = useState(false);
 
     try {
       const res = await httpService.postWithAuth("/api/v1/orders/project/create", order);
-      alert(res);
+       setAlertPopup({
+  show: true,
+  message: res || "Order submitted successfully!",
+  type: "success",
+});
       reset();
     } catch (err) {
-      alert("❌ Failed to Submit Order");
+       setAlertPopup({
+  show: true,
+  message: res || "❌ Failed to Submit Order",
+  type: "success",
+});
       console.error(err);
     } finally {
       setLoading(false);
@@ -54,10 +68,19 @@ const [productLoaded, setProductLoaded] = useState(false);
 
     try {
       const res = await httpService.postWithAuth("/api/v1/orders/project/save", order);
-      alert(res);
+      setAlertPopup({
+  show: true,
+  message: res || "Order saved successfully!",
+  type: "success",
+});
+
       reset();
     } catch (err) {
-      alert("❌ Failed to Save Order");
+         setAlertPopup({
+  show: true,
+  message: res || "Failed to Save order!",
+  type: "success",
+});
       console.error(err);
     } finally {
       setLoading(false);
@@ -344,6 +367,13 @@ const fetchProducts = async () => {
           </div>
         </form>
       </motion.div>
+
+      <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

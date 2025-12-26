@@ -96,7 +96,7 @@ export default function CloudTeamPage() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // 🔥 ordering set
+    setIsDateApplied(true);     // ordering set
     setIsSearchApplied(false);
   };
 

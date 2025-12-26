@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import * as yup from "yup";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 export default function ScmTable({
   orders,
@@ -44,6 +45,12 @@ export default function ScmTable({
 
   //  NEW POPUP FOR JIRA CLOSURE
   const [closurePopupId, setClosurePopupId] = useState(null);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
 
 const highlightText = (text) => {
@@ -125,7 +132,6 @@ const {
     await createJira(popupOrderId, data);
   }
 
-  alert("Jira Details Submitted!");
   reset();
   setPopupOrderId(null);
   setIsOld(false);
@@ -134,12 +140,16 @@ const {
 
   //  SUBMIT CLOSURE API HIT (PUT)
  const submitClosure = async (data) => {
-  await httpService.updateWithAuth(
+  const res = await httpService.updateWithAuth(
     `/api/v1/orders/scm/jira-ticket-closure/${closurePopupId}`,
     data
   );
 
-  alert("Closure Submitted");
+ setAlertPopup({
+  show: true,
+  message: res || "Closure Submitted",
+  type: "success",
+});
   resetClosure();
   setClosurePopupId(null);
   fetchOrders();
@@ -154,11 +164,19 @@ const notifyAmisp = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+    setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for AMISP!",
+  type: "success",
+});
     fetchOrders(); // UI refresh
   } catch (error) {
     console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: "Notification Failed",
+  type: "success",
+});
   }
 };
 
@@ -170,11 +188,18 @@ const financeApproval = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+     setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for Finance Approval",
+  type: "success",
+});
     fetchOrders(); // UI refresh
   } catch (error) {
-    console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: "Notification Failed",
+  type: "success",
+});
   }
 };
 
@@ -186,11 +211,19 @@ const financeApproval = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+     setAlertPopup({
+  show: true,
+  message: res || "Final Closure Submitted",
+  type: "success",
+});
     fetchOrders(); // UI refresh
   } catch (error) {
     console.error("completed Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: "Failed",
+  type: "success",
+});
   }
 };   
 
@@ -694,6 +727,12 @@ const financeApproval = async (orderId) => {
           </div>
         </div>
       )}
+       <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
       </div>
     </>
   );

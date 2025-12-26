@@ -4,6 +4,7 @@ import ScmTable from "../../../service/scmTable";
 import httpService from "../../../service/httpService";
 import { useRouter } from "next/navigation";
 import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import AlertPopup from "../../../../components/layout/AlertPopup";
 
 export default function ScmTeamPage() {
   const [orders, setOrders] = useState([]);
@@ -29,6 +30,12 @@ export default function ScmTeamPage() {
 
 
   const [noDataFound, setNoDataFound] = useState(false);
+
+const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const [username, setUsername] = useState("");
   const router = useRouter();
@@ -83,7 +90,12 @@ export default function ScmTeamPage() {
 
   // DATE FILTER API
   const applyDateFilter = async () => {
-    if (!startDate || !endDate) return alert("Select both dates");
+    if (!startDate || !endDate) 
+      return setAlertPopup({
+  show: true,
+  message: "Select Both Dates",
+  type: "success",
+});;
 
     const page = currentPage - 1;
 
@@ -191,28 +203,44 @@ export default function ScmTeamPage() {
   // NEW JIRA API
   const createJira = async (orderId, jiraPayload) => {
     try {
-      await httpService.postWithAuth(
+      const res = await httpService.postWithAuth(
         `/api/v1/orders/scm/jira/details/${orderId}`,
         jiraPayload
       );
-
+      setAlertPopup({
+  show: true,
+  message: res || "Jira details Submitted!",
+  type: "success",
+});
       fetchOrders();
     } catch (error) {
-      console.error("Jira Create Error:", error);
+      setAlertPopup({
+  show: true,
+  message: "Failed To submit",
+  type: "success",
+});
     }
   };
 
   // OLD JIRA API
   const createOldJira = async (orderId, jiraPayload) => {
     try {
-      await httpService.postWithAuth(
+      const res = await httpService.postWithAuth(
         `/api/v1/orders/scm/old/jira/details/${orderId}`,
         jiraPayload
       );
-
+    setAlertPopup({
+  show: true,
+  message: res || "Old Jira details Submitted!",
+  type: "success",
+});
       fetchOrders();
     } catch (error) {
-      console.error("Old Jira Create Error:", error);
+      setAlertPopup({
+  show: true,
+  message: "Failed To submit",
+  type: "success",
+});
     }
   };
 
@@ -224,11 +252,18 @@ const notifyRma = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   //  backend response text alert me show hoga
+    setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for RMA!",
+  type: "success",
+});  //  backend response text alert me show hoga
     fetchOrders(); // UI refresh
   } catch (error) {
-    console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: "Notification Failed",
+  type: "success",
+});  
   }
 };
 
@@ -240,11 +275,18 @@ const notifyPT = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   //  backend response text alert me show hoga
+     setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for Project Team!",
+  type: "success",
+});  
     fetchOrders(); // UI refresh
   } catch (error) {
-    console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: "Notification Failed",
+  type: "success",
+});  
   }
 };
  
@@ -256,11 +298,18 @@ const notifyLogistic = async (orderId) => {
       {}   //no body required
     );
 
-    alert(res);   // backend response text alert me show hoga
+     setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for Logisctic!",
+  type: "success",
+});  
     fetchOrders(); // UI refresh
   } catch (error) {
-    console.error("Notify Error:", error);
-    alert("Notification failed!");
+    setAlertPopup({
+  show: true,
+  message: "Notification Failed",
+  type: "success",
+});  
   }
 };
 
@@ -334,6 +383,13 @@ const notifyLogistic = async (orderId) => {
           fetchOrders={fetchOrders}
         />
       </div>
+
+       <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

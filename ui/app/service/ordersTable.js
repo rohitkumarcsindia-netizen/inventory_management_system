@@ -6,6 +6,7 @@ import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import AlertPopup from "../../components/layout/AlertPopup";
 
 
 
@@ -55,6 +56,12 @@ const [locationPopupOrderId, setLocationPopupOrderId] = useState(null);
     id: null,
     type: null, // pass / fail
   });
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
 
 const highlightText = (text) => {
@@ -170,7 +177,11 @@ const {
 
     const res = await httpService.updateWithAuth(apiUrl, data);
 
-    alert(res?.message || `${pdiMode} Delivery Submitted Successfully`);
+    setAlertPopup({
+  show: true,
+  message: res || "submitted successfully!",
+  type: "success",
+});
 
     setShowPostPopup(false);
     resetPdi(); 
@@ -178,27 +189,29 @@ const {
 
   } catch (error) {
     console.error(error);
-    alert("Error submitting PDI data");
+
+      setAlertPopup({
+  show: true,
+  message: "Error submitting PDI data",
+  type: "success",
+});
   }
 };
 
 
     // -----DELETE SAVE DATA--------
 const handleDeleteOrder = async () => {
-  if (!selectedOrder?.orderId) return;
-
-  const confirmDelete = window.confirm(
-    `Are you sure you want to delete Order ID ${selectedOrder.orderId}?`
-  );
-
-  if (!confirmDelete) return;
 
   try {
-    await httpService.deleteWithAuth(
+   const res = await httpService.deleteWithAuth(
       `/api/v1/orders/project/delete/${selectedOrder.orderId}`
     );
 
-    alert("Order deleted successfully ✅");
+    setAlertPopup({
+  show: true,
+  message: res || "Order deleted successfully!",
+  type: "success",
+});
 
     // popup close + data clear
     setEditPopup(false);
@@ -210,7 +223,12 @@ const handleDeleteOrder = async () => {
 
   } catch (error) {
     console.error("Delete Order Error:", error);
-    alert("Failed to delete order ❌");
+
+        setAlertPopup({
+  show: true,
+  message: res?.message || "Failed to delete order ❌",
+  type: "success",
+});
   }
 };
 
@@ -223,7 +241,12 @@ const handleDeleteOrder = async () => {
       `/api/v1/orders/project/submit/${selectedOrder.orderId}`,editForm   //  popup ka poora data body me
     );
 
-    alert(res?.message || "Order submitted successfully ✅");
+       setAlertPopup({
+  show: true,
+  message: res || "Order Submitted successfully",
+  type: "success",
+});
+    
 
     // popup close + reset
     setEditPopup(false);
@@ -236,7 +259,12 @@ const handleDeleteOrder = async () => {
 
   } catch (error) {
     console.error("Submit Order Error:", error);
-    alert("Failed to submit order ❌");
+
+       setAlertPopup({
+  show: true,
+  message: "Failed to SUbmit order ❌",
+  type: "success",
+});
   }
 };
 
@@ -245,12 +273,16 @@ const handleDeleteOrder = async () => {
   if (!editForm || !selectedOrder?.orderId) return;
 
   try {
-    await httpService.updateWithAuth(
+    const res = await httpService.updateWithAuth(
       `/api/v1/orders/project/update/${selectedOrder.orderId}`, // ✅ FIX
       editForm
     );
 
-    alert("Order updated successfully ✅");
+       setAlertPopup({
+  show: true,
+  message: res || "Order updated successfully",
+  type: "success",
+});
 
     setEditPopup(false);
     setSelectedOrder(null);
@@ -260,7 +292,11 @@ const handleDeleteOrder = async () => {
     fetchOrders();
   } catch (error) {
     console.error("Update Order Error:", error);
-    alert("Failed to update order ❌");
+     setAlertPopup({
+  show: true,
+  message: res?.message || "Order updated failed!",
+  type: "success",
+});
   }
 };
 
@@ -275,7 +311,11 @@ const notifyAmisp = async (data) => {
       data
     );
 
-    alert(res || "Email sent successfully!");
+     setAlertPopup({
+  show: true,
+  message: res || "Email sent to AMISP successfully",
+  type: "success",
+});
 
     resetAmisp();        // form reset
     setPopupOrderId(null);
@@ -283,7 +323,11 @@ const notifyAmisp = async (data) => {
 
   } catch (error) {
     console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: res || "Notification failed!",
+  type: "success",
+});
   }
 };
 
@@ -296,11 +340,19 @@ const notifyScm = async (orderId) => {
       {}   // ❗ no body required
     );
 
-    alert(res);   // 👈 backend response text alert me show hoga
+     setAlertPopup({
+  show: true,
+  message: res || "Notification Sent for SCM!",
+  type: "success",
+});
     fetchOrders(); // UI refresh
   } catch (error) {
     console.error("Notify Error:", error);
-    alert("Notification failed!");
+     setAlertPopup({
+  show: true,
+  message: res || "Notification failed!",
+  type: "success",
+});
   }
 };
 
@@ -314,7 +366,11 @@ const notifyScm = async (orderId) => {
       data
     );
 
-    alert(res?.message || "Location Sent Successfully!");
+     setAlertPopup({
+  show: true,
+  message: res?.message || "Sent Locatio  for SCM",
+  type: "success",
+});
 
     resetLocation();
     setLocationPopupOrderId(null);
@@ -322,7 +378,11 @@ const notifyScm = async (orderId) => {
 
   } catch (err) {
     console.error("Location API Error:", err);
-    alert("Error sending location!");
+     setAlertPopup({
+  show: true,
+  message: res.message || "Error sending location!",
+  type: "success",
+});
   }
 };
 
@@ -340,15 +400,24 @@ const notifyScm = async (orderId) => {
 
     const res = await httpService.updateWithAuth(endpoint, data);
 
-    alert(res?.message || "PDI updated successfully!");
 
+      setAlertPopup({
+  show: true,
+  message: res || "PDI updated successfully!",
+  type: "success",
+});
     resetPdi();
     setPdiPopup({ id: null, type: null });
     fetchOrders();
 
   } catch (err) {
     console.error("PDI API ERROR:", err);
-    alert("Failed to update PDI!");
+
+     setAlertPopup({
+  show: true,
+  message: res.message || "Failed to update PDI!",
+  type: "success",
+});
   }
 };
 
@@ -1214,7 +1283,12 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
   </div>
 )}
 
-
+<AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }
