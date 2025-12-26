@@ -4,6 +4,7 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -112,8 +113,18 @@ public class AuditorServiceImpl implements AuditorService
             return ResponseEntity.status(403).body("Only admin team can view this");
         }
 
+        OrderStatus orderStatus;
+        try
+        {
+            orderStatus = OrderStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatus(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(orderStatus, pageable);
 
         if (ordersPage.isEmpty())
         {

@@ -42,7 +42,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
 
     //status filter using userId
     @Query("SELECT o FROM Orders o WHERE o.status = :status AND o.users.userId = :userId")
-    Page<Orders> findByStatusAndUser(@Param("status") String status, @Param("userId") Long userId, Pageable pageable);
+    Page<Orders> findByStatusAndUser(@Param("status") OrderStatus status, @Param("userId") Long userId, Pageable pageable);
 
 
     // Order filter using status
@@ -57,7 +57,7 @@ public interface OrderRepository extends JpaRepository<Orders, Long>, JpaSpecifi
 
     //status filter using status
     @Query("SELECT o FROM Orders o WHERE o.status = :status ")
-    Page<Orders> findByStatus(@Param("status") String status, Pageable pageable);
+    Page<Orders> findByStatus(@Param("status") OrderStatus status, Pageable pageable);
 
 
     //Status searching query for finance pending button

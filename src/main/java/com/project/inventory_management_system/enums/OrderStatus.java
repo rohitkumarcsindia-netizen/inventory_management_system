@@ -1,5 +1,7 @@
 package com.project.inventory_management_system.enums;
 
+import java.util.Arrays;
+
 public enum OrderStatus
 {
 
@@ -12,6 +14,10 @@ public enum OrderStatus
             "PROJECT TEAM > SCM PENDING"),
     PROJECT_TEAM_NOTIFY_AMISP_PDI_TYPE_PENDING(
             "PROJECT TEAM NOTIFY > AMISP PDI TYPE PENDING"),
+    PDI_PENDING(
+            "PDI PENDING"),
+    POST_PDI_FAIL_RETURN_AMISP(
+            "POST PDI FAIL RETURN AMISP"),
     PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH(
             "PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH"),
     PROJECT_TEAM_SCM_READY_FOR_DISPATCH(
@@ -69,10 +75,6 @@ public enum OrderStatus
     // LOGISTIC
     DELIVERY_PENDING(
             "DELIVERY PENDING"),
-    PDI_PENDING(
-            "PDI PENDING"),
-    POST_PDI_FAIL_RETURN_AMISP(
-            "POST PDI FAIL RETURN AMISP"),
     LOGISTIC_FINANCE_CLOSURE_PENDING(
             "LOGISTIC > FINANCE CLOSURE PENDING");
 
@@ -86,5 +88,15 @@ public enum OrderStatus
     public String toDisplay()
     {
         return display;
+    }
+
+    public static OrderStatus fromDisplay(String display)
+    {
+        return Arrays.stream(values())
+                .filter(s -> s.display.equalsIgnoreCase(display))
+                .findFirst()
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Invalid OrderStatus: " + display)
+                );
     }
 }

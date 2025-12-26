@@ -34,11 +34,6 @@ public class LogisticsDetails
     @Column(name = "comments",columnDefinition = "TEXT")
     private String logisticsComment;
 
-//    @Column(columnDefinition = "TEXT")
-//    private String logisticsPdiComment;
-
-//    @Column(name = "action",columnDefinition = "TEXT")
-//    private String pdiAction;
 
     @Column(name = "document_url")
     private String shipmentDocumentUrl;

@@ -138,10 +138,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = String.valueOf(order.getStatus());
-        boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
+        OrderStatus status = order.getStatus();
 
-        if (!allowed)
+        if (status != OrderStatus.FINANCE_APPROVED_SCM_PENDING && status != OrderStatus.PROJECT_TEAM_SCM_PENDING)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -258,10 +257,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = String.valueOf(order.getStatus());
-        boolean allowed = status.equalsIgnoreCase("FINANCE APPROVED > SCM PENDING") || status.equalsIgnoreCase("PROJECT TEAM > SCM PENDING");
+        OrderStatus status = order.getStatus();
 
-        if (!allowed)
+        if (status != OrderStatus.FINANCE_APPROVED_SCM_PENDING && status != OrderStatus.PROJECT_TEAM_SCM_PENDING)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -317,10 +315,9 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        String status = String.valueOf(order.getStatus());
-        boolean allowed = status.equalsIgnoreCase("SYRMA PROD/TEST DONE > SCM ACTION PENDING") || status.equalsIgnoreCase("SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING");
+        OrderStatus status = order.getStatus();
 
-        if (!allowed)
+        if (status != OrderStatus.SYRMA_PROD_TEST_DONE_SCM_ACTION_PENDING && status != OrderStatus.SYRMA_RE_PROD_TEST_DONE_SCM_ACTION_PENDING)
         {
             return ResponseEntity.status(403).body("Notify details can only be submitted when the order is pending for SCM action");
         }
@@ -569,8 +566,18 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
+        OrderStatus orderStatus;
+        try
+        {
+            orderStatus = OrderStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatus(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(orderStatus, pageable);
 
         if (ordersPage.isEmpty())
         {
