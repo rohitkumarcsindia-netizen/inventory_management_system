@@ -1,10 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import httpService from "../service/httpService";
 import { motion } from "framer-motion";
 import { removeToken, getUsernameFromToken } from "../service/cookieService";
 import AlertPopup from "../../components/layout/AlertPopup";
+
 
 import { useRouter } from "next/navigation";
 
@@ -17,6 +18,11 @@ export default function OrderInitiation() {
 const [products, setProducts] = useState([]);
 const [projectLoaded, setProjectLoaded] = useState(false);
 const [productLoaded, setProductLoaded] = useState(false);
+
+const [selectedProducts, setSelectedProducts] = useState([]);
+const [showProductDropdown, setShowProductDropdown] = useState(false);
+const productDropdownRef = useRef(null);
+
 
 const [alertPopup, setAlertPopup] = useState({
   show: false,
@@ -38,54 +44,85 @@ const [alertPopup, setAlertPopup] = useState({
     setUsername(name || "");
   }, []);
 
-  //  -----SUBMIT-----
-  const handleOnSubmit = async (order) => {
-    setLoading(true);
+  
 
-    try {
-      const res = await httpService.postWithAuth("/api/v1/orders/project/create", order);
-       setAlertPopup({
-  show: true,
-  message: res || "Order submitted successfully!",
-  type: "success",
-});
-      reset();
-    } catch (err) {
-       setAlertPopup({
-  show: true,
-  message: res || "❌ Failed to Submit Order",
-  type: "success",
-});
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  //  -----SUBMIT-----
+ const handleOnSubmit = async (order) => {
+  setLoading(true);
+
+ const payload = {
+  ...order,
+  products: selectedProducts.map((p) => ({
+    productName: p.productName,
+    quantity: Number(p.quantity),
+  })),
+};
+
+
+  try {
+    const res = await httpService.postWithAuth(
+      "/api/v1/orders/project/create",
+      payload
+    );
+
+    setAlertPopup({
+      show: true,
+      message: res || "Order submitted successfully!",
+      type: "success",
+    });
+
+    reset();
+    setSelectedProducts([]);
+  } catch (err) {
+    setAlertPopup({
+      show: true,
+      message: "❌ Failed to Submit Order",
+      type: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   //  -----SAVE-----
   const handleOnSave = async (order) => {
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const res = await httpService.postWithAuth("/api/v1/orders/project/save", order);
-      setAlertPopup({
-  show: true,
-  message: res || "Order saved successfully!",
-  type: "success",
-});
+ const payload = {
+  ...order,
+  products: selectedProducts.map((p) => ({
+    productName: p.productName,
+    quantity: Number(p.quantity),
+  })),
+};
 
-      reset();
-    } catch (err) {
-         setAlertPopup({
-  show: true,
-  message: res || "Failed to Save order!",
-  type: "success",
-});
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+
+  try {
+    const res = await httpService.postWithAuth(
+      "/api/v1/orders/project/save",
+      payload
+    );
+
+    setAlertPopup({
+      show: true,
+      message: res || "Order saved successfully!",
+      type: "success",
+    });
+
+    reset();
+    setSelectedProducts([]);
+  } catch (err) {
+    setAlertPopup({
+      show: true,
+      message: "❌ Failed to saved Order",
+      type: "error",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
 const fetchProjects = async () => {
   if (projectLoaded) return;
@@ -116,6 +153,28 @@ const fetchProducts = async () => {
     console.error("Failed to load products", err);
   }
 };
+
+useEffect(() => {
+  fetchProducts();
+}, []);
+
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      productDropdownRef.current &&
+      !productDropdownRef.current.contains(event.target)
+    ) {
+      setShowProductDropdown(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
+
 
 
  const capitalizeWords = (text = "") =>
@@ -217,60 +276,187 @@ const fetchProducts = async () => {
               )}
             </div>
 
-            {/* Product Type */}
+            {/* ORDER TYPE */}
             <div>
               <label className="block text-sm text-gray-600 mb-1">
-                Product Type
+                Order Type
               </label>
-          <select
-  {...register("productType", {
-    required: "Product type is required",
-  })}
-  onFocus={fetchProducts}
-  className="w-full border border-gray-300 rounded-lg p-2 text-black"
->
-  <option value="">Select Product</option>
-
-  {products.map((product) => (
-    <option key={product.id} value={product.productType}>
-      {product.productType}
-    </option>
-  ))}
-</select>
-
-
-
-              {errors.productType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.productType.message}
-                </p>
-              )}
-            </div>
-
-            {/* Quantity */}
-            <div>
-              <label className="block text-sm text-gray-600 mb-1">
-                Proposed Build Plan Qty
-              </label>
-              <input
-                type="number"
-                {...register("proposedBuildPlanQty", {
-                  required: "Quantity is required",
-                  min: { value: 1, message: "Quantity must be at least 1" },
+              <select
+                {...register("orderType", {
+                  required: "Order type is required",
+                  setValueAs: (value) => capitalizeWords(value),
                 })}
-                 onKeyDown={(e) => {
-    if (["e", "E", "+", "-"].includes(e.key)) {
-      e.preventDefault();
-    }
-  }}
                 className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              />
-              {errors.proposedBuildPlanQty && (
+              >
+                <option value="">Select Order Type</option>
+                <option value="purchase">Purchase</option>
+                <option value="free of cost">Free of Cost</option>
+              </select>
+              {errors.orderType && (
                 <p className="text-red-500 text-sm mt-1">
-                  {errors.proposedBuildPlanQty.message}
+                  {errors.orderType.message}
                 </p>
               )}
             </div>
+
+           {/* Product Type (Multi Select) */}
+{/* Product Type */}
+<div 
+ref={productDropdownRef}
+className="relative sm:col-span-1">
+  <label className="block text-sm text-gray-600 mb-1">
+    Product Type
+  </label>
+
+  {/* Dropdown button */}
+  <div
+  onClick={() => setShowProductDropdown((prev) => !prev)}
+    className="w-full border border-gray-300 rounded-lg p-2 bg-white cursor-pointer flex justify-between items-center"
+  >
+    <span className="text-gray-700">
+      {selectedProducts.length > 0
+        ? `${selectedProducts.length} product(s) selected`
+        : "Select Product"}
+    </span>
+    <span className="text-gray-500">▼</span>
+  </div>
+
+  {/* Dropdown list */}
+  {showProductDropdown && (
+    <div
+      className="absolute z-50 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow max-h-52 overflow-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {products.length === 0 && (
+        <p className="p-3 text-sm text-gray-500">
+          No products available
+        </p>
+      )}
+
+      {products.map((product) => {
+        const checked = selectedProducts.some(
+          (p) => p.productName === product.productType
+        );
+
+        return (
+          <label
+            key={product.id}
+            className="flex items-center gap-2 px-3 py-2 hover:bg-[#f0f8ff] cursor-pointer"
+          >
+            <input
+              type="checkbox"
+              checked={checked}
+              onChange={() => {
+                setSelectedProducts((prev) => {
+                  if (checked) {
+                    return prev.filter(
+                      (p) => p.productName !== product.productType
+                    );
+                  }
+                  return [
+                    ...prev,
+                    {
+                      productName: product.productType,
+                      quantity: "",
+                    },
+                  ];
+                });
+              }}
+            />
+            <span className="text-gray-800">
+              {product.productType}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  )}
+</div>
+
+
+
+           {/* Selected Products with Quantity */}
+{selectedProducts.length > 0 && (
+  <div className="sm:col-span-2 mt-4">
+    <h3 className="text-sm font-semibold mb-2 text-gray-700">
+      Selected Products
+    </h3>
+
+    <div className="space-y-2">
+      {selectedProducts.map((item, index) => {
+        const qtyInvalid =
+          !item.quantity || Number(item.quantity) <= 0;
+
+        return (
+         <div
+  key={item.productName}
+  className="bg-[#f5faff] border border-[#cce7ff] rounded-lg overflow-hidden"
+>
+  <div className="grid grid-cols-2">
+    {/* LEFT HALF : PRODUCT */}
+    <div className="flex items-center gap-3 p-4 border-r border-[#cce7ff]">
+      <span className="w-120 px-4 py-1 border rounded-lg  text-black text-sm font-semibold">
+        {item.productName}
+      </span>
+    </div>
+
+    {/* RIGHT HALF : QTY */}
+    <div className="flex items-center justify-between p-4">
+      <div>
+        <input
+          type="number"
+          min={1}
+          placeholder="Qty"
+          value={item.quantity}
+          onKeyDown={(e) => {
+            if (["e", "E", "+", "-"].includes(e.key)) {
+              e.preventDefault();
+            }
+          }}
+          onChange={(e) => {
+            const qty = e.target.value;
+            setSelectedProducts((prev) =>
+              prev.map((p, i) =>
+                i === index ? { ...p, quantity: qty } : p
+              )
+            );
+          }}
+          className={`w-120 border rounded-lg p-2 text-black ${
+            qtyInvalid ? "border-red-500" : "border-gray-300"
+          }`}
+        />
+
+        {qtyInvalid && (
+          <p className="text-xs text-red-500 mt-1">
+            Qty required
+          </p>
+        )}
+      </div>
+
+      {/* REMOVE */}
+      <button
+        type="button"
+        onClick={() =>
+          setSelectedProducts((prev) =>
+            prev.filter((_, i) => i !== index)
+          )
+        }
+        className="text-red-500 font-bold text-xl"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>
+
+
+        );
+      })}
+    </div>
+  </div>
+)}
+
+
 
             {/* Reason */}
             <div className="sm:col-span-2">
@@ -296,28 +482,7 @@ const fetchProducts = async () => {
               )}
             </div>
 
-            {/* ORDER TYPE */}
-            <div>
-              <label className="block text-sm text-gray-600 mb-1">
-                Order Type
-              </label>
-              <select
-                {...register("orderType", {
-                  required: "Order type is required",
-                  setValueAs: (value) => capitalizeWords(value),
-                })}
-                className="w-full border border-gray-300 rounded-lg p-2 text-black"
-              >
-                <option value="">Select Order Type</option>
-                <option value="purchase">Purchase</option>
-                <option value="free of cost">Free of Cost</option>
-              </select>
-              {errors.orderType && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.orderType.message}
-                </p>
-              )}
-            </div>
+            
 
             {/* PMS Remarks */}
             <div className="sm:col-span-2">
