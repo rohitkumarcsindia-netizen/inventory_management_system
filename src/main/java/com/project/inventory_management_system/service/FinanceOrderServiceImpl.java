@@ -493,7 +493,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             }
         }
 
-        return ResponseEntity.ok("Order Final Approved Successfully");
+        return ResponseEntity.ok("Order Approved Successfully");
     }
 
     @Override
@@ -575,7 +575,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             }
         }
 
-        return ResponseEntity.ok("Order Final Rejected Successfully");
+        return ResponseEntity.ok("Order Rejected Successfully");
     }
 
     @Override

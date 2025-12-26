@@ -2,10 +2,7 @@ package com.project.inventory_management_system.controller;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
-import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
-import com.project.inventory_management_system.repository.OrderRepository;
-import com.project.inventory_management_system.repository.UsersRepository;
 import com.project.inventory_management_system.service.ProjectOrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +23,6 @@ import java.time.LocalDateTime;
 public class ProjectOrdersController
 {
     private final ProjectOrderService projectOrderService;
-    private final UsersRepository usersRepository;
-    private final OrderRepository orderRepository;
 
     @PostMapping("/create")
     public ResponseEntity<?> addNewOrders(HttpServletRequest request, @RequestBody OrdersDto ordersDto)

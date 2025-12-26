@@ -8,6 +8,9 @@ import com.project.inventory_management_system.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class OrderMapper
@@ -49,14 +52,12 @@ public class OrderMapper
         order.setExpectedOrderDate(dto.getExpectedOrderDate());
         order.setProject(dto.getProject());
         order.setOrderType(dto.getOrderType());
-        order.setInitiator(dto.getUsers().getUsername());
-        order.setProductType(dto.getProductType());
-        order.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(dto.getReasonForBuildRequest());
         order.setPmsRemarks(dto.getPmsRemarks());
 
         // usersDTO → users
         Users user = userMapper.toEntity(dto.getUsers());
+        order.setInitiator(user.getUsername());
         order.setUsers(user);
 
         return order;

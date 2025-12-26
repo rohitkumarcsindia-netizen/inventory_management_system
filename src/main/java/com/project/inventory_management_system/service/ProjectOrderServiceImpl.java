@@ -1,8 +1,6 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.OrdersDto;
-import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
-import com.project.inventory_management_system.dto.UserDto;
+import com.project.inventory_management_system.dto.*;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
@@ -48,12 +46,23 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentName()
-                .equalsIgnoreCase("PROJECT TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("PROJECT TEAM"))
         {
             return ResponseEntity.status(403).body("This User not allowed create orders");
         }
 
+        // product list
+        List<ProductRequestDto> productRequestDto = ordersDto.getProducts();
+
+        if (productRequestDto == null || productRequestDto.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("Product list cannot be empty");
+        }
+
+        boolean failedMail = false;
+
+        for (ProductRequestDto productType : productRequestDto)
+        {
 
             // Set user inside Dto
             UserDto userDto = new UserDto();
@@ -66,13 +75,13 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             // Convert Dto → Entity
             Orders orders = orderMapper.toEntity(ordersDto);
             orders.setUsers(user);
+            orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+            orders.setProductType(productType.getProductName());
+            orders.setProposedBuildPlanQty(productType.getQuantity());
 
             if (orders.getOrderType().equalsIgnoreCase("PURCHASE"))
             {
-                orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
                 orders.setStatus(OrderStatus.PROJECT_TEAM_SCM_PENDING);
-
-
                 Orders saved = orderRepository.save(orders);
 
                 Department scmTeam = departmentRepository.findByDepartmentName("SCM");
@@ -80,32 +89,37 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
                 //sending mail
                 boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(scmTeam.getDepartmentEmail(), saved.getOrderId());
 
-                boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
+                boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(), saved.getOrderId());
 
-                if (!mailSent && !mailSentPM)
+                if (!mailSent || !mailSentPM)
                 {
-                    return ResponseEntity.ok("Order submitted but mail failed to send");
+                    failedMail = true;
                 }
 
-                return ResponseEntity.ok("Order Created Successfully Submit");
             }
-
-
-            orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-            orders.setStatus(OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING);
-            Orders saved = orderRepository.save(orders);
-
-            Department financeTeam = departmentRepository.findByDepartmentName("FINANCE");
-
-            //sending mail
-            boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
-
-            boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(),saved.getOrderId());
-
-            if (!mailSent && !mailSentPM)
+            else
             {
-                return ResponseEntity.ok("Order submitted but mail failed to send");
+                orders.setStatus(OrderStatus.PROJECT_TEAM_FINANCE_PRE_APPROVAL_PENDING);
+                Orders saved = orderRepository.save(orders);
+
+                Department financeTeam = departmentRepository.findByDepartmentName("FINANCE");
+
+                //sending mail
+                boolean mailSent = emailService.sendMailNextDepartmentOrderCreate(financeTeam.getDepartmentEmail(), saved.getOrderId());
+
+                boolean mailSentPM = emailService.sendMailOrderConfirm(user.getDepartment().getDepartmentEmail(), saved.getOrderId());
+
+                if (!mailSent || !mailSentPM)
+                {
+                    failedMail = true;
+                }
             }
+        }
+        if (failedMail)
+        {
+            return ResponseEntity.ok("Order submitted but mail failed to send");
+        }
+
 
         return ResponseEntity.ok("Order Created Successfully Submit");
     }
@@ -508,23 +522,36 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
             return ResponseEntity.status(403).body("This User not allowed save orders");
         }
 
+        // product list
+        List<ProductRequestDto> productRequestDtos = ordersDto.getProducts();
 
-        // Set user inside Dto
-        UserDto userDto = new UserDto();
-        userDto.setUserId(user.getUserId());
-        userDto.setUsername(user.getUsername());
-        userDto.setEmail(user.getEmail());
+        if (productRequestDtos == null || productRequestDtos.isEmpty())
+        {
+            return ResponseEntity.badRequest().body("Product list cannot be empty");
+        }
 
-        ordersDto.setUsers(userDto);
+        for (ProductRequestDto productType : productRequestDtos)
+        {
 
-        // Convert Dto → Entity
-        Orders orders = orderMapper.toEntity(ordersDto);
-        orders.setUsers(user);
+            // Set user inside Dto
+            UserDto userDto = new UserDto();
+            userDto.setUserId(user.getUserId());
+            userDto.setUsername(user.getUsername());
+            userDto.setEmail(user.getEmail());
 
-        orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
-        orders.setStatus(OrderStatus.PROJECT_TEAM_PENDING);
+            ordersDto.setUsers(userDto);
 
-        orderRepository.save(orders);
+            // Convert Dto → Entity
+            Orders orders = orderMapper.toEntity(ordersDto);
+            orders.setUsers(user);
+
+            orders.setCreateAt(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
+            orders.setProductType(productType.getProductName());
+            orders.setProposedBuildPlanQty(productType.getQuantity());
+            orders.setStatus(OrderStatus.PROJECT_TEAM_PENDING);
+
+            orderRepository.save(orders);
+        }
 
         return ResponseEntity.ok("Order Saved Successfully");
     }
