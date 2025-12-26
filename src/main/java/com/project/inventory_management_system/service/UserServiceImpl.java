@@ -2,17 +2,18 @@ package com.project.inventory_management_system.service;
 
 
 
-import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.*;
 import com.project.inventory_management_system.mapper.UserMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -28,72 +29,135 @@ public class UserServiceImpl implements UserService
 
 
     @Override
-    public UserDto createUser(UserDto userDto)
+    public ResponseEntity<?> createUser(String username, UserDto userDto)
     {
-
-        Department department = departmentRepository.findById(userDto.getDepartmentId())
-                .orElseThrow(() -> new RuntimeException("Department not found"));
-
-
-        // Convert Dto → Entity
-        Users users = userMapper.toEntity(userDto);
-        users.setPassword(passwordEncoder.encode(userDto.getPassword()));
-
-        // Set existing department
-        users.setDepartment(department);
-
-        //saved from database
-        Users savedUser = usersRepository.save(users);
-
-        // Return Dto
-        return userMapper.toDto(savedUser);
-    }
-
-    @Override
-    public Users updateUserData(Users user)
-    {
-        Optional<Users> findUser = Optional.ofNullable(usersRepository.findByUserId(user.getUserId()));
-        if (findUser.isPresent())
+        Users user = usersRepository.findByUsername(username);
+        if (user == null)
         {
-            Users existinguser = findUser.get();
-            //existinguser.setUserRoles(user.getUserRoles());
-            existinguser.setEmail(user.getEmail());
-//            existinguser.setDepartmentRole(user.getDepartmentRole());
-            existinguser.setPassword(user.getPassword());
-            existinguser.setUsername(user.getUsername());
-            return existinguser;
+            return ResponseEntity.status(404).body("Logged-in user not found");
         }
-        return null;
-    }
 
-    @Override
-    public Users deleteUser(Users user)
-    {
-        Users findUser = usersRepository.findByUserId(user.getUserId());
-        if (findUser != null)
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
-            usersRepository.deleteById(findUser.getUserId());
-            return findUser;
+            return ResponseEntity.status(403).body("Only Admin add Users");
         }
-        return null;
-    }
 
-    @Override
-    public List<Users> findAllUsers()
-    {
-        return usersRepository.findAll();
-    }
-
-    @Override
-    public Users findUsers(UserDto userDto)
-    {
-        Optional<Users> existingRoles = usersRepository.findById(userDto.getDepartmentId());
-        if (existingRoles.isPresent())
+        Department department = departmentRepository.findByDepartmentName(userDto.getDepartmentName());
+        if (department == null)
         {
-            Users userDetails = existingRoles.get();
-            return userDetails;
+            return ResponseEntity.status(404).body("Department not Found");
         }
-        return null;
+
+        Users existingUserByUsername = usersRepository.findByUsername(userDto.getUsername());
+        if (existingUserByUsername != null)
+        {
+            return ResponseEntity.status(409).body("Username already exists");
+        }
+
+        Users existingUserByEmail = usersRepository.findByEmail(userDto.getEmail());
+        if (existingUserByEmail != null)
+        {
+            return ResponseEntity.status(409).body("Email already exists");
+        }
+
+        Users saveUser = userMapper.toEntity(userDto);
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank())
+        {
+            saveUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+        saveUser.setDepartment(department);
+        usersRepository.save(saveUser);
+        return ResponseEntity.ok("User Details Save Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> getUsers(String username, int limit, int offset)
+    {
+        Users user = usersRepository.findByUsername(username);
+        if (user == null)
+        {
+            return ResponseEntity.status(404).body("Logged-in user not found");
+        }
+
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        {
+            return ResponseEntity.status(403).body("Only ADMIN can view users");
+        }
+
+        List<Users> users = usersRepository.findAllWithLimitOffset(limit, offset);
+        if (users.isEmpty())
+        {
+            return ResponseEntity.ok("No Users found");
+        }
+        List<UserDto> userDtoList = users.stream()
+                .map(userMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "offset", offset,
+                "limit", limit,
+                "usersCount", usersRepository.count(),
+                "users", userDtoList
+        ));
+    }
+
+    @Override
+    public ResponseEntity<?> updateUserDetails(String username, Long userId, UserDto userDto)
+    {
+        Users user = usersRepository.findByUsername(username);
+        if (user == null)
+        {
+            return ResponseEntity.status(404).body("Logged-in user not found");
+        }
+
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        {
+            return ResponseEntity.status(403).body("Only ADMIN can update users");
+        }
+        Users existsUser = usersRepository.findByUserId(userId);
+        if (existsUser == null)
+        {
+            return ResponseEntity.ok("UserDetails not found");
+        }
+        Department department = departmentRepository.findByDepartmentName(userDto.getDepartmentName());
+        if (department == null)
+        {
+            return ResponseEntity.status(404).body("Department not Found");
+        }
+        existsUser.setUsername(userDto.getUsername());
+        existsUser.setEmail(userDto.getEmail());
+        existsUser.setDepartment(department);
+        if (userDto.getPassword() != null && !userDto.getPassword().isBlank())
+        {
+            existsUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        }
+
+        usersRepository.save(existsUser);
+
+        return ResponseEntity.ok("User Details Updated Successfully");
+    }
+
+    @Override
+    public ResponseEntity<?> deleteUserDetails(String username, Long userId)
+    {
+        Users user = usersRepository.findByUsername(username);
+        if (user == null)
+        {
+            return ResponseEntity.status(404).body("Logged-in user not found");
+        }
+
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        {
+            return ResponseEntity.status(403).body("Only ADMIN can delete users");
+        }
+        Users existsUser = usersRepository.findByUserId(userId);
+        if (existsUser == null)
+        {
+            return ResponseEntity.ok("UserDetails not found");
+        }
+
+        usersRepository.delete(existsUser);
+        return ResponseEntity.ok("User Details Delete Successfully");
     }
 
 }

@@ -30,6 +30,7 @@ public class ProjectTeamOrdersHistoryDto
     private String locationDetails;
 
     private Long amispApprovedBy;
+    private String amispApprovedByUserName;
 
     private UserDto users;
 }

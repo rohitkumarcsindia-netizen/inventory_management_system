@@ -19,10 +19,13 @@ public class RmaApproval
     @JoinColumn(name = "order_id")
     private Orders order;
 
+    @Column(name = "action")
     private String rmaAction;
+
+    @Column(name = "action_time")
     private LocalDateTime rmaActionTime;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comments",columnDefinition = "TEXT")
     private String rmaComment;
 
     @ManyToOne

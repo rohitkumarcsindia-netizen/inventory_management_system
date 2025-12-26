@@ -4,6 +4,7 @@ import com.project.inventory_management_system.dto.CloudOrdersDto;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.CloudOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +39,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     private final EmailService emailService;
     private final CloudApprovalRepository cloudApprovalRepository;
     private final CloudOrderMapper cloudOrderMapper;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
     //Cloud Team getOrders Method
     @Override
@@ -49,12 +52,16 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only Cloud team can view approved orders");
         }
 
-        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset("SCM CREATED TICKET > CLOUD PENDING", offset, limit);
+        List<OrderStatus> cloudStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+
+        List<String> statusNames = cloudStatuses.stream().map(Enum::name).toList();
+
+        List<Orders> ordersList = orderRepository.findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (ordersList.isEmpty())
         {
@@ -68,7 +75,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatus("SCM CREATED TICKET > CLOUD PENDING"),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }
@@ -83,7 +90,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view complete orders");
         }
@@ -117,7 +124,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only Cloud team can update jira ticket details");
         }
@@ -128,7 +135,8 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM CREATED TICKET > CLOUD PENDING"))
+
+        if (order.getStatus() != OrderStatus.SCM_CREATED_TICKET_CLOUD_PENDING)
         {
             return ResponseEntity.status(403).body("Jira details can only be submitted when the order is pending for SCM action");
         }
@@ -143,11 +151,11 @@ public class CloudOrderServiceImpl implements CloudOrderService
         jiraDetailsUpdate.setUpdatedBy(user);
         cloudApprovalRepository.save(jiraDetailsUpdate);
 
-        order.setStatus("CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING");
+        order.setStatus(OrderStatus.CLOUD_CREATED_CERTIFICATE_SCM_PROD_BACK_CREATION_PENDING);
         orderRepository.save(order);
 
 
-        Department department = departmentRepository.findByDepartmentname("SCM");
+        Department department = departmentRepository.findByDepartmentName("SCM");
 
         boolean mailsent = emailService.sendMailCertificateGenerate(department.getDepartmentEmail(), order.getOrderId());
 
@@ -171,13 +179,15 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
 
+        List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForCloud(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
@@ -206,13 +216,18 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
 
+
+        List<OrderStatus> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+
+        Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.searchCloud(keyword.trim(), pageable);
+        Page<Orders> ordersPage = orderRepository.findAll(spec, pageable);
 
         if (ordersPage.isEmpty())
         {
@@ -242,7 +257,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }
@@ -277,7 +292,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("FINANCE"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("FINANCE"))
         {
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
@@ -313,7 +328,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("CLOUD TEAM"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("CLOUD TEAM"))
         {
             return ResponseEntity.status(403).body("Only cloud team can view this");
         }

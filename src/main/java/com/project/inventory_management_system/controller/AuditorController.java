@@ -1,7 +1,7 @@
 package com.project.inventory_management_system.controller;
 
 
-import com.project.inventory_management_system.service.AdminService;
+import com.project.inventory_management_system.service.AuditorService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,16 +11,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/admin")
-public class AdminController
+@RequestMapping("/api/v1/orders/auditor")
+public class AuditorController
 {
-    private final AdminService adminService;
+    private final AuditorService auditorService;
 
 
     @GetMapping("/all-orders")
@@ -38,7 +40,7 @@ public class AdminController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return adminService.getOrdersByAdmin(userDetails.getUsername(), offset, limit);
+        return auditorService.getOrdersByAuditor(userDetails.getUsername(), offset, limit);
 
 
     }
@@ -61,7 +63,7 @@ public class AdminController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return adminService.getOrdersFilterDate(userDetails.getUsername(), start, end,page,size);
+        return auditorService.getOrdersFilterDate(userDetails.getUsername(), start, end,page,size);
 
     }
 
@@ -79,7 +81,7 @@ public class AdminController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return adminService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
+        return auditorService.getOrdersFilterStatus(userDetails.getUsername(), status, page, size);
 
     }
 
@@ -98,7 +100,7 @@ public class AdminController
             return ResponseEntity.status(401).body("Unauthorized");
         }
 
-        return adminService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
+        return auditorService.getOrdersSearch(userDetails.getUsername(), keyword, page, size);
 
     }
 }

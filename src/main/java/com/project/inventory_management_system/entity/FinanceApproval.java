@@ -19,21 +19,29 @@ public class FinanceApproval
     @JoinColumn(name = "order_id")
     private Orders order;
 
+    @Column(name = "action")
     private String financeAction;
+
+    @Column(name = "action_time")
     private LocalDateTime financeActionTime;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "reason",columnDefinition = "TEXT")
     private String financeReason;
 
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private Users financeApprovedBy;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "remark",columnDefinition = "TEXT")
     private String financeFinalRemark;
 
     //Finance Final Closure Details
+    @Column(name = "document_url")
     private String financeApprovalDocumentUrl;
+
+    @Column(name = "closure_status")
     private String financeClosureStatus;
+
+    @Column(name = "closure_time")
     private LocalDateTime financeClosureTime;
 }

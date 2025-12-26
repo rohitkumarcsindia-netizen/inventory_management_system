@@ -29,6 +29,7 @@ public class CloudOrdersHistoryDto
     private String priority;
     private String cloudComments;
     private Long updatedBy;
+    private String updatedByUserName;
 
     private UserDto users;
 }

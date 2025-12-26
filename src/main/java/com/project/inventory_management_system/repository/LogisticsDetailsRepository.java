@@ -47,7 +47,7 @@ public interface LogisticsDetailsRepository extends JpaRepository<LogisticsDetai
 
 
     //status filter
-    @Query("SELECT o FROM LogisticsDetails o WHERE o.pdiAction = :status")
+    @Query("SELECT o FROM LogisticsDetails o WHERE o.deliveredStatus = :status")
     Page<LogisticsDetails> findByStatusFilter(@Param("status") String status, Pageable pageable);
 
 

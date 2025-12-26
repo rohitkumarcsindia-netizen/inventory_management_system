@@ -15,8 +15,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/logistic")
+@RequestMapping("/api/v1/orders/logistic")
 public class LogisticsOrdersController
 {
 
@@ -65,31 +66,6 @@ public class LogisticsOrdersController
         return logisticsOrderService.fillDeliveryDetails(userDetails.getUsername(), orderId, deliveryDetails);
     }
 
-    @PutMapping("/pdi-pass/{orderId}")
-    public ResponseEntity<?> fillPassPdiDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody LogisticsDetails pdiComments)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        return logisticsOrderService.fillPassPdiDetails(userDetails.getUsername(), orderId, pdiComments);
-    }
-
-    @PutMapping("/pdi-fail/{orderId}")
-    public ResponseEntity<?> fillFailPdiDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody LogisticsDetails pdiComments)
-    {
-        UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");
-
-        if (userDetails == null)
-        {
-            return ResponseEntity.status(401).body("Unauthorized");
-        }
-
-        return logisticsOrderService.fillFailPdiDetails(userDetails.getUsername(), orderId, pdiComments);
-    }
 
     @GetMapping("/complete")
     public ResponseEntity<?> getCompleteOrdersForLogistics(

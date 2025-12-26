@@ -9,13 +9,11 @@ import java.util.List;
 
 public interface UserService
 {
-    public UserDto createUser(UserDto userDto);
+    ResponseEntity<?> createUser(String username, UserDto userDto);
 
-    Users updateUserData(Users user);
+    ResponseEntity<?> getUsers(String username, int offset, int limit);
 
-    Users deleteUser(Users user);
+    ResponseEntity<?> updateUserDetails(String username, Long userId, UserDto userDto);
 
-    List<Users> findAllUsers();
-
-    Users findUsers(UserDto userDto);
+    ResponseEntity<?> deleteUserDetails(String username, Long userId);
 }

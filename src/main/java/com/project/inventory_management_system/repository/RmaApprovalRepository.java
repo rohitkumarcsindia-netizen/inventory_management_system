@@ -17,7 +17,7 @@ public interface RmaApprovalRepository extends JpaRepository<RmaApproval, Long>
     //All order Action count only
     @Query(
             value = "SELECT COUNT(*) FROM rma_approval " +
-                    "WHERE rma_approval.rma_action IS NOT NULL",
+                    "WHERE rma_approval.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByRmaAction();
@@ -26,8 +26,8 @@ public interface RmaApprovalRepository extends JpaRepository<RmaApproval, Long>
     //All Complete Order data fetch
     @Query(
             value = "SELECT * FROM rma_approval " +
-                    "WHERE rma_action IS NOT NULL " +
-                    "ORDER BY rma_action_time DESC " +
+                    "WHERE action IS NOT NULL " +
+                    "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",
             nativeQuery = true
     )

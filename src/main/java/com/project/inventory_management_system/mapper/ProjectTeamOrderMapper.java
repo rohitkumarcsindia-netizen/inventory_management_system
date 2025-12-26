@@ -14,24 +14,27 @@ public class ProjectTeamOrderMapper
     private final OrderMapper orderMapper;
 
 
-    public ProjectTeamOrderDto amispOrdersDto(ProjectTeamApproval projectTeamApproval)
+    public ProjectTeamOrderDto projectTeamOrderDto(ProjectTeamApproval projectTeamApproval)
     {
         if (projectTeamApproval == null) return null;
 
-        ProjectTeamOrderDto amispOrdersDto = new ProjectTeamOrderDto();
-        amispOrdersDto.setId(projectTeamApproval.getId());
-        amispOrdersDto.setAmispPdiType(projectTeamApproval.getAmispPdiType());
-        amispOrdersDto.setProjectTeamActionTime(projectTeamApproval.getProjectTeamActionTime());
-        amispOrdersDto.setProjectTeamComment(projectTeamApproval.getProjectTeamComment());
-        projectTeamApproval.setPdiLocation(projectTeamApproval.getPdiLocation());
-        amispOrdersDto.setDispatchDetails(projectTeamApproval.getDispatchDetails());
-        amispOrdersDto.setDocumentUrl(projectTeamApproval.getDocumentUrl());
-        amispOrdersDto.setSerialNumbers(projectTeamApproval.getSerialNumbers());
-        amispOrdersDto.setLocationDetails(projectTeamApproval.getLocationDetails());
+        ProjectTeamOrderDto projectTeamOrderDto = new ProjectTeamOrderDto();
+        projectTeamOrderDto.setId(projectTeamApproval.getId());
+        projectTeamOrderDto.setAmispPdiType(projectTeamApproval.getAmispPdiType());
+        projectTeamOrderDto.setProjectTeamActionTime(projectTeamApproval.getProjectTeamActionTime());
+        projectTeamOrderDto.setProjectTeamComment(projectTeamApproval.getProjectTeamComment());
+        projectTeamOrderDto.setPdiLocation(projectTeamApproval.getPdiLocation());
+        projectTeamOrderDto.setDispatchDetails(projectTeamApproval.getDispatchDetails());
+        projectTeamOrderDto.setDocumentUrl(projectTeamApproval.getDocumentUrl());
+        projectTeamOrderDto.setSerialNumbers(projectTeamApproval.getSerialNumbers());
+        projectTeamOrderDto.setLocationDetails(projectTeamApproval.getLocationDetails());
+        projectTeamOrderDto.setPdiAction(projectTeamApproval.getPdiAction());
+        projectTeamOrderDto.setPdiComment(projectTeamApproval.getPdiComment());
 
-        amispOrdersDto.setOrder(orderMapper.toDto(projectTeamApproval.getOrder()));
-        amispOrdersDto.setActionBy(userMapper.toDto(projectTeamApproval.getActionBy())); // nested mapping
 
-        return amispOrdersDto;
+        projectTeamOrderDto.setOrder(orderMapper.toDto(projectTeamApproval.getOrder()));
+        projectTeamOrderDto.setActionBy(userMapper.toDto(projectTeamApproval.getActionBy())); // nested mapping
+
+        return projectTeamOrderDto;
     }
 }

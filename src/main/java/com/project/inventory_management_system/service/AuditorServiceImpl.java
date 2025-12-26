@@ -4,6 +4,7 @@ package com.project.inventory_management_system.service;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.OrderRepository;
 import com.project.inventory_management_system.repository.UsersRepository;
@@ -21,14 +22,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AdminServiceImpl implements AdminService
+public class AuditorServiceImpl implements AuditorService
 {
     private final OrderRepository orderRepository;
     private final UsersRepository usersRepository;
     private final OrderMapper orderMapper;
 
     @Override
-    public ResponseEntity<?> getOrdersByAdmin(String username, int offset, int limit)
+    public ResponseEntity<?> getOrdersByAuditor(String username, int offset, int limit)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -37,7 +38,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -71,7 +72,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -107,13 +108,23 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }
 
+        OrderStatus orderStatus;
+        try
+        {
+            orderStatus = OrderStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatus(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(orderStatus, pageable);
 
         if (ordersPage.isEmpty())
         {
@@ -143,7 +154,7 @@ public class AdminServiceImpl implements AdminService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }

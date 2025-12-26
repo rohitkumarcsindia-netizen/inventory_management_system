@@ -30,6 +30,7 @@ public class ScmOrdersHistoryDto
     private String jiraSummary;
     private String jiraStatus;
     private Long approvedBy;
+    private String approvedByUserName;
 
     private UserDto users;
 }

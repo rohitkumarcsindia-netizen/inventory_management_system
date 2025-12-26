@@ -42,6 +42,7 @@ public class OrdersCompleteMapper
         }
 
         financeOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
+        financeOrdersHistoryDto.setApprovedByUserName(approvedUser.getUsername());
 
         return financeOrdersHistoryDto;
     }
@@ -79,6 +80,7 @@ public class OrdersCompleteMapper
         }
 
         scmOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
+        scmOrdersHistoryDto.setApprovedByUserName(approvedUser.getUsername());
 
         return scmOrdersHistoryDto;
     }
@@ -114,6 +116,7 @@ public class OrdersCompleteMapper
         }
 
         cloudOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        cloudOrdersHistoryDto.setUpdatedByUserName(approvedUser.getUsername());
 
         return cloudOrdersHistoryDto;
     }
@@ -146,6 +149,7 @@ public class OrdersCompleteMapper
         }
 
         syrmaOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        syrmaOrdersHistoryDto.setActionDoneByUserName(approvedUser.getUsername());
 
         return syrmaOrdersHistoryDto;
     }
@@ -177,6 +181,7 @@ public class OrdersCompleteMapper
         }
 
         rmaOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        rmaOrdersHistoryDto.setRmaApprovedByUserName(approvedUser.getUsername());
 
         return rmaOrdersHistoryDto;
     }
@@ -213,6 +218,7 @@ public class OrdersCompleteMapper
         }
 
         projectTeamOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        projectTeamOrdersHistoryDto.setAmispApprovedByUserName(approvedUser.getUsername());
 
         return projectTeamOrdersHistoryDto;
     }
@@ -234,7 +240,7 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
         logisticOrdersHistoryDto.setLogisticsComment(logisticsDetails.getLogisticsComment());
-        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
+//        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
         logisticOrdersHistoryDto.setActionTime(logisticsDetails.getActionTime());
         logisticOrdersHistoryDto.setCourierName(logisticsDetails.getCourierName());
         logisticOrdersHistoryDto.setDeliveredStatus(logisticsDetails.getDeliveredStatus());
@@ -243,7 +249,7 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setActualDeliveryDate(logisticsDetails.getActualDeliveryDate());
         logisticOrdersHistoryDto.setShippingMode(logisticsDetails.getShippingMode());
         logisticOrdersHistoryDto.setExpectedDeliveryDate(logisticsDetails.getExpectedDeliveryDate());
-        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
+//        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
         logisticOrdersHistoryDto.setShipmentDocumentUrl(logisticsDetails.getShipmentDocumentUrl());
         logisticOrdersHistoryDto.setTrackingNumber(logisticsDetails.getTrackingNumber());
 
@@ -254,6 +260,7 @@ public class OrdersCompleteMapper
         }
 
         logisticOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
+        logisticOrdersHistoryDto.setActionByUserName(approvedUser.getUsername());
 
         return logisticOrdersHistoryDto;
     }

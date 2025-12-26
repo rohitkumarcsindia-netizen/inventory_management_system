@@ -18,7 +18,7 @@ public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Lo
     @Query(
             value = "SELECT sa.* FROM syrma_approval sa " +
                     "JOIN orders o ON o.order_id = sa.order_id " +
-                    "WHERE sa.syrma_action IS NOT NULL " +
+                    "WHERE sa.action IS NOT NULL " +
                     "ORDER BY sa.action_time DESC " +
                     "LIMIT :offset, :limit",
             nativeQuery = true
@@ -28,7 +28,7 @@ public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Lo
     //All order Action count only
     @Query(
             value = "SELECT COUNT(*) FROM syrma_approval " +
-                    "WHERE syrma_approval.syrma_action IS NOT NULL",
+                    "WHERE syrma_approval.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByAction();

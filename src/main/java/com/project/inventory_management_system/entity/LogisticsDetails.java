@@ -28,23 +28,20 @@ public class LogisticsDetails
     private java.time.LocalDate actualDeliveryDate;
     private String deliveredStatus;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "serial_number",columnDefinition = "TEXT")
     private String serialNumbers;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "comments",columnDefinition = "TEXT")
     private String logisticsComment;
 
-    @Column(columnDefinition = "TEXT")
-    private String logisticsPdiComment;
 
-    @Column(columnDefinition = "TEXT")
-    private String pdiAction;
-
+    @Column(name = "document_url")
     private String shipmentDocumentUrl;
 
     @ManyToOne
-    @JoinColumn(name = "updated_by")
+    @JoinColumn(name = "action_by")
     private Users actionBy;
 
+    @Column(name = "action_time")
     private LocalDateTime actionTime;
 }

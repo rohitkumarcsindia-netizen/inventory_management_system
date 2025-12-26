@@ -16,7 +16,8 @@ import java.time.LocalDateTime;
 
 
 @Controller
-@RequestMapping("/api/orders/scm")
+@RestController
+@RequestMapping("/api/v1/orders/scm")
 @RequiredArgsConstructor
 public class ScmOrderController
 {

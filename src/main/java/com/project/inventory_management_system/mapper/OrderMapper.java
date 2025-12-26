@@ -4,8 +4,12 @@ import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.ScmApproval;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +33,7 @@ public class OrderMapper
         dto.setProductType(order.getProductType());
         dto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
         dto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-        dto.setStatus(order.getStatus());
+        dto.setStatus(order.getStatus().toDisplay());
         dto.setPmsRemarks(order.getPmsRemarks());
 
         dto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
@@ -48,15 +52,12 @@ public class OrderMapper
         order.setExpectedOrderDate(dto.getExpectedOrderDate());
         order.setProject(dto.getProject());
         order.setOrderType(dto.getOrderType());
-        order.setInitiator(dto.getUsers().getUsername());
-        order.setProductType(dto.getProductType());
-        order.setProposedBuildPlanQty(dto.getProposedBuildPlanQty());
         order.setReasonForBuildRequest(dto.getReasonForBuildRequest());
-        order.setStatus(dto.getStatus());
         order.setPmsRemarks(dto.getPmsRemarks());
 
         // usersDTO → users
         Users user = userMapper.toEntity(dto.getUsers());
+        order.setInitiator(user.getUsername());
         order.setUsers(user);
 
         return order;

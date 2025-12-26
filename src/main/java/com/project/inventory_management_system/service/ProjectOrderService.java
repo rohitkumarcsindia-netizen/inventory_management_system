@@ -2,6 +2,7 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
+import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.Users;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +42,8 @@ public interface ProjectOrderService
     ResponseEntity<?> postDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails);
 
     ResponseEntity<?> priDeliveryPdiOrder(String username, Long orderId, ProjectTeamOrderDto pdiDetails);
+
+    ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, ProjectTeamApproval pdiComments);
+
+    ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, ProjectTeamApproval pdiComments);
 }

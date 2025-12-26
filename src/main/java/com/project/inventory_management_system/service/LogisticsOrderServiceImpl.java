@@ -4,6 +4,7 @@ import com.project.inventory_management_system.dto.LogisticOrderDto;
 import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +37,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
     private final OrdersCompleteMapper ordersCompleteMapper;
     private final LogisticOrderMapper logisticOrderMapper;
     private final ProjectTeamApprovalRepository projectTeamApprovalRepository;
+    private final OrderStatusByDepartmentService orderStatusByDepartmentService;
 
 
     @Override
@@ -47,19 +50,15 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view pending orders");
         }
+        List<OrderStatus> logisticStatuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
 
-        // Allowed Finance statuses (priority order)
-        List<String> logisticStatuses = List.of(
-                "SCM > LOGISTIC PENDING",
-                "DELIVERY PENDING",
-                "PDI PENDING"
-        );
+        List<String> statusNames = logisticStatuses.stream().map(Enum::name).toList();
 
-        List<Orders> orders = orderRepository. findByLogisticStatusWithLimitOffset(logisticStatuses, offset, limit);
+        List<Orders> orders = orderRepository. findByStatusWithLimitOffset(statusNames, offset, limit);
 
         if (orders.isEmpty())
         {
@@ -72,7 +71,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         return ResponseEntity.ok(Map.of(
                 "offset", offset,
                 "limit", limit,
-                "ordersCount", orderRepository.countByStatusList(logisticStatuses),
+                "ordersCount", orderRepository.countByStatus(statusNames),
                 "orders", ordersDtoList
         ));
     }
@@ -87,7 +86,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -98,7 +97,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("SCM > LOGISTIC PENDING"))
+        if (order.getStatus() != OrderStatus.SCM_LOGISTIC_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -121,7 +120,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
 
 
         //Order table status update
-        order.setStatus("DELIVERY PENDING");
+        order.setStatus(OrderStatus.DELIVERY_PENDING);
         orderRepository.save(order);
 
         return ResponseEntity.ok("Order Shipping Successfully");
@@ -137,7 +136,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can approve orders");
         }
@@ -149,7 +148,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.ok("Order not found");
         }
 
-        if (!order.getStatus().equalsIgnoreCase("DELIVERY PENDING"))
+        if (order.getStatus() != OrderStatus.DELIVERY_PENDING)
         {
             return ResponseEntity.status(403).body("Order is not pending for logistic approval");
         }
@@ -165,11 +164,10 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             findOrder.setLogisticsComment(deliveryDetails.getLogisticsComment().trim());
             findOrder.setActualDeliveryDate(deliveryDetails.getActualDeliveryDate());
             findOrder.setActionTime(LocalDateTime.now());
-            findOrder.setLogisticsPdiComment("Pdi Already Completed");
             logisticsDetailsRepository.save(findOrder);
 
             //Order table status update
-            order.setStatus("LOGISTIC > FINANCE CLOSURE PENDING");
+            order.setStatus(OrderStatus.LOGISTIC_FINANCE_CLOSURE_PENDING);
             orderRepository.save(order);
 
             return ResponseEntity.ok("Order Delivery Successfully");
@@ -185,95 +183,12 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         logisticsDetailsRepository.save(findOrder);
 
         //Order table status update
-        order.setStatus("PDI PENDING");
+        order.setStatus(OrderStatus.PDI_PENDING);
         orderRepository.save(order);
 
         return ResponseEntity.ok("Order Delivery Successfully");
     }
 
-    @Override
-    public ResponseEntity<?> fillPassPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
-        {
-            return ResponseEntity.status(403).body("Only logistic team can approve orders");
-        }
-
-        Orders order = orderRepository.findById(orderId).orElse(null);
-
-        if (order == null)
-        {
-            return ResponseEntity.ok("Order not found");
-        }
-
-        if (!order.getStatus().equalsIgnoreCase("PDI PENDING"))
-        {
-            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
-        }
-
-        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Logistic Details table data update
-        findOrder.setPdiAction("PDI PASS");
-        findOrder.setActionTime(LocalDateTime.now());
-        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
-        logisticsDetailsRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus("LOGISTIC > FINANCE CLOSURE PENDING");
-        orderRepository.save(order);
-
-        return ResponseEntity.ok("PDI Details Submit Successfully");
-    }
-
-    @Override
-    public ResponseEntity<?> fillFailPdiDetails(String username, Long orderId, LogisticsDetails pdiComments)
-    {
-        Users user = usersRepository.findByUsername(username);
-
-        if (user == null)
-        {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
-        {
-            return ResponseEntity.status(403).body("Only logistic team can approve orders");
-        }
-
-        Orders order = orderRepository.findById(orderId).orElse(null);
-
-        if (order == null)
-        {
-            return ResponseEntity.ok("Order not found");
-        }
-
-        if (!order.getStatus().equalsIgnoreCase("PDI PENDING"))
-        {
-            return ResponseEntity.status(403).body("Order is not pending for logistic approval");
-        }
-
-        LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
-
-        //Logistic Details table data update
-        findOrder.setPdiAction("PDI FAIL");
-        findOrder.setActionTime(LocalDateTime.now());
-        findOrder.setLogisticsPdiComment(pdiComments.getLogisticsPdiComment());
-        logisticsDetailsRepository.save(findOrder);
-
-        //Order table status update
-        order.setStatus("POST PDI FAIL RETURN AMISP");
-        orderRepository.save(order);
-
-        return ResponseEntity.ok("PDI Details Submit Successfully");
-    }
 
     @Override
     public ResponseEntity<?> getCompleteOrdersForLogistics(String username, int offset, int limit)
@@ -285,7 +200,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view complete orders");
         }
@@ -319,13 +234,15 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
 
+        List<OrderStatus> statuses = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.findByDateRangeForLogistic(start, end, pageable);
+        Page<Orders> ordersPage = orderRepository.findByDateRange(start, end, statuses, pageable);
         if (ordersPage.isEmpty())
         {
             return ResponseEntity.ok("No orders found");
@@ -354,13 +271,23 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
 
+        OrderStatus orderStatus;
+        try
+        {
+            orderStatus = OrderStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage =  orderRepository.findByStatusForLogistic(status, pageable);
+        Page<Orders> ordersPage =  orderRepository.findByStatus(orderStatus, pageable);
 
         if (ordersPage.isEmpty())
         {
@@ -390,13 +317,17 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
 
+        List<OrderStatus> departmentNameWiseStatus = orderStatusByDepartmentService.getStatusesByDepartment(user.getDepartment().getDepartmentName());
+
+        Specification<Orders> spec = Specification.allOf(OrderSpecification.statusIn(departmentNameWiseStatus)).and(OrderSpecification.keywordSearch(keyword));
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        Page<Orders> ordersPage = orderRepository.searchLogistic(keyword.trim(), pageable);
+        Page<Orders> ordersPage = orderRepository.findAll(spec, pageable);
 
         if (ordersPage.isEmpty())
         {
@@ -426,7 +357,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
@@ -461,7 +392,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }
@@ -497,7 +428,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentname().equalsIgnoreCase("LOGISTIC"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("LOGISTIC"))
         {
             return ResponseEntity.status(403).body("Only logistic team can view this");
         }

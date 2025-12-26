@@ -14,8 +14,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Controller
+@RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/orders/finance")
+@RequestMapping("/api/v1/orders/finance")
 public class FinanceOrderController
 {
     private final FinanceOrderService financeOrderService;
