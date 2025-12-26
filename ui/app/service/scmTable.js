@@ -329,7 +329,7 @@ const financeApproval = async (orderId) => {
   );
 }
         //Case 5: PROJECT TEAM NOTIFY > SCM LOCATION DETAILS → Show Notify Button
-       if (row.status === "PROJECT TEAM NOTIFY > SCM LOCATION DETAILS") {
+       if (row.status === "PROJECT TEAM > NOTIFY SCM LOCATION DETAILS") {
   return (
     <button
       onClick={() => financeApproval(row.orderId)}   //  FUNCTION CALL
@@ -470,7 +470,7 @@ const financeApproval = async (orderId) => {
   </option>
 
   <option value="PROJECT TEAM NOTIFY > SCM LOCATION DETAILS">
-    PROJECT TEAM NOTIFY {'>'} SCM LOCATION DETAILS
+    PROJECT TEAM {'>'} NOTIFY SCM LOCATION DETAILS
   </option>
 
   <option value="FINANCE > SCM PLAN TO DISPATCH">

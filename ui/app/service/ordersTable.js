@@ -50,6 +50,12 @@ const [showPostPopup, setShowPostPopup] = useState(false);
 //Send Location ProjectTeam to Scm Team
 const [locationPopupOrderId, setLocationPopupOrderId] = useState(null);
 
+ // ---------- NEW: PDI Popup ----------
+  const [pdiPopup, setPdiPopup] = useState({
+    id: null,
+    type: null, // pass / fail
+  });
+
 
 const highlightText = (text) => {
   if (!searchText || text === null || text === undefined) return text;
@@ -136,6 +142,22 @@ const {
     locationDetails: "",
   },
 });
+
+//  -----------PDI PASS/FAIL SCHEMA-------
+const pdiPassFailSchema = yup.object().shape({
+  pdiComment: yup.string().required("PDI Comment is required"),
+});
+
+//  -----------PDI PASS/FAIL REACT HOOK FORM-------
+const {
+  register: registerPdiResult,
+  handleSubmit: handlePdiResultSubmit,
+  reset: resetPdiResult,
+  formState: { errors: pdiResultErrors },
+} = useForm({
+  resolver: yupResolver(pdiPassFailSchema),
+});
+
 
 
    //------POST/PRE PDI SUBMIT---------
@@ -305,6 +327,30 @@ const notifyScm = async (orderId) => {
 };
 
 
+
+// ---------- NEW: Submit PDI API ----------
+  const submitPDI = async (data) => {
+  try {
+    if (!pdiPopup.id || !pdiPopup.type) return;
+
+    const endpoint =
+      pdiPopup.type === "pass"
+        ? `/api/v1/orders/project/pdi-pass/${pdiPopup.id}`
+        : `/api/v1/orders/project/pdi-fail/${pdiPopup.id}`;
+
+    const res = await httpService.updateWithAuth(endpoint, data);
+
+    alert(res?.message || "PDI updated successfully!");
+
+    resetPdi();
+    setPdiPopup({ id: null, type: null });
+    fetchOrders();
+
+  } catch (err) {
+    console.error("PDI API ERROR:", err);
+    alert("Failed to update PDI!");
+  }
+};
 
 
 
@@ -521,6 +567,27 @@ const formatOrderDateTime = (dateString) => {
     );
   }
 
+  //Case 7: PDI PENDING
+   if (row.status === "PDI PENDING") {
+          return (
+            <div className="flex gap-3">
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center"
+                onClick={() => setPdiPopup({ id: row.orderId, type: "pass" })}
+              >
+                PDI Pass
+              </button>
+
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center justify-center"
+                onClick={() => setPdiPopup({ id: row.orderId, type: "fail" })}
+              >
+                PDI Fail
+              </button>
+            </div>
+          );
+        }
+
          // DEFAULT — No button
     return (
       <span className="text-balck-500 font-bold">
@@ -657,7 +724,8 @@ const handleCancelEdit = () => {
           <option value="">Status</option>
           <option value="PROJECT TEAM PENDING">PROJECT TEAM PENDING</option>
           <option value="PROJECT TEAM > FINANCE PRE APPROVAL PENDING">PROJECT TEAM {'>'} FINANCE PRE APPROVAL PENDING</option>
-          <option value="FINANCE TEAM REJECTED">Finance TEAM Rejected</option>
+          <option value="PROJECT TEAM > SCM PENDING">PROJECT TEAM {'>'} SCM PENDING</option>
+          <option value="FINANCE TEAM REJECTED">FINANCE TEAM REJECTED</option>
           <option value="FINANCE APPROVED > SCM PENDING">FINANCE APPROVED {'>'} SCM PENDING</option>
           <option value="SCM CREATED TICKET > CLOUD PENDING">
 SCM CREATED TICKET {'>'} CLOUD PENDING</option>
@@ -673,13 +741,14 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
           <option value="PROJECT TEAM > PROJECT TEAM READY FOR DISPATCH">PROJECT TEAM {'>'} PROJECT TEAM READY FOR DISPATCH</option>
           <option value="PROJECT TEAM > SCM READY FOR DISPATCH">PROJECT TEAM {'>'} SCM READY FOR DISPATCH</option>
           <option value="SCM NOTIFY > AMISP READY FOR DISPATCH">SCM NOTIFY {'>'} AMISP READY FOR DISPATCH</option>
-          <option value="PROJECT TEAM NOTIFY > SCM LOCATION DETAILS">PROJECT TEAM NOTIFY {'>'} SCM LOCATION DETAILS</option>
+          <option value="PROJECT TEAM > NOTIFY SCM LOCATION DETAILS">PROJECT TEAM {'>'} NOTIFY SCM LOCATION DETAILS</option>
           <option value="SCM > FINANCE POST APPROVAL PENDING">SCM {'>'} FINANCE POST APPROVAL PENDING</option>
           <option value="FINANCE > SCM PLAN TO DISPATCH">FINANCE {'>'} SCM PLAN TO DISPATCH</option>
           <option value="SCM > LOGISTIC PENDING">SCM {'>'} LOGISTIC PENDING</option>
           <option value="DELIVERY PENDING">DELIVERY PENDING</option>
           <option value="PDI PENDING">PDI PENDING</option>
           <option value="LOGISTIC > FINANCE CLOSURE PENDING">LOGISTIC {'>'} FINANCE CLOSURE PENDING</option>
+          <option value="PROJECT TEAM > FINANCE CLOSURE PENDING">PROJECT TEAM {'>'} FINANCE CLOSURE PENDING</option>
           <option value="FINANCE CLOSURE DONE > SCM CLOSURE PENDING">FINANCE CLOSURE DONE {'>'} SCM CLOSURE PENDING</option>
           <option value="COMPLETED">COMPLETED</option>
          
@@ -1075,6 +1144,67 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
             className="px-6 py-2 bg-green-600 text-white rounded-lg"
           >
             Submit
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+)}
+
+ {/* ---------- NEW: PDI POPUP ---------- */}
+      {pdiPopup.id && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-2xl w-[550px]">
+
+      <h2 className="text-2xl font-bold text-center text-blue-700 mb-2">
+        {pdiPopup.type === "pass" ? "PDI Pass Confirmation" : "PDI Fail Confirmation"}
+      </h2>
+
+      <p className="text-center text-lg text-gray-600 mb-4">
+        Order ID: <b>{pdiPopup.id}</b>
+      </p>
+
+      <form onSubmit={handlePdiResultSubmit(submitPDI)}>
+
+        <div className="grid grid-cols-1 gap-3 text-black">
+          <div>
+            <label className="text-sm font-semibold">Project Team PDI Comment</label>
+
+            <input
+              type="text"
+              {...registerPdiResult("pdiComment")}
+              className={`border px-2 py-2 rounded w-full ${
+                pdiErrors.pdiComment ? "border-red-500" : ""
+              }`}
+            />
+
+            {pdiResultErrors.pdiComment && (
+              <p className="text-red-500 text-xs mt-1">
+                {pdiResultErrors.pdiComment.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-6">
+          <button
+            type="button"
+            onClick={() => {
+              resetPdiResult();
+              setPdiPopup({ id: null, type: null });
+            }}
+            className="px-6 py-2 bg-red-500 text-white rounded-lg"
+          >
+            ✖
+          </button>
+
+          <button
+            type="submit"
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+          >
+            OK
           </button>
         </div>
 

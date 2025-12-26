@@ -342,7 +342,7 @@ const formatOrderDateTime = (dateString) => {
         }
 
         // 🔥 NEW Closure case
-        if (row.status === "LOGISTIC > FINANCE CLOSURE PENDING") {
+        if (row.status === "LOGISTIC > FINANCE CLOSURE PENDING" || row.status ==="PROJECT TEAM > FINANCE CLOSURE PENDING" ) {
           return (
             <button
               className="px-5 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700"
