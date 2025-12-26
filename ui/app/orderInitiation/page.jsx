@@ -300,7 +300,6 @@ useEffect(() => {
             </div>
 
            {/* Product Type (Multi Select) */}
-{/* Product Type */}
 <div 
 ref={productDropdownRef}
 className="relative sm:col-span-1">

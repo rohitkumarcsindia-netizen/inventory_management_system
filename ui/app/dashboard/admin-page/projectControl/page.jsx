@@ -10,11 +10,18 @@ import {
 } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import AlertPopup from "../../../../components/layout/AlertPopup";
 
 export default function ProjectAndProductControl() {
   const [orders, setOrders] = useState([]);
   const [username, setUsername] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const router = useRouter();
 
@@ -59,13 +66,20 @@ export default function ProjectAndProductControl() {
         body
       );
 
-      alert(res);
+      setAlertPopup({
+  show: true,
+  message: res || "project Added",
+  type: "success",
+});
       reset();
       setShowPopup(false);
       fetchData();
     } catch (err) {
-      console.error("POST ERROR:", err);
-      alert("Failed to save data");
+         setAlertPopup({
+  show: true,
+  message:"❌ Failed to Add project",
+  type: "success",
+});
     }
   };
 
@@ -97,7 +111,8 @@ export default function ProjectAndProductControl() {
 
       {/* ---------------- TABLE ---------------- */}
       <div className="w-[95%] bg-white shadow-xl rounded-xl p-6">
-        <ProjectControlTable orders={orders} />
+        <ProjectControlTable orders={orders} 
+        fetchData = {fetchData}/>
       </div>
 
       {/* ---------------- ADD BUTTON ---------------- */}
@@ -172,6 +187,12 @@ export default function ProjectAndProductControl() {
           </div>
         </>
       )}
+       <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

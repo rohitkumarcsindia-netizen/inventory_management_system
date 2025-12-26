@@ -4,17 +4,22 @@ import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
 import UserControlTable from "../../../service/userControlTable";
 import { Cpu } from "lucide-react";
-import {
-  getUsernameFromToken,
-  removeToken,
-} from "../../../service/cookieService";
+import {getUsernameFromToken,  removeToken,} from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import AlertPopup from "../../../../components/layout/AlertPopup";
 
 export default function UserControl() {
   const [user, setUser] = useState([]);
   const [username, setUsername] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+
+  const [departments, setDepartments] = useState([]);
+const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   const router = useRouter();
 
@@ -27,6 +32,16 @@ export default function UserControl() {
       console.error("Fetch Error:", err);
     }
   };
+
+  const fetchDepartments = async () => {
+  try {
+    const res = await httpService.get("/api/v1/departments");
+    setDepartments(Array.isArray(res) ? res : []);
+  } catch (err) {
+    console.error("Department fetch error:", err);
+  }
+};
+
 
   useEffect(() => {
     const name = getUsernameFromToken();
@@ -62,13 +77,20 @@ export default function UserControl() {
         body
       );
 
-      alert(res);
+      setAlertPopup({
+  show: true,
+  message: res || "User Added",
+  type: "success",
+});
       reset();
       setShowPopup(false);
       fetchData();
     } catch (err) {
-      console.error("POST ERROR:", err);
-      alert("Failed to save data");
+           setAlertPopup({
+  show: true,
+  message:"❌ Failed to add user",
+  type: "success",
+});
     }
   };
 
@@ -100,19 +122,23 @@ export default function UserControl() {
 
       {/* ---------------- TABLE ---------------- */}
       <div className="w-[95%] bg-white shadow-xl rounded-xl p-6">
-        <UserControlTable orders={user} />
+        <UserControlTable 
+        orders={user} 
+        fetchData = {fetchData}/>
       </div>
 
       {/* ---------------- ADD BUTTON ---------------- */}
-      <button
-        onClick={() => {
-          setShowPopup(true);
-          reset();
-        }}
-        className="fixed bottom-8 left-8 bg-[#02A3EE] text-white px-6 py-4 rounded-2xl shadow-xl"
-      >
-        Add New User
-      </button>
+     <button
+  onClick={() => {
+    setShowPopup(true);
+    reset();
+    fetchDepartments(); // 👈 yahin call karo
+  }}
+  className="fixed bottom-8 left-8 bg-[#02A3EE] text-white px-6 py-4 rounded-2xl shadow-xl"
+>
+  Add New User
+</button>
+
 
       {/* ================= POPUP ================= */}
       {showPopup && (
@@ -191,13 +217,21 @@ export default function UserControl() {
                   <label className="block text-black font-semibold mb-1">
                     Department Name
                   </label>
-                  <input
-                    {...register("departmentName", {
-                      required: "departmentName is required",
-                    })}
-                    placeholder="Enter Department Name"
-                    className="w-full px-3 py-2 text-black border rounded-md"
-                  />
+                 <select
+  {...register("departmentName", {
+    required: "department is required",
+  })}
+  className="w-full px-3 py-2 text-black border rounded-md bg-white"
+>
+  <option value="">Select Department</option>
+
+  {departments.map((dept, index) => (
+    <option key={index} value={dept.departmentName}>
+      {dept.departmentName}
+    </option>
+  ))}
+</select>
+
                   {errors.departmentName && (
                     <p className="text-red-500 text-xs mt-1">
                       {errors.departmentName.message}
@@ -230,6 +264,13 @@ export default function UserControl() {
           </div>
         </>
       )}
+
+       <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </div>
   );
 }

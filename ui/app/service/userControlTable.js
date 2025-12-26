@@ -4,11 +4,21 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useForm } from "react-hook-form";
 import httpService from "./httpService";
+import AlertPopup from "../../components/layout/AlertPopup";
 
-export default function UserControlTable({ orders }) {
+export default function UserControlTable({ 
+  orders,
+  fetchData,
+}) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [alertPopup, setAlertPopup] = useState({
+  show: false,
+  message: "",
+  type: "success",
+});
 
   /* ---------------- FORM ---------------- */
   const {
@@ -39,31 +49,43 @@ export default function UserControlTable({ orders }) {
         data
       );
 
-      alert(res);
+      setAlertPopup({
+  show: true,
+  message: res || "Update successfully!",
+  type: "success",
+});
       setShowPopup(false);
-      window.location.reload(); // simple refresh
+      fetchData();
     } catch (err) {
-      console.error(err);
-      alert("Update failed");
+        setAlertPopup({
+  show: true,
+  message: "Update Failed!",
+  type: "success",
+});
     }
   };
 
   /* ---------------- DELETE ---------------- */
   const onDelete = async () => {
     try {
-      const confirmDelete = confirm("Are you sure you want to delete?");
-      if (!confirmDelete) return;
 
       const res = await httpService.deleteWithAuth(
         `/api/v1/admin/users/delete/${selectedRow.userId}`
       );
 
-      alert(res);
+        setAlertPopup({
+  show: true,
+  message: res || "Delete successfully!",
+  type: "success",
+});
       setShowPopup(false);
-      window.location.reload();
+      fetchData();
     } catch (err) {
-      console.error(err);
-      alert("Delete failed");
+        setAlertPopup({
+  show: true,
+  message: "Delete successfully!",
+  type: "success",
+});
     }
   };
 
@@ -273,6 +295,14 @@ export default function UserControlTable({ orders }) {
           </div>
         </>
       )}
+
+      
+ <AlertPopup
+      show={alertPopup.show}
+      message={alertPopup.message}
+      type={alertPopup.type}
+      onClose={() => setAlertPopup({ ...alertPopup, show: false })}
+    />
     </>
   );
 }
