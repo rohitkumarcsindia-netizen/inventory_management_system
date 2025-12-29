@@ -42,7 +42,10 @@ export default function MainLayout({ children }) {
         router.push("/dashboard/admin-page");
       } else if (department === "Logistic") {
         router.push("/dashboard/logistic-team");
-      } else {
+      } else if (department === "AUDITOR") {
+        router.push("/dashboard/auditor");
+      }
+      else {
         router.push("/");
       }
     }

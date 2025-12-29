@@ -31,6 +31,7 @@ export default function LoginPage() {
       else if (department === "RMA") router.push("/dashboard/rma-team");
       else if (department === "Admin") router.push("/dashboard/admin-page");
       else if (department === "Logistic") router.push("/dashboard/logistic-team");
+      else if (department === "AUDITOR") router.push("/dashboard/auditor");
       else router.push("/");
 
     } catch (error) {
