@@ -14,6 +14,8 @@ const normalizeFinanceRecord = (rec) => {
   return {
     orderId: o.orderId,
     createAt: o.createAt,
+    expectedOrderDate: o.expectedOrderDate,
+    pmsRemarks: o.pmsRemarks,
     project: o.project,
     initiator: o.initiator,
     productType: o.productType,

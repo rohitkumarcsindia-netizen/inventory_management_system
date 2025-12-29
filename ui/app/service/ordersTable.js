@@ -674,11 +674,13 @@ const formatOrderDateTime = (dateString) => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
   const ExpandedOrderDetails = ({ data }) => {
-  const Field = ({ label, value, type = "text" }) => {
-  const formattedValue =
-    type === "date" && value
-      ? value.split("T")[0] // 👈 YYYY-MM-DD
-      : value || "-";
+const Field = ({ label, value, type = "text" }) => {
+  let formattedValue = value || "-";
+
+  if (type === "date" && value) {
+    const { date } = formatOrderDateTime(value);
+    formattedValue = date;   // ✅ 19-Dec-25
+  }
 
   return (
     <div>
@@ -686,7 +688,7 @@ const formatOrderDateTime = (dateString) => {
         {label}
       </label>
       <input
-        type={type}
+        type="text"
         value={formattedValue}
         readOnly
         className="w-full mt-1 px-3 py-2 rounded-md border 
@@ -696,6 +698,7 @@ const formatOrderDateTime = (dateString) => {
     </div>
   );
 };
+
 
 
   return (
@@ -730,6 +733,7 @@ const formatOrderDateTime = (dateString) => {
         />
 
           <Field label="Status" value={data.status} />
+          <Field label="PM's Reamrks" value={data.pmsRemarks} />
         
 
       </div>
