@@ -121,7 +121,7 @@ const formatOrderDateTime = (dateString) => {
     </span>
   ),
 },
-    { name: "APPROVED BY", selector: row => row.users?.username || "-" },
+    { name: "INITIATOR", selector: row => row.initiator || "-" },
     { name: "REASON", selector: row => row.reasonForBuildRequest || "-" }
   ];
 
