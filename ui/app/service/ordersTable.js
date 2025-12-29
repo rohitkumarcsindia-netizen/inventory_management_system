@@ -1247,8 +1247,10 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
 
             <input
               type="text"
-              {...registerPdiResult("pdiComment")}
-              className={`border px-2 py-2 rounded w-full ${
+              {...registerPdiResult("pdiComment",{
+                setValueAs: (value) => capitalizeWords(value)
+              })}
+              className={`capitalize border px-2 py-2 rounded w-full ${
                 pdiErrors.pdiComment ? "border-red-500" : ""
               }`}
             />

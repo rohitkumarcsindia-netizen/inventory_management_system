@@ -197,6 +197,9 @@ const {
     ? filteredData
     : orders;
 
+    const today = new Date().toISOString().split("T")[0];
+
+
     const formatOrderDateTime = (dateString) => {
   if (!dateString) return { date: "-", time: "-" };
 
@@ -465,13 +468,19 @@ const {
                 </label>
 
                 <input
+                min={today}
                   type={isDateField ? "date" : "text"}
-                  className={`capitalize border px-2 py-2 rounded w-full ${
-                    shippingErrors[field] ? "border-red-500" : ""
-                  }`}
-                  {...registerShipping(field,{
-                    setValueAs: (value) => capitalizeWords(value),
-                  })}
+                 className={`${
+  isDateField ? "" : "capitalize"
+} border px-2 py-2 rounded w-full ${
+  shippingErrors[field] ? "border-red-500" : ""
+}`}
+
+                 {...registerShipping(field, {
+  setValueAs: (value) =>
+    isDateField ? value : capitalizeWords(value),
+})}
+
                   defaultValue={shippingDetails[field]}
                 />
 
@@ -573,6 +582,7 @@ const {
             <label className="text-sm font-semibold">Actual Delivery Date</label>
             <input
               type="datetime-local"
+               min={new Date().toISOString().slice(0, 16)}
               {...registerDelivered("actualDeliveryDate")}
               className={`border px-2 py-2 rounded w-full ${
                 deliveredErrors.actualDeliveryDate ? "border-red-500" : ""
