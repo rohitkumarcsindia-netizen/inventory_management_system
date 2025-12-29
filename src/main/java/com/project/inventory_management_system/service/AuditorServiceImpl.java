@@ -38,7 +38,7 @@ public class AuditorServiceImpl implements AuditorService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("AUDITOR"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -72,7 +72,7 @@ public class AuditorServiceImpl implements AuditorService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("AUDITOR"))
         {
             return ResponseEntity.status(403).body("Only admin team can view pending orders");
         }
@@ -108,7 +108,7 @@ public class AuditorServiceImpl implements AuditorService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("AUDITOR"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }
@@ -154,7 +154,7 @@ public class AuditorServiceImpl implements AuditorService
             return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("ADMIN"))
+        if (!user.getDepartment().getDepartmentName().equalsIgnoreCase("AUDITOR"))
         {
             return ResponseEntity.status(403).body("Only admin team can view this");
         }
