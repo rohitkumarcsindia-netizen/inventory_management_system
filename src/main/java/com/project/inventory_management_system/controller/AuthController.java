@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/login")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4000")
 public class AuthController
@@ -17,7 +17,7 @@ public class AuthController
 
     private final AuthService loginService;
 
-    @PostMapping("/login")
+    @PostMapping()
     public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto) throws Exception
     {
        return loginService.loginUser(loginRequestDto);

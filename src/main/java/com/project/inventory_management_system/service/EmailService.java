@@ -4,9 +4,12 @@ import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import static com.project.inventory_management_system.constants.ConnectConstants.SENDER_MAIL;
 
 
 @Service
@@ -15,7 +18,8 @@ public class EmailService
     @Autowired
     private JavaMailSender mailSender;
 
-    private static final String SENDERMAIL = "shubhamkumar10510sk@gmail.com";
+    @Value(SENDER_MAIL)
+    private String SENDERMAIL;
 
     //Order Create Mail Method
     public boolean sendMailNextDepartmentOrderCreate(String departmentEmail, Long orderId)
