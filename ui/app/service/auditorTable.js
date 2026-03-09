@@ -122,7 +122,6 @@ const formatOrderDateTime = (dateString) => {
   ),
 },
     { name: "INITIATOR", selector: row => row.initiator || "-" },
-    { name: "REASON", selector: row => row.reasonForBuildRequest || "-" }
   ];
 
    const ExpandedOrderDetails = ({ data }) => {
