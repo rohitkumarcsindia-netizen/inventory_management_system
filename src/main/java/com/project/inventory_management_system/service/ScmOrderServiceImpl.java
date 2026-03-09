@@ -125,7 +125,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
     }
 
     @Override
-    public ResponseEntity<?> fillJiraTicketDetail(String username, Long orderId, ScmApproval jiraDetails)
+    public ResponseEntity<?> fillJiraTicketDetail(String username, Long orderId, ScmApproval ticketDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -156,13 +156,13 @@ public class ScmOrderServiceImpl implements ScmOrderService
         //ScmApproval Table data insert
         ScmApproval scmApproval = new ScmApproval();
         scmApproval.setOrder(order);
-        scmApproval.setJiraTicketNumber(jiraDetails.getJiraTicketNumber());
-        scmApproval.setJiraSummary(jiraDetails.getJiraSummary());
-        scmApproval.setJiraStatus(jiraDetails.getJiraStatus());
+        scmApproval.setTicketNumber(ticketDetails.getTicketNumber());
+        scmApproval.setTicketSummary(ticketDetails.getTicketSummary());
+        scmApproval.setTicketStatus(ticketDetails.getTicketStatus());
         scmApproval.setScmAction("JIRA FILLED");
         scmApproval.setActionTime(LocalDateTime.now());
         scmApproval.setApprovedBy(user);
-        scmApproval.setScmComments(jiraDetails.getScmComments());
+        scmApproval.setScmComments(ticketDetails.getScmComments());
         scmApprovalRepository.save(scmApproval);
 
 
@@ -186,7 +186,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
     // Scm Recheck Method
     @Override
-    public ResponseEntity<?> prodbackGenerateAndJiraTicketClosure(String username, Long orderId, ScmApproval jiraDetails)
+    public ResponseEntity<?> prodbackGenerateAndJiraTicketClosure(String username, Long orderId, ScmApproval ticketDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -219,8 +219,8 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(404).body("SCM approval record not found for update");
         }
 
-        jiraDetailsUpdate.setJiraStatus(jiraDetails.getJiraStatus());
-        jiraDetailsUpdate.setScmComments(jiraDetails.getScmComments());
+        jiraDetailsUpdate.setTicketStatus(ticketDetails.getTicketStatus());
+        jiraDetailsUpdate.setScmComments(ticketDetails.getScmComments());
         jiraDetailsUpdate.setScmAction("JIRA_VERIFIED");
         jiraDetailsUpdate.setActionTime(LocalDateTime.now());
         jiraDetailsUpdate.setApprovedBy(user);
@@ -244,7 +244,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
     //old button method
     @Override
-    public ResponseEntity<?> fillJiraTicketDetailOldOrder(String username, Long orderId, ScmApproval jiraDetails)
+    public ResponseEntity<?> fillJiraTicketDetailOldOrder(String username, Long orderId, ScmApproval ticketDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -275,12 +275,12 @@ public class ScmOrderServiceImpl implements ScmOrderService
         //ScmApproval Table data insert
         ScmApproval scmApproval = new ScmApproval();
         scmApproval.setOrder(order);
-        scmApproval.setJiraTicketNumber(jiraDetails.getJiraTicketNumber());
-        scmApproval.setJiraSummary(jiraDetails.getJiraSummary());
-        scmApproval.setJiraStatus(jiraDetails.getJiraStatus());
+        scmApproval.setTicketNumber(ticketDetails.getTicketNumber());
+        scmApproval.setTicketSummary(ticketDetails.getTicketSummary());
+        scmApproval.setTicketStatus(ticketDetails.getTicketStatus());
         scmApproval.setScmAction("JIRA FILLED");
         scmApproval.setActionTime(LocalDateTime.now());
-        scmApproval.setScmComments(jiraDetails.getScmComments());
+        scmApproval.setScmComments(ticketDetails.getScmComments());
         scmApproval.setApprovedBy(user);
         scmApprovalRepository.save(scmApproval);
 

@@ -62,7 +62,7 @@ public class OrdersCompleteMapper
     }
 
     // Entity → DTO Scm Orders Action History
-    public ScmOrdersHistoryDto scmOrdersHistoryDto(Orders order, ScmApproval jiraDetails)
+    public ScmOrdersHistoryDto scmOrdersHistoryDto(Orders order, ScmApproval ticketDetails)
     {
 
         if (order == null) return null;
@@ -80,14 +80,14 @@ public class OrdersCompleteMapper
         scmOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         scmOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
-        scmOrdersHistoryDto.setJiraTicketNumber(jiraDetails.getJiraTicketNumber());
-        scmOrdersHistoryDto.setJiraSummary(jiraDetails.getJiraSummary());
+        scmOrdersHistoryDto.setJiraTicketNumber(ticketDetails.getTicketNumber());
+        scmOrdersHistoryDto.setJiraSummary(ticketDetails.getTicketSummary());
 
-        scmOrdersHistoryDto.setScmAction(jiraDetails.getScmAction());
-        scmOrdersHistoryDto.setScmActionTime(jiraDetails.getActionTime());
-        scmOrdersHistoryDto.setJiraStatus(jiraDetails.getJiraStatus());
+        scmOrdersHistoryDto.setScmAction(ticketDetails.getScmAction());
+        scmOrdersHistoryDto.setScmActionTime(ticketDetails.getActionTime());
+        scmOrdersHistoryDto.setJiraStatus(ticketDetails.getTicketStatus());
 
-        Users approvedUser = jiraDetails.getApprovedBy();
+        Users approvedUser = ticketDetails.getApprovedBy();
         if (approvedUser != null)
         {
             scmOrdersHistoryDto.setApprovedBy(approvedUser.getUserId());
@@ -100,7 +100,7 @@ public class OrdersCompleteMapper
     }
 
     //Entity → DTO Cloud Orders Action History
-    public CloudOrdersHistoryDto cloudOrdersHistoryDto(Orders order, CloudApproval jiraDetails)
+    public CloudOrdersHistoryDto cloudOrdersHistoryDto(Orders order, CloudApproval ticketDetails)
     {
         CloudOrdersHistoryDto cloudOrdersHistoryDto = new CloudOrdersHistoryDto();
 
@@ -116,14 +116,14 @@ public class OrdersCompleteMapper
         cloudOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
 
-        cloudOrdersHistoryDto.setJiraDescription(jiraDetails.getJiraDescription());
-        cloudOrdersHistoryDto.setPriority(jiraDetails.getPriority());
-        cloudOrdersHistoryDto.setCloudComments(jiraDetails.getCloudComments());
+        cloudOrdersHistoryDto.setJiraDescription(ticketDetails.getTicketDescription());
+        cloudOrdersHistoryDto.setPriority(ticketDetails.getPriority());
+        cloudOrdersHistoryDto.setCloudComments(ticketDetails.getCloudComments());
 
-        cloudOrdersHistoryDto.setCloudAction(jiraDetails.getCloudAction());
-        cloudOrdersHistoryDto.setCloudActionTime(jiraDetails.getActionTime());
+        cloudOrdersHistoryDto.setCloudAction(ticketDetails.getCloudAction());
+        cloudOrdersHistoryDto.setCloudActionTime(ticketDetails.getActionTime());
 
-        Users approvedUser = jiraDetails.getUpdatedBy();
+        Users approvedUser = ticketDetails.getUpdatedBy();
         if (approvedUser != null)
         {
             cloudOrdersHistoryDto.setUpdatedBy(approvedUser.getUserId());

@@ -29,7 +29,7 @@ public class CloudApproval
     private Orders order;
 
     @Column(columnDefinition = "TEXT")
-    private String jiraDescription;
+    private String ticketDescription;
 
 
     private String priority;

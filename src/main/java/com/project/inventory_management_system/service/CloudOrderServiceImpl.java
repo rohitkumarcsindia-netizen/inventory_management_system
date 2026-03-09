@@ -118,7 +118,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
     }
 
     @Override
-    public ResponseEntity<?> updateJiraDetails(String username, Long orderId, CloudApproval jiraDetails)
+    public ResponseEntity<?> updateJiraDetails(String username, Long orderId, CloudApproval ticketDetails)
     {
         Users user = usersRepository.findByUsername(username);
 
@@ -146,9 +146,9 @@ public class CloudOrderServiceImpl implements CloudOrderService
 
         CloudApproval jiraDetailsUpdate = new CloudApproval();
         jiraDetailsUpdate.setOrder(order);
-        jiraDetailsUpdate.setJiraDescription(jiraDetails.getJiraDescription());
-        jiraDetailsUpdate.setPriority(jiraDetails.getPriority());
-        jiraDetailsUpdate.setCloudComments(jiraDetails.getCloudComments());
+        jiraDetailsUpdate.setTicketDescription(ticketDetails.getTicketDescription());
+        jiraDetailsUpdate.setPriority(ticketDetails.getPriority());
+        jiraDetailsUpdate.setCloudComments(ticketDetails.getCloudComments());
         jiraDetailsUpdate.setCloudAction("CLOUD UPDATED");
         jiraDetailsUpdate.setActionTime(LocalDateTime.now());
         jiraDetailsUpdate.setUpdatedBy(user);

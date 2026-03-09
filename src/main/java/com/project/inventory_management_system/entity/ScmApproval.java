@@ -28,9 +28,9 @@ public class ScmApproval
     @JoinColumn(name = "order_id")
     private Orders order;
 
-    private String jiraTicketNumber;
-    private String jiraSummary;
-    private String jiraStatus;
+    private String ticketNumber;
+    private String ticketSummary;
+    private String ticketStatus;
 
 
     @Column(name = "action")

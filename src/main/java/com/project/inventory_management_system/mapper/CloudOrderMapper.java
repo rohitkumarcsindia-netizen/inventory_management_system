@@ -23,7 +23,7 @@ public class CloudOrderMapper
          cloudOrdersDto.setActionTime(cloudApproval.getActionTime());
          cloudOrdersDto.setPriority(cloudApproval.getPriority());
          cloudOrdersDto.setCloudComments(cloudApproval.getCloudComments());
-         cloudOrdersDto.setJiraDescription(cloudApproval.getJiraDescription());
+         cloudOrdersDto.setJiraDescription(cloudApproval.getTicketDescription());
 
         cloudOrdersDto.setOrder(orderMapper.toDto(cloudApproval.getOrder()));
         cloudOrdersDto.setUpdatedBy(userMapper.toDto(cloudApproval.getUpdatedBy())); // nested mapping
