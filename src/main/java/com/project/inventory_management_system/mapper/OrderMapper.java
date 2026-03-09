@@ -2,14 +2,9 @@ package com.project.inventory_management_system.mapper;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.ScmApproval;
 import com.project.inventory_management_system.entity.Users;
-import com.project.inventory_management_system.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

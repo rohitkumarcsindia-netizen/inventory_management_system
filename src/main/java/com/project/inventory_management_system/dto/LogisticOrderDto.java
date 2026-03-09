@@ -1,7 +1,5 @@
 package com.project.inventory_management_system.dto;
 
-import com.project.inventory_management_system.entity.Orders;
-import com.project.inventory_management_system.entity.Users;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,8 +20,6 @@ public class LogisticOrderDto
     private String deliveredStatus;
     private String serialNumbers;
     private String logisticsComment;
-//    private String logisticsPdiComment;
-//    private String pdiAction;
     private String shipmentDocumentUrl;
 
     private UserDto actionBy;

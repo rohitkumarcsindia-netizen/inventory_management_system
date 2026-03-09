@@ -2,8 +2,6 @@ package com.project.inventory_management_system.mapper;
 
 import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Users;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component

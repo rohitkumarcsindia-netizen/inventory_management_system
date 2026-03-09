@@ -2,14 +2,10 @@ package com.project.inventory_management_system.service;
 
 import com.project.inventory_management_system.dto.OrdersDto;
 import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
-import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
-import com.project.inventory_management_system.entity.Users;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface ProjectOrderService
 {

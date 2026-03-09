@@ -1,6 +1,5 @@
 package com.project.inventory_management_system.repository;
 
-import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.SyrmaApproval;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -30,8 +30,6 @@ public class LogisticOrdersHistoryDto
     private String deliveredStatus;
     private String serialNumbers;
     private String logisticsComment;
-//    private String logisticsPdiComment;
-//    private String pdiAction;
     private String shipmentDocumentUrl;
     private LocalDateTime actionTime;
     private Long actionBy;

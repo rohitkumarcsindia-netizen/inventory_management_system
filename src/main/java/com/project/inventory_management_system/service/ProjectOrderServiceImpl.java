@@ -1,7 +1,13 @@
 package com.project.inventory_management_system.service;
 
-import com.project.inventory_management_system.dto.*;
-import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.dto.UserDto;
+import com.project.inventory_management_system.dto.OrdersDto;
+import com.project.inventory_management_system.dto.ProductRequestDto;
+import com.project.inventory_management_system.dto.ProjectTeamOrderDto;
+import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.Department;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;

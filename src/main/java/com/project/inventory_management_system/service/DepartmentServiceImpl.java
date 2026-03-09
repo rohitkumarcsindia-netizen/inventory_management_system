@@ -2,9 +2,7 @@ package com.project.inventory_management_system.service;
 
 
 import com.project.inventory_management_system.dto.DepartmentDto;
-import com.project.inventory_management_system.dto.ProjectTypeDto;
 import com.project.inventory_management_system.entity.Department;
-import com.project.inventory_management_system.entity.ProjectType;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.mapper.DepartmentMapper;
 import com.project.inventory_management_system.repository.DepartmentRepository;

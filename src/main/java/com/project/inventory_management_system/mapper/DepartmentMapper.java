@@ -2,7 +2,6 @@ package com.project.inventory_management_system.mapper;
 
 
 import com.project.inventory_management_system.dto.DepartmentDto;
-import com.project.inventory_management_system.dto.UserDto;
 import com.project.inventory_management_system.entity.Department;
 import org.springframework.stereotype.Component;
 

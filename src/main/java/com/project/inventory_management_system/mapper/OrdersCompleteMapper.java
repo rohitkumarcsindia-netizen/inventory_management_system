@@ -1,8 +1,22 @@
 package com.project.inventory_management_system.mapper;
 
 
-import com.project.inventory_management_system.dto.*;
-import com.project.inventory_management_system.entity.*;
+import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
+import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
+import com.project.inventory_management_system.dto.RmaOrdersHistoryDto;
+import com.project.inventory_management_system.dto.ProjectTeamOrdersHistoryDto;
+import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
+import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
+import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
+import com.project.inventory_management_system.entity.FinanceApproval;
+import com.project.inventory_management_system.entity.Orders;
+import com.project.inventory_management_system.entity.ScmApproval;
+import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.entity.CloudApproval;
+import com.project.inventory_management_system.entity.SyrmaApproval;
+import com.project.inventory_management_system.entity.RmaApproval;
+import com.project.inventory_management_system.entity.ProjectTeamApproval;
+import com.project.inventory_management_system.entity.LogisticsDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
