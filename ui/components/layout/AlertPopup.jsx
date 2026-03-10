@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function AlertPopup({
   show,
   message,
-  type = "success", // success | error | info
+  type = "success",
   onClose,
 }) {
   return (

@@ -154,7 +154,7 @@ export default function ProjectAndProductControl() {
                     {...register("productType", {
                       required: "Project is required",
                     })}
-                    placeholder="Enter Project"
+                    placeholder="Enter Product"
                     className="w-full px-3 py-2 text-black border rounded-md"
                   />
                   {errors.productType && (

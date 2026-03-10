@@ -64,7 +64,7 @@ const highlightText = (text) => {
   } = useForm({
     
     defaultValues: {
-      jiraDescription: "",
+      ticketDescription: "",
       priority: "",
       cloudComments: ""
     }
@@ -334,17 +334,17 @@ const highlightText = (text) => {
               {/* FORM */}
               <form onSubmit={handleSubmit(submitTicket)} className="flex flex-col gap-3 text-black">
 
-                {/* Jira Description */}
+                {/* Ticket Description */}
                 <div>
                   <textarea
-                    {...register("jiraDescription", { required: "Description is required",
+                    {...register("ticketDescription", { required: "Description is required",
                       setValueAs: (value) => capitalizeWords(value),
                      })}
-                    placeholder="Jira Description"
-                    className={`capitalize border p-2 rounded h-20 w-full ${errors.jiraDescription ? "border-red-500" : ""}`}
+                    placeholder="Ticket Description"
+                    className={`capitalize border p-2 rounded h-20 w-full ${errors.ticketDescription ? "border-red-500" : ""}`}
                   />
-                  {errors.jiraDescription && (
-                    <p className="text-red-500 text-sm">{errors.jiraDescription.message}</p>
+                  {errors.ticketDescription && (
+                    <p className="text-red-500 text-sm">{errors.ticketDescription.message}</p>
                   )}
                 </div>
 

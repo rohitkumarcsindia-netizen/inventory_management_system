@@ -200,16 +200,16 @@ const [alertPopup, setAlertPopup] = useState({
     }
   }, [searchText]);
 
-  // NEW JIRA API
-  const createJira = async (orderId, jiraPayload) => {
+  // NEW TICKET API
+  const createTicket = async (orderId, ticketPayload) => {
     try {
       const res = await httpService.postWithAuth(
         `/api/v1/orders/scm/jira/details/${orderId}`,
-        jiraPayload
+        ticketPayload
       );
       setAlertPopup({
   show: true,
-  message: res || "Jira details Submitted!",
+  message: res || "Ticket details Submitted!",
   type: "success",
 });
       fetchOrders();
@@ -222,16 +222,16 @@ const [alertPopup, setAlertPopup] = useState({
     }
   };
 
-  // OLD JIRA API
-  const createOldJira = async (orderId, jiraPayload) => {
+  // OLD TICKET API
+  const createOldTicket = async (orderId, ticketPayload) => {
     try {
       const res = await httpService.postWithAuth(
         `/api/v1/orders/scm/old/jira/details/${orderId}`,
-        jiraPayload
+        ticketPayload
       );
     setAlertPopup({
   show: true,
-  message: res || "Old Jira details Submitted!",
+  message: res || "Old Ticket details Submitted!",
   type: "success",
 });
       fetchOrders();
@@ -374,8 +374,8 @@ const notifyLogistic = async (orderId) => {
           setIsDateApplied={setIsDateApplied}
           statusFilter={statusFilter}
           applyStatusFilter={applyStatusFilter}
-          createJira={createJira}
-          createOldJira={createOldJira}   // 🔥 Added
+          createTicket={createTicket}
+          createOldTicket={createOldTicket}  
           notifyRma={notifyRma}
           notifyPT={notifyPT}
       

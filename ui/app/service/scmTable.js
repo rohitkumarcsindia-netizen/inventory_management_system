@@ -10,8 +10,8 @@ import AlertPopup from "../../components/layout/AlertPopup";
 
 export default function ScmTable({
   orders,
-  createJira,
-  createOldJira,
+  createTicket,
+  createOldTicket,
   currentPage,
   setCurrentPage,
    notifyRma, 
@@ -39,11 +39,11 @@ export default function ScmTable({
 }) {
   
 
-  // Popup for new/old jira
+  // Popup for new/old Ticket
   const [popupOrderId, setPopupOrderId] = useState(null);
   const [isOld, setIsOld] = useState(false);
 
-  //  NEW POPUP FOR JIRA CLOSURE
+  //  NEW POPUP FOR TICKET CLOSURE
   const [closurePopupId, setClosurePopupId] = useState(null);
 
   const [alertPopup, setAlertPopup] = useState({
@@ -68,16 +68,16 @@ const highlightText = (text) => {
 };
 
   //  VALIDATION NEW/OLD POPUP
-  const jiraSchema = yup.object().shape({
-  jiraTicketNumber: yup.string().required("Jira Ticket Number is required"),
-  jiraSummary: yup.string().required("Jira Summary is required"),
-  jiraStatus: yup.string().required("Jira Status is required"),
+  const ticketSchema = yup.object().shape({
+  ticketNumber: yup.string().required("Ticket Number is required"),
+  ticketSummary: yup.string().required("Ticket Summary is required"),
+  ticketStatus: yup.string().required("Ticket Status is required"),
   scmComments: yup.string().required("SCM Comments are required"),
 });
 
   //  VALIDATION CLOSURE POPUP
 const closureSchema = yup.object().shape({
-  jiraStatus: yup.string().required("Jira Status is required"),
+  ticketStatus: yup.string().required("Ticket Status is required"),
   scmComments: yup.string().required("SCM Comments are required"),
 });
 
@@ -89,7 +89,7 @@ const closureSchema = yup.object().shape({
   reset,
   formState: { errors }
 } = useForm({
-  resolver: yupResolver(jiraSchema),
+  resolver: yupResolver(ticketSchema),
 });
 
 // REACT FORM CLOSURE POPUP
@@ -102,13 +102,13 @@ const {
   resolver: yupResolver(closureSchema),
 });
  
-// JIRA POPUP RESET
+// TICKET POPUP RESET
   useEffect(() => {
     if (popupOrderId) {
       reset({
-        jiraTicketNumber: "",
-        jiraSummary: "",
-        jiraStatus: "",
+        ticketNumber: "",
+        ticketSummary: "",
+        ticketStatus: "",
         scmComments: ""
       });
     }
@@ -118,18 +118,18 @@ const {
   useEffect(() => {
     if (closurePopupId) {
       resetClosure({
-        jiraStatus: "",
+        ticketStatus: "",
         scmComments: ""
       });
     }
   }, [closurePopupId]);
 
-  // SUBMIT NEW / OLD JIRA
-  const submitJiraDetails = async (data) => {
+  // SUBMIT NEW / OLD TICKET
+  const submitTicketDetails = async (data) => {
   if (isOld) {
-    await createOldJira(popupOrderId, data);
+    await createOldTicket(popupOrderId, data);
   } else {
-    await createJira(popupOrderId, data);
+    await createTicket(popupOrderId, data);
   }
 
   reset();
@@ -314,7 +314,7 @@ const financeApproval = async (orderId) => {
       name: "ACTION",
       width: "200px",
       cell: (row) => {
-        // Case 1: CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING → Show Jira Closure
+        // Case 1: CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING → Show Ticket Closure
         if (row.status === "CLOUD CREATED CERTIFICATE > SCM PROD-BACK CREATION PENDING") {
           return (
             <button
@@ -582,13 +582,13 @@ const financeApproval = async (orderId) => {
         }}
       />
 
-      {/* ============================= POPUP - NEW/OLD JIRA ============================= */}
+      {/* ============================= POPUP - NEW/OLD TICKET ============================= */}
       {popupOrderId && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-[800px] relative">
             <h2 className="text-2xl font-bold mb-3 text-cyan-700 text-center">
-              {isOld ? "UPDATE PROD-BACK GENERATION JIRA DETAILS" : 
-              "UPDATE NEW CERTIFICATE CREATION JIRA DETAILS"}
+              {isOld ? "UPDATE PROD-BACK GENERATION TICKET DETAILS" : 
+              "UPDATE NEW CERTIFICATE CREATION TICKET DETAILS"}
             </h2>
 
             <p className="text-gray-600 text-center mb-4">
@@ -597,37 +597,37 @@ const financeApproval = async (orderId) => {
 
             <div className="flex flex-col gap-3">
               <input
-  {...register("jiraTicketNumber",{
+  {...register("ticketNumber",{
     setValueAs: (value) => capitalizeWords(value),
   })}
-  placeholder="Jira Ticket Number"
+  placeholder="Ticket Number"
   className={`capitalize border p-2 rounded text-black ${
-    errors.jiraTicketNumber ? "border-red-500" : ""
+    errors.ticketNumber ? "border-red-500" : ""
   }`}
 />
-<p className="text-red-500 text-sm">{errors.jiraTicketNumber?.message}</p>
+<p className="text-red-500 text-sm">{errors.ticketNumber?.message}</p>
 
 <textarea
-  {...register("jiraSummary",{
+  {...register("ticketSummary",{
     setValueAs: (value) => capitalizeWords(value),
   })}
-  placeholder="Jira Summary"
+  placeholder="Ticket Summary"
   className={`capitalize border p-2 rounded h-20 text-black ${
-    errors.jiraSummary ? "border-red-500" : ""
+    errors.ticketSummary ? "border-red-500" : ""
   }`}
 />
-<p className="text-red-500 text-sm">{errors.jiraSummary?.message}</p>
+<p className="text-red-500 text-sm">{errors.ticketSummary?.message}</p>
 
 <input
-  {...register("jiraStatus",{
+  {...register("ticketStatus",{
     setValueAs: (value) => capitalizeWords(value),
   })}
-  placeholder="Jira Status"
+  placeholder="Ticket Status"
   className={`capitalize border p-2 rounded text-black ${
-    errors.jiraStatus ? "border-red-500" : ""
+    errors.ticketStatus ? "border-red-500" : ""
   }`}
 />
-<p className="text-red-500 text-sm">{errors.jiraStatus?.message}</p>
+<p className="text-red-500 text-sm">{errors.ticketStatus?.message}</p>
 
 <textarea
   {...register("scmComments",{
@@ -657,7 +657,7 @@ const financeApproval = async (orderId) => {
               </button>
 
               <button
-                onClick={handleSubmit(submitJiraDetails)}
+                onClick={handleSubmit(submitTicketDetails)}
                 className="px-6 py-2 bg-green-600 text-white rounded-lg"
               >
                 Submit
@@ -667,12 +667,12 @@ const financeApproval = async (orderId) => {
         </div>
       )}
 
-      {/* ============================= POPUP - JIRA CLOSURE ============================= */}
+      {/* ============================= POPUP - TICKET CLOSURE ============================= */}
       {closurePopupId && (
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl w-[800px] relative">
             <h2 className="text-2xl font-bold mb-3 text-yellow-700 text-center">
-              JIRA TICKET CLOSURE
+              TICKET CLOSURE
             </h2>
 
             <p className="text-gray-600 text-center mb-4">
@@ -681,15 +681,15 @@ const financeApproval = async (orderId) => {
 
             <div className="flex flex-col gap-3">
               <input
-  {...registerClosure("jiraStatus",{
+  {...registerClosure("ticketStatus",{
     setValueAs: (value) => capitalizeWords(value),
   })}
-  placeholder="Jira Status"
+  placeholder="Ticket Status"
   className={`capitalize border p-2 rounded text-black ${
-    closureErrors.jiraStatus ? "border-red-500" : ""
+    closureErrors.ticketStatus ? "border-red-500" : ""
   }`}
 />
-<p className="text-red-500 text-sm">{closureErrors.jiraStatus?.message}</p>
+<p className="text-red-500 text-sm">{closureErrors.ticketStatus?.message}</p>
 
 <textarea
   {...registerClosure("scmComments",{
