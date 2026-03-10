@@ -17,8 +17,8 @@ public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Lo
 
     //All order Action count only
     @Query(
-            value = "SELECT COUNT(*) FROM cloud_approval " +
-                    "WHERE cloud_approval.action IS NOT NULL",
+            value = "SELECT COUNT(*) FROM cloud_action " +
+                    "WHERE cloud_action.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByCloudAction();
@@ -26,7 +26,7 @@ public interface CloudApprovalRepository extends JpaRepository<CloudApproval, Lo
 
     //All Complete Order data fetch
     @Query(
-            value = "SELECT * FROM cloud_approval " +
+            value = "SELECT * FROM cloud_action " +
                     "WHERE action IS NOT NULL " +
                     "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",

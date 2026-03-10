@@ -28,8 +28,8 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
 
     //All order Action count only
     @Query(
-            value = "SELECT COUNT(*) FROM finance_approval " +
-                    "WHERE finance_approval.action IS NOT NULL",
+            value = "SELECT COUNT(*) FROM finance_action " +
+                    "WHERE finance_action.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByAction();
