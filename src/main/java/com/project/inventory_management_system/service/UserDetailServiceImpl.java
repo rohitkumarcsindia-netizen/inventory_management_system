@@ -1,6 +1,5 @@
 package com.project.inventory_management_system.service;
 
-
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,5 @@ public class UserDetailServiceImpl implements UserDetailsService
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getUsername())
                 .password(user.getPassword()).build();
-//                .roles(user.getUserRoles().stream()
-//                        .map(userRoles -> userRoles.getRole().getRoleName())
-//                        .collect(Collectors.toList())
-//                        .toArray(new String[0])).build();
     }
 }

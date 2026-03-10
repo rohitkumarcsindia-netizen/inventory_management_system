@@ -20,7 +20,7 @@ public class SyrmaOrdersMapper
 
         SyrmaOrdersDto syrmaOrdersDto = new SyrmaOrdersDto();
         syrmaOrdersDto.setId(syrmaApproval.getId());
-        syrmaOrdersDto.setSyrmaAction(syrmaApproval.getSyrmaAction());
+        syrmaOrdersDto.setSyrmaAction(syrmaApproval.getSyrmaAction().toDisplay());
         syrmaOrdersDto.setActionTime(syrmaApproval.getActionTime());
         syrmaOrdersDto.setSyrmaComments(syrmaApproval.getSyrmaComments());
 

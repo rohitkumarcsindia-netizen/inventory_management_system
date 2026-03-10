@@ -7,6 +7,7 @@ import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.CloudApproval;
 import com.project.inventory_management_system.entity.Department;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.CloudOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
@@ -149,7 +150,7 @@ public class CloudOrderServiceImpl implements CloudOrderService
         jiraDetailsUpdate.setTicketDescription(ticketDetails.getTicketDescription());
         jiraDetailsUpdate.setPriority(ticketDetails.getPriority());
         jiraDetailsUpdate.setCloudComments(ticketDetails.getCloudComments());
-        jiraDetailsUpdate.setCloudAction("CLOUD UPDATED");
+        jiraDetailsUpdate.setCloudAction(ActionStatus.CLOUD_UPDATED);
         jiraDetailsUpdate.setActionTime(LocalDateTime.now());
         jiraDetailsUpdate.setUpdatedBy(user);
         cloudApprovalRepository.save(jiraDetailsUpdate);

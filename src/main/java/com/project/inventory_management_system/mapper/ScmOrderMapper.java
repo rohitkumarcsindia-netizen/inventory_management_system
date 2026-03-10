@@ -19,7 +19,7 @@ public class ScmOrderMapper
 
         ScmOrdersDto scmOrdersDto = new ScmOrdersDto();
         scmOrdersDto.setId(scmApproval.getId());
-        scmOrdersDto.setScmAction(scmApproval.getScmAction());
+        scmOrdersDto.setScmAction(scmApproval.getScmAction().toDisplay());
         scmOrdersDto.setActionTime(scmApproval.getActionTime());
         scmOrdersDto.setScmComments(scmApproval.getScmComments());
         scmOrdersDto.setTicketStatus(scmApproval.getTicketStatus());

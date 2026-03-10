@@ -21,7 +21,7 @@ public class FinanceOrderMapper
 
         FinanceOrderDto dto = new FinanceOrderDto();
         dto.setId(financeApproval.getId());
-        dto.setFinanceAction(financeApproval.getFinanceAction());
+        dto.setFinanceAction(financeApproval.getFinanceAction().toDisplay());
         dto.setFinanceActionTime(financeApproval.getFinanceActionTime());
         dto.setFinanceReason(financeApproval.getFinanceReason());
         dto.setFinanceFinalRemark(financeApproval.getFinanceFinalRemark());

@@ -4,7 +4,6 @@ package com.project.inventory_management_system.mapper;
 import com.project.inventory_management_system.dto.CloudOrdersHistoryDto;
 import com.project.inventory_management_system.dto.FinanceOrdersHistoryDto;
 import com.project.inventory_management_system.dto.RmaOrdersHistoryDto;
-import com.project.inventory_management_system.dto.ProjectTeamOrdersHistoryDto;
 import com.project.inventory_management_system.dto.SyrmaOrdersHistoryDto;
 import com.project.inventory_management_system.dto.ScmOrdersHistoryDto;
 import com.project.inventory_management_system.dto.LogisticOrdersHistoryDto;
@@ -15,7 +14,6 @@ import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.CloudApproval;
 import com.project.inventory_management_system.entity.SyrmaApproval;
 import com.project.inventory_management_system.entity.RmaApproval;
-import com.project.inventory_management_system.entity.ProjectTeamApproval;
 import com.project.inventory_management_system.entity.LogisticsDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,7 +43,7 @@ public class OrdersCompleteMapper
         financeOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
 
-        financeOrdersHistoryDto.setFinanceAction(financeApproval.getFinanceAction());
+        financeOrdersHistoryDto.setFinanceAction(financeApproval.getFinanceAction().toDisplay());
         financeOrdersHistoryDto.setFinanceActionTime(financeApproval.getFinanceActionTime());
         financeOrdersHistoryDto.setFinanceReason(financeApproval.getFinanceReason());
 
@@ -55,7 +53,7 @@ public class OrdersCompleteMapper
             financeOrdersHistoryDto.setFinanceApprovedBy(approvedUser.getUserId());
         }
 
-        financeOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers())); // nested mapping
+        financeOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
         financeOrdersHistoryDto.setApprovedByUserName(approvedUser.getUsername());
 
         return financeOrdersHistoryDto;
@@ -83,7 +81,7 @@ public class OrdersCompleteMapper
         scmOrdersHistoryDto.setJiraTicketNumber(ticketDetails.getTicketNumber());
         scmOrdersHistoryDto.setJiraSummary(ticketDetails.getTicketSummary());
 
-        scmOrdersHistoryDto.setScmAction(ticketDetails.getScmAction());
+        scmOrdersHistoryDto.setScmAction(ticketDetails.getScmAction().toDisplay());
         scmOrdersHistoryDto.setScmActionTime(ticketDetails.getActionTime());
         scmOrdersHistoryDto.setJiraStatus(ticketDetails.getTicketStatus());
 
@@ -120,7 +118,7 @@ public class OrdersCompleteMapper
         cloudOrdersHistoryDto.setPriority(ticketDetails.getPriority());
         cloudOrdersHistoryDto.setCloudComments(ticketDetails.getCloudComments());
 
-        cloudOrdersHistoryDto.setCloudAction(ticketDetails.getCloudAction());
+        cloudOrdersHistoryDto.setCloudAction(ticketDetails.getCloudAction().toDisplay());
         cloudOrdersHistoryDto.setCloudActionTime(ticketDetails.getActionTime());
 
         Users approvedUser = ticketDetails.getUpdatedBy();
@@ -152,7 +150,7 @@ public class OrdersCompleteMapper
         syrmaOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
 
-        syrmaOrdersHistoryDto.setSyrmaAction(syrmaApprovalDetails.getSyrmaAction());
+        syrmaOrdersHistoryDto.setSyrmaAction(syrmaApprovalDetails.getSyrmaAction().toDisplay());
         syrmaOrdersHistoryDto.setActionTime(syrmaApprovalDetails.getActionTime());
         syrmaOrdersHistoryDto.setSyrmaComments(syrmaApprovalDetails.getSyrmaComments());
 
@@ -184,7 +182,7 @@ public class OrdersCompleteMapper
         rmaOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
         rmaOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
-        rmaOrdersHistoryDto.setRmaAction(rmaApprovalDetails.getRmaAction());
+        rmaOrdersHistoryDto.setRmaAction(String.valueOf(rmaApprovalDetails.getRmaAction()));
         rmaOrdersHistoryDto.setRmaActionTime(rmaApprovalDetails.getRmaActionTime());
         rmaOrdersHistoryDto.setRmaComment(rmaApprovalDetails.getRmaComment());
 
@@ -198,43 +196,6 @@ public class OrdersCompleteMapper
         rmaOrdersHistoryDto.setRmaApprovedByUserName(approvedUser.getUsername());
 
         return rmaOrdersHistoryDto;
-    }
-
-    //Entity → DTO Amisp Orders Action History
-    public ProjectTeamOrdersHistoryDto amispOrdersHistoryDto(Orders order, ProjectTeamApproval projectTeamApprovalDetails)
-    {
-        ProjectTeamOrdersHistoryDto projectTeamOrdersHistoryDto = new ProjectTeamOrdersHistoryDto();
-
-        projectTeamOrdersHistoryDto.setOrderId(order.getOrderId());
-        projectTeamOrdersHistoryDto.setCreateAt(order.getCreateAt());
-        projectTeamOrdersHistoryDto.setExpectedOrderDate(order.getExpectedOrderDate());
-        projectTeamOrdersHistoryDto.setProject(order.getProject());
-        projectTeamOrdersHistoryDto.setOrderType(order.getOrderType());
-        projectTeamOrdersHistoryDto.setInitiator(order.getInitiator());
-        projectTeamOrdersHistoryDto.setProductType(order.getProductType());
-        projectTeamOrdersHistoryDto.setProposedBuildPlanQty(order.getProposedBuildPlanQty());
-        projectTeamOrdersHistoryDto.setReasonForBuildRequest(order.getReasonForBuildRequest());
-        projectTeamOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
-
-        projectTeamOrdersHistoryDto.setAmispAction(projectTeamApprovalDetails.getAmispPdiType());
-        projectTeamOrdersHistoryDto.setAmispActionTime(projectTeamApprovalDetails.getProjectTeamActionTime());
-        projectTeamOrdersHistoryDto.setAmispComment(projectTeamApprovalDetails.getProjectTeamComment());
-        projectTeamOrdersHistoryDto.setPdiLocation(projectTeamApprovalDetails.getPdiLocation());
-        projectTeamOrdersHistoryDto.setDispatchDetails(projectTeamApprovalDetails.getDispatchDetails());
-        projectTeamOrdersHistoryDto.setDocumentUrl(projectTeamApprovalDetails.getDocumentUrl());
-        projectTeamOrdersHistoryDto.setSerialNumbers(projectTeamApprovalDetails.getSerialNumbers());
-        projectTeamOrdersHistoryDto.setLocationDetails(projectTeamApprovalDetails.getLocationDetails());
-
-        Users approvedUser = projectTeamApprovalDetails.getActionBy();
-        if (approvedUser != null)
-        {
-            projectTeamOrdersHistoryDto.setAmispApprovedBy(approvedUser.getUserId());
-        }
-
-        projectTeamOrdersHistoryDto.setUsers(userMapper.toDto(order.getUsers()));
-        projectTeamOrdersHistoryDto.setAmispApprovedByUserName(approvedUser.getUsername());
-
-        return projectTeamOrdersHistoryDto;
     }
 
     //Entity → DTO Logistic Orders Action History
@@ -254,7 +215,6 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setPmsRemarks(order.getPmsRemarks());
 
         logisticOrdersHistoryDto.setLogisticsComment(logisticsDetails.getLogisticsComment());
-//        logisticOrdersHistoryDto.setLogisticsPdiComment(logisticsDetails.getLogisticsPdiComment());
         logisticOrdersHistoryDto.setActionTime(logisticsDetails.getActionTime());
         logisticOrdersHistoryDto.setCourierName(logisticsDetails.getCourierName());
         logisticOrdersHistoryDto.setDeliveredStatus(logisticsDetails.getDeliveredStatus());
@@ -263,7 +223,6 @@ public class OrdersCompleteMapper
         logisticOrdersHistoryDto.setActualDeliveryDate(logisticsDetails.getActualDeliveryDate());
         logisticOrdersHistoryDto.setShippingMode(logisticsDetails.getShippingMode());
         logisticOrdersHistoryDto.setExpectedDeliveryDate(logisticsDetails.getExpectedDeliveryDate());
-//        logisticOrdersHistoryDto.setPdiAction(logisticsDetails.getPdiAction());
         logisticOrdersHistoryDto.setShipmentDocumentUrl(logisticsDetails.getShipmentDocumentUrl());
         logisticOrdersHistoryDto.setTrackingNumber(logisticsDetails.getTrackingNumber());
 
