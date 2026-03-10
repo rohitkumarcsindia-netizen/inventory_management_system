@@ -17,20 +17,20 @@ public interface ScmApprovalRepository extends JpaRepository<ScmApproval, Long>
 {
     //find order orderId in scm entity
     @Query(
-            value = "SELECT * FROM scm_approval WHERE order_id = :orderId ORDER BY action_time DESC LIMIT 1",
+            value = "SELECT * FROM scm_action WHERE order_id = :orderId ORDER BY action_time DESC LIMIT 1",
             nativeQuery = true
     )
     ScmApproval findLatestByOrderId(@Param("orderId") Long orderId);
 
 
     // Order Count using Scm Action
-    @Query(value = "SELECT COUNT(*) FROM  scm_approval WHERE action IS NOT NULL", nativeQuery = true)
+    @Query(value = "SELECT COUNT(*) FROM  scm_action WHERE action IS NOT NULL", nativeQuery = true)
     Long countByScmAction();
 
 
     // Order get using Scm Action
     @Query(
-            value = "SELECT * FROM scm_approval " +
+            value = "SELECT * FROM scm_action " +
                     "WHERE action IS NOT NULL " +
                     "ORDER BY action_time DESC " +
                     "LIMIT :limit OFFSET :offset",

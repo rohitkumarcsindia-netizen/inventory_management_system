@@ -22,9 +22,9 @@ public class ScmOrderMapper
         scmOrdersDto.setScmAction(scmApproval.getScmAction());
         scmOrdersDto.setActionTime(scmApproval.getActionTime());
         scmOrdersDto.setScmComments(scmApproval.getScmComments());
-        scmOrdersDto.setJiraStatus(scmApproval.getTicketStatus());
-        scmOrdersDto.setJiraTicketNumber(scmApproval.getTicketNumber());
-        scmOrdersDto.setJiraSummary(scmApproval.getTicketSummary());
+        scmOrdersDto.setTicketStatus(scmApproval.getTicketStatus());
+        scmOrdersDto.setTicketNumber(scmApproval.getTicketNumber());
+        scmOrdersDto.setTicketSummary(scmApproval.getTicketSummary());
 
         scmOrdersDto.setOrder(orderMapper.toDto(scmApproval.getOrder()));
         scmOrdersDto.setApprovedBy(userMapper.toDto(scmApproval.getApprovedBy())); // nested mapping

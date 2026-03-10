@@ -10,9 +10,9 @@ public class ScmOrdersDto
     private Long id;
     private OrdersDto order;
 
-    private String jiraTicketNumber;
-    private String jiraSummary;
-    private String jiraStatus;
+    private String ticketNumber;
+    private String ticketSummary;
+    private String ticketStatus;
     private String scmAction;
     private LocalDateTime actionTime;
     private String scmComments;

@@ -16,26 +16,6 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
 {
     ProjectTeamApproval findByOrder_OrderId(Long orderId);
 
-    //All order Action count only
-    @Query(
-            value = "SELECT COUNT(*) FROM project_team_approval " +
-                    "WHERE project_team_approval.action_by IS NOT NULL",
-            nativeQuery = true
-    )
-    Long countByAmispAction();
-
-
-    //All Complete Order data fetch
-    @Query(
-            value = "SELECT * FROM project_team_approval " +
-                    "WHERE action_by IS NOT NULL " +
-                    "ORDER BY project_team_action_time DESC " +
-                    "LIMIT :limit OFFSET :offset",
-            nativeQuery = true
-    )
-    List<ProjectTeamApproval> findByAmispActionIsNotNull(@Param("limit") int limit, @Param("offset") int offset);
-
-
     @Query("""
     SELECT aa FROM ProjectTeamApproval aa
     WHERE aa.actionBy IS NOT NULL
@@ -43,26 +23,5 @@ public interface ProjectTeamApprovalRepository extends JpaRepository<ProjectTeam
     ORDER BY aa.projectTeamActionTime DESC
 """)
     Page<ProjectTeamApproval> findByDateRange(@Param("start") LocalDateTime start, @Param("end")LocalDateTime end, Pageable pageable);
-
-
-    //status filter
-    @Query("SELECT o FROM ProjectTeamApproval o WHERE o.amispPdiType = :status")
-    Page<ProjectTeamApproval> findByStatusFilter(@Param("status") String status, Pageable pageable);
-
-
-    @Query("""
-       SELECT a FROM ProjectTeamApproval a
-       JOIN a.order o
-       JOIN a.actionBy u
-       WHERE a.actionBy IS NOT NULL
-       AND (
-            CAST(u.userId AS string) LIKE CONCAT('%', :keyword, '%')
-         OR CAST(o.orderId AS string) LIKE CONCAT('%', :keyword, '%')
-         OR LOWER(COALESCE(o.project, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(COALESCE(o.productType, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
-         OR LOWER(COALESCE(o.initiator, '')) LIKE LOWER(CONCAT('%', :keyword, '%'))
-       )
-""")
-    Page<ProjectTeamApproval> searchAmispComplete(@Param("keyword") String keyword, Pageable pageable);
 
 }

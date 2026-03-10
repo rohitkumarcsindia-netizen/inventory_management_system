@@ -26,8 +26,8 @@ public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Lo
 
     //All order Action count only
     @Query(
-            value = "SELECT COUNT(*) FROM syrma_approval " +
-                    "WHERE syrma_approval.action IS NOT NULL",
+            value = "SELECT COUNT(*) FROM syrma_action " +
+                    "WHERE syrma_action.action IS NOT NULL",
             nativeQuery = true
     )
     Long countByAction();
