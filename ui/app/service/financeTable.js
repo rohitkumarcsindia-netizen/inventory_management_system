@@ -35,7 +35,7 @@ export default function FinanceTable({
   const [selectedId, setSelectedId] = useState(null);
   const [actionType, setActionType] = useState("");
 
-  // 🔥 FINAL APPROVAL POPUP STATES
+  //  FINAL APPROVAL POPUP STATES
   const [showFinalPopup, setShowFinalPopup] = useState(false);
   const [finalRemark, setFinalRemark] = useState("");
   const [financeRemark, setFinanceRemark] = useState("");
@@ -84,6 +84,11 @@ const openFinalPopup = (type, id) => {
 // APPROVE / REJECT VALIDATION
 const reasonSchema = yup.object().shape({
   reason: yup.string().required("Reason is required"),
+  finalRemark: yup.string().when("$actionType", {
+    is: "reject",
+    then: (schema) => schema.required("Final Remark is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const {
@@ -130,9 +135,12 @@ const {
 
 
   // APPROVE/REJECT Submit
- const submitApproveReject = (data) => {
-  if (actionType === "approve") approveOrder(selectedId, data.reason);
-  else rejectOrder(selectedId, data.reason);
+const submitApproveReject = (data) => {
+  if (actionType === "approve") {
+    approveOrder(selectedId, data.reason);
+  } else {
+    rejectOrder(selectedId, data.reason, data.finalRemark);
+  }
 
   resetReason();
   setShowPopup(false);
@@ -159,9 +167,11 @@ const {
     };
   
     // REJECT ORDER
-    const rejectOrder = async (orderId, reason) => {
+    const rejectOrder = async (orderId, reason, finalRemark) => {
       try {
-        const res = await httpService.postWithAuth(`/api/v1/orders/finance/reject/${orderId}`, { financeReason: reason });
+        const res = await httpService.postWithAuth(`/api/v1/orders/finance/reject/${orderId}`, { financeReason: reason
+          ,financeFinalRemark: finalRemark
+         });
         setAlertPopup({
   show: true,
   message: res || "Order Rejected",
@@ -547,6 +557,23 @@ const formatOrderDateTime = (dateString) => {
             reasonErrors.reason ? "border-red-500" : ""
           }`}
         />
+        {actionType === "reject" && (
+  <>
+    <textarea
+      placeholder="Enter Final Remark"
+      {...registerReason("finalRemark",{
+        setValueAs: (value) => capitalizeWords(value),
+      })}
+      className="capitalize w-full border px-4 py-3 rounded-lg text-black mt-3"
+    />
+
+    {reasonErrors.finalRemark && (
+      <p className="text-red-500 text-sm mt-1">
+        {reasonErrors.finalRemark.message}
+      </p>
+    )}
+  </>
+)}
 
         {reasonErrors.reason && (
           <p className="text-red-500 text-sm mt-1">{reasonErrors.reason.message}</p>
