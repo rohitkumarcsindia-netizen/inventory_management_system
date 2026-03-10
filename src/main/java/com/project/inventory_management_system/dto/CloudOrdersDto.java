@@ -11,7 +11,7 @@ public class CloudOrdersDto
     private Long id;
     private OrdersDto order;
 
-    private String jiraDescription;
+    private String ticketDescription;
     private String priority;
     private String cloudComments;
 
