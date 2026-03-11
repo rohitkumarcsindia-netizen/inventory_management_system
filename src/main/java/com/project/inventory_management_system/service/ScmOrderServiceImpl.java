@@ -696,8 +696,18 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-        Page<ScmApproval> scmApprovalPage =  scmApprovalRepository.findByStatusFilter(status, pageable);
+        Page<ScmApproval> scmApprovalPage =  scmApprovalRepository.findByStatusFilter(actionStatus, pageable);
 
         if (scmApprovalPage.isEmpty())
         {

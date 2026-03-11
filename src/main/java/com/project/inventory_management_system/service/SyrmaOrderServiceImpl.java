@@ -309,8 +309,18 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-        Page<SyrmaApproval> syrmaApprovalPage = syrmaApprovalRepository.findByStatusFilterForSyrma(status, pageable);
+        Page<SyrmaApproval> syrmaApprovalPage = syrmaApprovalRepository.findByStatusFilterForSyrma(actionStatus, pageable);
 
         if (syrmaApprovalPage.isEmpty()) {
             return ResponseEntity.ok("No orders found");

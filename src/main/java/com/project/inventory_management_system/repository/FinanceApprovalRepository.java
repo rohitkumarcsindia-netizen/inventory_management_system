@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.FinanceApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,7 +17,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
 {
 
     @Query(
-            value = "SELECT fa.* FROM finance_approval fa " +
+            value = "SELECT fa.* FROM finance_action fa " +
                     "JOIN orders o ON o.order_id = fa.order_id " +
                     "WHERE fa.action IS NOT NULL " +
                     "ORDER BY fa.action_time DESC " +
@@ -37,7 +38,7 @@ public interface FinanceApprovalRepository extends JpaRepository<FinanceApproval
 
     //status filter
     @Query("SELECT o FROM FinanceApproval o WHERE o.financeAction = :status")
-    Page<FinanceApproval> findByStatusFilter(@Param("status") String status, Pageable pageable);
+    Page<FinanceApproval> findByStatusFilter(@Param("status") ActionStatus status, Pageable pageable);
 
 
 

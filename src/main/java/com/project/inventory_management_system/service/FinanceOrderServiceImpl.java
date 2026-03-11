@@ -322,8 +322,18 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
-        Page<FinanceApproval> financeApprovalpage =  financeApprovalRepository.findByStatusFilter(status, pageable);
+        Page<FinanceApproval> financeApprovalpage =  financeApprovalRepository.findByStatusFilter(actionStatus, pageable);
 
         if (financeApprovalpage.isEmpty())
         {

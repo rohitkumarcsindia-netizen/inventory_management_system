@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.RmaApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -44,7 +45,7 @@ public interface RmaApprovalRepository extends JpaRepository<RmaApproval, Long>
 
     //status filter
     @Query("SELECT r FROM RmaApproval r WHERE r.rmaAction = :status")
-    Page<RmaApproval> findByStatusFilterForRma(@Param("status")String status, Pageable pageable);
+    Page<RmaApproval> findByStatusFilterForRma(@Param("status") ActionStatus status, Pageable pageable);
 
     @Query("""
        SELECT r FROM RmaApproval r

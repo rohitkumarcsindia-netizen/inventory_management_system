@@ -346,8 +346,18 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("rmaActionTime").descending());
-        Page<RmaApproval> rmaApprovalPage =  rmaApprovalRepository.findByStatusFilterForRma(status, pageable);
+        Page<RmaApproval> rmaApprovalPage =  rmaApprovalRepository.findByStatusFilterForRma(actionStatus, pageable);
 
         if (rmaApprovalPage.isEmpty())
         {
