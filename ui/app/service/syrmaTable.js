@@ -296,7 +296,7 @@ const {
           }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
+          <option value="">STATUS</option>
           <option value="SCM JIRA TICKET CLOSURE > SYRMA PENDING">SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
           <option value="RMA QC FAIL > SYRMA RE-PROD/TEST PENDING">RMA QC FAIL {'>'} SYRMA RE-PROD/TEST PENDING</option>
         </select>

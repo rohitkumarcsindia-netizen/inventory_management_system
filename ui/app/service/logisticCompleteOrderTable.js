@@ -108,14 +108,6 @@ const formatOrderDateTime = (dateString) => {
   ),
      },
     { name: "QTY", selector: (row) => row.proposedBuildPlanQty },
-    { name: "ACTION", selector: (row) => row.pdiAction,
-       grow: 1.5,
-  cell: (row) => (
-    <span className="font-bold">
-      {row.pdiAction}
-    </span>
-  ),
-     },
     { name: "ACTION TIME", selector: (row) => row.actionTime,
        grow: 1.5,
  cell: (row) => {
@@ -182,8 +174,6 @@ const formatOrderDateTime = (dateString) => {
           className="px-3 py-2 border rounded-md shadow-sm"
         >
           <option value="">STATUS</option>
-          <option value="PDI PASS">PDI PASS</option>
-          <option value="PDI FAIL">PDI FAIL</option>
         </select>
 
         {/* LIVE SEARCH BACKEND CALL */}

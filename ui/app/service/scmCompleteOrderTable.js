@@ -163,8 +163,8 @@ cell: (row) => {
           onChange={(e) => { setCurrentPage(1); applyStatusFilter(e.target.value); }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
-          <option value="JIRA_VERIFIED">JIRA_VERIFIED</option>
+          <option value="">STATUS</option>
+          <option value="JIRA VERIFIED">JIRA VERIFIED</option>
           <option value="JIRA FILLED">JIRA FILLED</option>
         </select>
 

@@ -359,10 +359,9 @@ const {
           }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
+          <option value="">STATUS</option>
           <option value="SCM > LOGISTIC PENDING">SCM {'>'} LOGISTIC PENDING</option>
           <option value="DELIVERY PENDING">DELIVERY PENDING</option>
-          <option value="PDI PENDING">PDI PENDING</option>
         </select>
 
         {/* LIVE SEARCH BACKEND CALL */}
