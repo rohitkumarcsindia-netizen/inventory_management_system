@@ -225,7 +225,7 @@ setAlertPopup({
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

@@ -97,7 +97,7 @@ export default function RmaTeamPage() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // 🔥 ordering set
+    setIsDateApplied(true);     //  ordering set
     setIsSearchApplied(false);
   };
 
@@ -147,7 +147,7 @@ export default function RmaTeamPage() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

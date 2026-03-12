@@ -43,7 +43,7 @@ export default function ProjectAndProductControl() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   /* ---------------- FORM (POPUP) ---------------- */

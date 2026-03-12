@@ -115,7 +115,7 @@ const [alertPopup, setAlertPopup] = useState({
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // 🔥 ordering set
+    setIsDateApplied(true);     //  ordering set
     setIsSearchApplied(false);
   };
 
@@ -249,7 +249,7 @@ const notifyRma = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/notify-rma/${orderId}`,
-      {}   // ❗ no body required
+      {}   //  no body required
     );
 
     setAlertPopup({
@@ -272,7 +272,7 @@ const notifyPT = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/notify-project-team/${orderId}`,
-      {}   // ❗ no body required
+      {}   //  no body required
     );
 
      setAlertPopup({
@@ -318,7 +318,7 @@ const notifyLogistic = async (orderId) => {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

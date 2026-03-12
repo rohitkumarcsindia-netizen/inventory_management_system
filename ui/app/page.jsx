@@ -23,16 +23,16 @@ export default function LoginPage() {
       setToken(token);
       localStorage.setItem("department", department);
 
-      if (department === "Project Team") router.push("/dashboard/project-team");
-      else if (department === "Finance") router.push("/dashboard/finance-team");
-      else if (department === "SCM") router.push("/dashboard/scm-team");
-      else if (department === "Cloud Team") router.push("/dashboard/cloud-team");
-      else if (department === "Syrma") router.push("/dashboard/syrma-team");
-      else if (department === "RMA") router.push("/dashboard/rma-team");
-      else if (department === "Admin") router.push("/dashboard/admin-page");
-      else if (department === "Logistic") router.push("/dashboard/logistic-team");
-      else if (department === "AUDITOR") router.push("/dashboard/auditor");
-      else router.push("/");
+      if (department === "Project Team") router.replace("/dashboard/project-team");
+      else if (department === "Finance") router.replace("/dashboard/finance-team");
+      else if (department === "SCM") router.replace("/dashboard/scm-team");
+      else if (department === "Cloud Team") router.replace("/dashboard/cloud-team");
+      else if (department === "Syrma") router.replace("/dashboard/syrma-team");
+      else if (department === "RMA") router.replace("/dashboard/rma-team");
+      else if (department === "Admin") router.replace("/dashboard/admin-page");
+      else if (department === "Logistic") router.replace("/dashboard/logistic-team");
+      else if (department === "AUDITOR") router.replace("/dashboard/auditor");
+      else router.replace("/");
 
     } catch (error) {
       if (error.response && error.response.status === 401) {

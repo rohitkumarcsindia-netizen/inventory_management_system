@@ -7,7 +7,7 @@ import { Cpu } from "lucide-react";
 import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
 
-// 🔥 Universal normalizer (flat + nested response support)
+// Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
   const o = rec.order || rec;
 
@@ -147,7 +147,7 @@ export default function AmispCompleteOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 STATUS FILTER
+  //  STATUS FILTER
   const applyStatusFilter = async (value) => {
     setStatusFilter(value);
 
@@ -224,7 +224,7 @@ export default function AmispCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

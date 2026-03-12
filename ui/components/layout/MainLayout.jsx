@@ -27,32 +27,32 @@ export default function MainLayout({ children }) {
 
     if (isLoginPage && token && isTokenValid(token)) {
       if (department === "Project Team") {
-        router.push("/dashboard/project-team");
+        router.replace("/dashboard/project-team");
       } else if (department === "Finance") {
-        router.push("/dashboard/finance-team");
+        router.replace("/dashboard/finance-team");
       } else if (department === "SCM") {
-        router.push("/dashboard/scm-team");
+        router.replace("/dashboard/scm-team");
       } else if (department === "Cloud Team") {
-        router.push("/dashboard/cloud-team");
+        router.replace("/dashboard/cloud-team");
       } else if (department === "Syrma") {
-        router.push("/dashboard/syrma-team");
+        router.replace("/dashboard/syrma-team");
       } else if (department === "RMA") {
-        router.push("/dashboard/rma-team");
+        router.replace("/dashboard/rma-team");
       } else if (department === "Admin") {
-        router.push("/dashboard/admin-page");
+        router.replace("/dashboard/admin-page");
       } else if (department === "Logistic") {
-        router.push("/dashboard/logistic-team");
+        router.replace("/dashboard/logistic-team");
       } else if (department === "AUDITOR") {
-        router.push("/dashboard/auditor");
+        router.replace("/dashboard/auditor");
       }
       else {
-        router.push("/");
+        router.replace("/");
       }
     }
 
     // Example auth guard logic
     if (!isLoginPage && (!token || !isTokenValid(token))) {
-      router.push("/");
+      router.replace("/");
     }
   }, [isClient, router]);
 
