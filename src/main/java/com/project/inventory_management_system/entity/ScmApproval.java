@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.entity;
 
 
+import com.project.inventory_management_system.enums.ActionStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +10,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,9 +35,9 @@ public class ScmApproval
     private String ticketSummary;
     private String ticketStatus;
 
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "action")
-    private String scmAction;
+    private ActionStatus scmAction;
 
     @Column(name = "action_time")
     private LocalDateTime actionTime;

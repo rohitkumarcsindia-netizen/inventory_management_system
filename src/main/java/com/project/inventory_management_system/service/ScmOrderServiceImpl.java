@@ -9,6 +9,7 @@ import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.ScmApproval;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -159,7 +160,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApproval.setTicketNumber(ticketDetails.getTicketNumber());
         scmApproval.setTicketSummary(ticketDetails.getTicketSummary());
         scmApproval.setTicketStatus(ticketDetails.getTicketStatus());
-        scmApproval.setScmAction("JIRA FILLED");
+        scmApproval.setScmAction(ActionStatus.TICKET_FILLED);
         scmApproval.setActionTime(LocalDateTime.now());
         scmApproval.setApprovedBy(user);
         scmApproval.setScmComments(ticketDetails.getScmComments());
@@ -221,7 +222,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
 
         jiraDetailsUpdate.setTicketStatus(ticketDetails.getTicketStatus());
         jiraDetailsUpdate.setScmComments(ticketDetails.getScmComments());
-        jiraDetailsUpdate.setScmAction("JIRA_VERIFIED");
+        jiraDetailsUpdate.setScmAction(ActionStatus.TICKET_VERIFIED);
         jiraDetailsUpdate.setActionTime(LocalDateTime.now());
         jiraDetailsUpdate.setApprovedBy(user);
         scmApprovalRepository.save(jiraDetailsUpdate);
@@ -278,7 +279,7 @@ public class ScmOrderServiceImpl implements ScmOrderService
         scmApproval.setTicketNumber(ticketDetails.getTicketNumber());
         scmApproval.setTicketSummary(ticketDetails.getTicketSummary());
         scmApproval.setTicketStatus(ticketDetails.getTicketStatus());
-        scmApproval.setScmAction("JIRA FILLED");
+        scmApproval.setScmAction(ActionStatus.TICKET_FILLED);
         scmApproval.setActionTime(LocalDateTime.now());
         scmApproval.setScmComments(ticketDetails.getScmComments());
         scmApproval.setApprovedBy(user);
@@ -695,8 +696,18 @@ public class ScmOrderServiceImpl implements ScmOrderService
             return ResponseEntity.status(403).body("Only scm team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-        Page<ScmApproval> scmApprovalPage =  scmApprovalRepository.findByStatusFilter(status, pageable);
+        Page<ScmApproval> scmApprovalPage =  scmApprovalRepository.findByStatusFilter(actionStatus, pageable);
 
         if (scmApprovalPage.isEmpty())
         {

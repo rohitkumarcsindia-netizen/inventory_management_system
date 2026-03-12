@@ -7,6 +7,7 @@ import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.SyrmaApproval;
 import com.project.inventory_management_system.entity.Department;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -102,7 +103,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
 
         SyrmaApproval syrmaApproval = new SyrmaApproval();
         syrmaApproval.setOrder(order);
-        syrmaApproval.setSyrmaAction("Completed");
+        syrmaApproval.setSyrmaAction(ActionStatus.COMPLETED);
         syrmaApproval.setActionTime(LocalDateTime.now());
         syrmaApproval.setActionDoneBy(user);
         syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());
@@ -308,8 +309,18 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
             return ResponseEntity.status(403).body("Only syrma team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("actionTime").descending());
-        Page<SyrmaApproval> syrmaApprovalPage = syrmaApprovalRepository.findByStatusFilterForSyrma(status, pageable);
+        Page<SyrmaApproval> syrmaApprovalPage = syrmaApprovalRepository.findByStatusFilterForSyrma(actionStatus, pageable);
 
         if (syrmaApprovalPage.isEmpty()) {
             return ResponseEntity.ok("No orders found");
@@ -390,7 +401,7 @@ public class SyrmaOrderServiceImpl implements SyrmaOrderService {
         SyrmaApproval syrmaApproval = syrmaApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         syrmaApproval.setOrder(order);
-        syrmaApproval.setSyrmaAction("RE-PROD/TEST-Completed");
+        syrmaApproval.setSyrmaAction(ActionStatus.RE_PROD_TEST_Completed);
         syrmaApproval.setActionTime(LocalDateTime.now());
         syrmaApproval.setActionDoneBy(user);
         syrmaApproval.setSyrmaComments(syrmaComments.getSyrmaComments().trim());

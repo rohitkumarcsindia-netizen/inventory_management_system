@@ -20,7 +20,7 @@ public class ProjectTeamOrderMapper
 
         ProjectTeamOrderDto projectTeamOrderDto = new ProjectTeamOrderDto();
         projectTeamOrderDto.setId(projectTeamApproval.getId());
-        projectTeamOrderDto.setAmispPdiType(projectTeamApproval.getAmispPdiType());
+        projectTeamOrderDto.setAmispPdiType(projectTeamApproval.getAmispPdiType().toDisplay());
         projectTeamOrderDto.setProjectTeamActionTime(projectTeamApproval.getProjectTeamActionTime());
         projectTeamOrderDto.setProjectTeamComment(projectTeamApproval.getProjectTeamComment());
         projectTeamOrderDto.setPdiLocation(projectTeamApproval.getPdiLocation());
@@ -28,7 +28,7 @@ public class ProjectTeamOrderMapper
         projectTeamOrderDto.setDocumentUrl(projectTeamApproval.getDocumentUrl());
         projectTeamOrderDto.setSerialNumbers(projectTeamApproval.getSerialNumbers());
         projectTeamOrderDto.setLocationDetails(projectTeamApproval.getLocationDetails());
-        projectTeamOrderDto.setPdiAction(projectTeamApproval.getPdiAction());
+        projectTeamOrderDto.setPdiAction(projectTeamApproval.getPdiAction().toDisplay());
         projectTeamOrderDto.setPdiComment(projectTeamApproval.getPdiComment());
 
 

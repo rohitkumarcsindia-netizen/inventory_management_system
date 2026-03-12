@@ -8,6 +8,7 @@ import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.repository.ProjectTeamApprovalRepository;
@@ -678,7 +679,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         //project team table update
         ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
-        projectTeamApproval.setAmispPdiType("Post-Delivery PDI");
+        projectTeamApproval.setAmispPdiType(ActionStatus.POST_DELIVERY_PDI);
         projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
         projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
         projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
@@ -735,7 +736,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         //project team table update
         ProjectTeamApproval projectTeamApproval = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
-        projectTeamApproval.setAmispPdiType("Pri-Delivery PDI");
+        projectTeamApproval.setAmispPdiType(ActionStatus.PRI_DELIVERY_PDI);
         projectTeamApproval.setProjectTeamActionTime(LocalDateTime.now());
         projectTeamApproval.setProjectTeamComment(pdiDetails.getProjectTeamComment());
         projectTeamApproval.setSerialNumbers(pdiDetails.getSerialNumbers());
@@ -746,7 +747,6 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
 
         //Order table status update
         order.setStatus(OrderStatus.PDI_PENDING);
-//        order.setStatus(OrderStatus.PROJECT_TEAM_PROJECT_TEAM_READY_FOR_DISPATCH);
         orderRepository.save(order);
 
         Department department = departmentRepository.findByDepartmentName("PROJECT TEAM");
@@ -791,9 +791,9 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         ProjectTeamApproval findOrder = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         //pri PDI condition
-        if (findOrder.getAmispPdiType().equalsIgnoreCase("Pri-Delivery PDI"))
+        if (findOrder.getAmispPdiType() == ActionStatus.PRI_DELIVERY_PDI)
         {
-            findOrder.setPdiAction("PDI PASS");
+            findOrder.setPdiAction(ActionStatus.PDI_PASS);
             findOrder.setProjectTeamActionTime(LocalDateTime.now());
             findOrder.setPdiComment(pdiComments.getPdiComment());
             projectTeamApprovalRepository.save(findOrder);
@@ -804,7 +804,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         }
 
         //project team table data update
-        findOrder.setPdiAction("PDI PASS");
+        findOrder.setPdiAction(ActionStatus.PDI_PASS);
         findOrder.setProjectTeamActionTime(LocalDateTime.now());
         findOrder.setPdiComment(pdiComments.getPdiComment());
         projectTeamApprovalRepository.save(findOrder);
@@ -846,7 +846,7 @@ public class ProjectOrderServiceImpl implements ProjectOrderService
         ProjectTeamApproval findOrder = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
         //Logistic Details table data update
-        findOrder.setPdiAction("PDI FAIL");
+        findOrder.setPdiAction(ActionStatus.PDI_FAIL);
         findOrder.setProjectTeamActionTime(LocalDateTime.now());
         findOrder.setPdiComment(pdiComments.getPdiComment());
         projectTeamApprovalRepository.save(findOrder);

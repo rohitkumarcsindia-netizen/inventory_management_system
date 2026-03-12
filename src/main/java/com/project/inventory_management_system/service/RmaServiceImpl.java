@@ -8,6 +8,7 @@ import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.RmaApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.OrderMapper;
 import com.project.inventory_management_system.mapper.OrdersCompleteMapper;
@@ -108,7 +109,7 @@ public class RmaServiceImpl implements RmaService
 
         //Rma Approval table data save
         RmaApproval rmaApproval = new RmaApproval();
-        rmaApproval.setRmaAction("PASSED");
+        rmaApproval.setRmaAction(ActionStatus.PASSED);
         rmaApproval.setRmaActionTime(LocalDateTime.now());
         rmaApproval.setRmaComment(comments.getRmaComment().trim());
         rmaApproval.setApprovedBy(user);
@@ -161,7 +162,7 @@ public class RmaServiceImpl implements RmaService
 
         //Rma Approval table data save
         RmaApproval rmaApproval = new RmaApproval();
-        rmaApproval.setRmaAction("FAILED");
+        rmaApproval.setRmaAction(ActionStatus.FAILED);
         rmaApproval.setRmaActionTime(LocalDateTime.now());
         rmaApproval.setRmaComment(comments.getRmaComment().trim());
         rmaApproval.setApprovedBy(user);
@@ -345,8 +346,18 @@ public class RmaServiceImpl implements RmaService
             return ResponseEntity.status(403).body("Only rma team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("rmaActionTime").descending());
-        Page<RmaApproval> rmaApprovalPage =  rmaApprovalRepository.findByStatusFilterForRma(status, pageable);
+        Page<RmaApproval> rmaApprovalPage =  rmaApprovalRepository.findByStatusFilterForRma(actionStatus, pageable);
 
         if (rmaApprovalPage.isEmpty())
         {

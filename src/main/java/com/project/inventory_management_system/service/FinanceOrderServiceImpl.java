@@ -7,6 +7,7 @@ import com.project.inventory_management_system.entity.Department;
 import com.project.inventory_management_system.entity.FinanceApproval;
 import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.FinanceOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
@@ -147,7 +148,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         //Finance Approval table data save
         FinanceApproval financeApproval = new FinanceApproval();
-        financeApproval.setFinanceAction("APPROVED");
+        financeApproval.setFinanceAction(ActionStatus.APPROVED);
         financeApproval.setFinanceActionTime(LocalDateTime.now());
         financeApproval.setFinanceReason(reason.getFinanceReason().trim());
         financeApproval.setFinanceApprovedBy(user);
@@ -202,8 +203,8 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
 
         //Finance Approval table data save
         FinanceApproval financeApproval = new FinanceApproval();
-        financeApproval.setFinanceAction("REJECTED");
-        financeApproval.setFinanceFinalRemark("REJECTED");
+        financeApproval.setFinanceAction(ActionStatus.REJECTED);
+        financeApproval.setFinanceFinalRemark(reason.getFinanceFinalRemark().trim());
         financeApproval.setFinanceActionTime(LocalDateTime.now());
         financeApproval.setFinanceReason(reason.getFinanceReason().trim());
         financeApproval.setFinanceApprovedBy(user);
@@ -321,8 +322,18 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             return ResponseEntity.status(403).body("Only finance team can view this");
         }
 
+        ActionStatus actionStatus;
+        try
+        {
+            actionStatus = ActionStatus.fromDisplay(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            return ResponseEntity.badRequest().body("Invalid status");
+        }
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("financeActionTime").descending());
-        Page<FinanceApproval> financeApprovalpage =  financeApprovalRepository.findByStatusFilter(status, pageable);
+        Page<FinanceApproval> financeApprovalpage =  financeApprovalRepository.findByStatusFilter(actionStatus, pageable);
 
         if (financeApprovalpage.isEmpty())
         {
@@ -446,7 +457,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
             //Finance Approval table data update
-            findOrder.setFinanceAction("APPROVED");
+            findOrder.setFinanceAction(ActionStatus.APPROVED);
             findOrder.setFinanceActionTime(LocalDateTime.now());
             findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
             findOrder.setFinanceApprovedBy(user);
@@ -471,7 +482,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         {
             //Finance Approval table data save
             FinanceApproval financeApproval = new FinanceApproval();
-            financeApproval.setFinanceAction("APPROVED");
+            financeApproval.setFinanceAction(ActionStatus.APPROVED);
             financeApproval.setFinanceActionTime(LocalDateTime.now());
             financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
             financeApproval.setFinanceApprovedBy(user);
@@ -529,7 +540,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
             FinanceApproval findOrder = financeApprovalRepository.findByOrder_OrderId(order.getOrderId());
 
             //Finance Approval table data update
-            findOrder.setFinanceAction("REJECTED");
+            findOrder.setFinanceAction(ActionStatus.REJECTED);
             findOrder.setFinanceActionTime(LocalDateTime.now());
             findOrder.setFinanceFinalRemark(finalReason.getFinanceFinalRemark().trim());
             findOrder.setFinanceApprovedBy(user);
@@ -553,7 +564,7 @@ public class FinanceOrderServiceImpl implements FinanceOrderService
         {
             //Finance Approval table data save
             FinanceApproval financeApproval = new FinanceApproval();
-            financeApproval.setFinanceAction("REJECTED");
+            financeApproval.setFinanceAction(ActionStatus.REJECTED);
             financeApproval.setFinanceActionTime(LocalDateTime.now());
             financeApproval.setFinanceReason(finalReason.getFinanceReason().trim());
             financeApproval.setFinanceApprovedBy(user);

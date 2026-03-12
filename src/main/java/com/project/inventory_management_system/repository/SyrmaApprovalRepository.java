@@ -1,6 +1,7 @@
 package com.project.inventory_management_system.repository;
 
 import com.project.inventory_management_system.entity.SyrmaApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ import java.util.List;
 public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Long>
 {
     @Query(
-            value = "SELECT sa.* FROM syrma_approval sa " +
+            value = "SELECT sa.* FROM syrma_action sa " +
                     "JOIN orders o ON o.order_id = sa.order_id " +
                     "WHERE sa.action IS NOT NULL " +
                     "ORDER BY sa.action_time DESC " +
@@ -43,7 +44,7 @@ public interface SyrmaApprovalRepository extends JpaRepository<SyrmaApproval, Lo
 
     //status filter
     @Query("SELECT o FROM SyrmaApproval o WHERE o.syrmaAction = :status")
-    Page<SyrmaApproval> findByStatusFilterForSyrma(@Param("status")String status, Pageable pageable);
+    Page<SyrmaApproval> findByStatusFilterForSyrma(@Param("status") ActionStatus status, Pageable pageable);
 
 
     @Query("""

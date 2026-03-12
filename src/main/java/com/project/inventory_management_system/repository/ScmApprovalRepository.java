@@ -2,6 +2,7 @@ package com.project.inventory_management_system.repository;
 
 
 import com.project.inventory_management_system.entity.ScmApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,7 +51,7 @@ public interface ScmApprovalRepository extends JpaRepository<ScmApproval, Long>
 
     //status filter
     @Query("SELECT o FROM ScmApproval o WHERE o.scmAction = :status")
-    Page<ScmApproval> findByStatusFilter(@Param("status") String status, Pageable pageable);
+    Page<ScmApproval> findByStatusFilter(@Param("status") ActionStatus status, Pageable pageable);
 
     @Query("""
        SELECT sa FROM ScmApproval sa

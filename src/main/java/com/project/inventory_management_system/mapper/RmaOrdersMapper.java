@@ -20,7 +20,7 @@ public class RmaOrdersMapper
 
         RmaOrdersDto rmaOrdersDto = new RmaOrdersDto();
         rmaOrdersDto.setId(rmaApproval.getId());
-        rmaOrdersDto.setRmaAction(rmaApproval.getRmaAction());
+        rmaOrdersDto.setRmaAction(rmaApproval.getRmaAction().toDisplay());
         rmaOrdersDto.setRmaActionTime(rmaApproval.getRmaActionTime());
         rmaOrdersDto.setRmaComment(rmaApproval.getRmaComment());
 

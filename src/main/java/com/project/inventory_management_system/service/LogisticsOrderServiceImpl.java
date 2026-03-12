@@ -7,6 +7,7 @@ import com.project.inventory_management_system.entity.Orders;
 import com.project.inventory_management_system.entity.Users;
 import com.project.inventory_management_system.entity.LogisticsDetails;
 import com.project.inventory_management_system.entity.ProjectTeamApproval;
+import com.project.inventory_management_system.enums.ActionStatus;
 import com.project.inventory_management_system.enums.OrderStatus;
 import com.project.inventory_management_system.mapper.LogisticOrderMapper;
 import com.project.inventory_management_system.mapper.OrderMapper;
@@ -157,7 +158,7 @@ public class LogisticsOrderServiceImpl implements LogisticsOrderService
         }
 
         ProjectTeamApproval findPdiType = projectTeamApprovalRepository.findByOrder_OrderId(order.getOrderId());
-        if (findPdiType.getAmispPdiType().equalsIgnoreCase("Pri-Delivery PDI"))
+        if (findPdiType.getAmispPdiType() == ActionStatus.PRI_DELIVERY_PDI)
         {
             LogisticsDetails findOrder = logisticsDetailsRepository.findByOrder_OrderId(order.getOrderId());
 
