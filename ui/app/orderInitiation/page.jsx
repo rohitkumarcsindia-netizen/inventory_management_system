@@ -193,7 +193,7 @@ useEffect(() => {
   // LOGOUT
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

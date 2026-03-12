@@ -7,7 +7,7 @@ import { Cpu } from "lucide-react";
 import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
 
-// 🔥 Universal normalizer (flat + nested response support)
+//  Universal normalizer
 const normalizeFinanceRecord = (rec) => {
   const o = rec.order || rec;
 
@@ -64,7 +64,7 @@ export default function SyrmaCompleteOrders() {
   const [username, setUsername] = useState("");
   const router = useRouter();
 
-  // 🔹 FETCH DEFAULT DATA
+  //  FETCH DEFAULT DATA
   const fetchOrders = async () => {
     try {
       const offset = (currentPage - 1) * ordersPerPage;
@@ -104,7 +104,7 @@ export default function SyrmaCompleteOrders() {
     fetchOrders();
   }, [currentPage, ordersPerPage]);
 
-  // 🔹 STATUS FILTER
+  // STATUS FILTER
   const applyStatusFilter = async (value) => {
     setStatusFilter(value);
 
@@ -134,7 +134,7 @@ export default function SyrmaCompleteOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 DATE FILTER
+  //  DATE FILTER
   const applyDateFilter = async () => {
     if (!startDate || !endDate) return alert("Select both dates");
 
@@ -161,7 +161,7 @@ export default function SyrmaCompleteOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 SEARCH FILTER
+  // SEARCH FILTER
   const applySearchFilter = async (text) => {
     setSearchText(text);
 
@@ -199,7 +199,7 @@ export default function SyrmaCompleteOrders() {
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (

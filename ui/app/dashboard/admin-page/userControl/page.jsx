@@ -51,7 +51,7 @@ const [alertPopup, setAlertPopup] = useState({
 
   const handleLogout = () => {
     removeToken();
-    router.push("/");
+    window.location.replace("/");
   };
 
   /* ---------------- FORM (POPUP) ---------------- */

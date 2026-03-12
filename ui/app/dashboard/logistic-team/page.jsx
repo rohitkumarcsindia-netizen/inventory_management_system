@@ -16,7 +16,7 @@ export default function LogisticMenu() {
   const handleLogout = () => {
     removeToken();
     setUsername("");
-    router.push("/");
+    window.location.replace("/");
   };
 
   return (
