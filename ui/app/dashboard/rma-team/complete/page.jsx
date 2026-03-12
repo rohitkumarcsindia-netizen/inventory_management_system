@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
 import RmaCompleteOrderTable from "../../../service/rmaCompleteOrderTable";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "../../../service/authService";
 
 // Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
@@ -221,11 +222,6 @@ export default function RmaCompleteOrders() {
     }
   }, [searchText]);
 
-  const handleLogout = () => {
-    removeToken();
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
 
@@ -234,7 +230,7 @@ export default function RmaCompleteOrders() {
         <span className="text-lg font-semibold text-[#003b66]">👤 {username}</span>
 
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md hover:bg-red-600 transition font-medium"
         >
           Logout

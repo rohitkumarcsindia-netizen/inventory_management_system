@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getUsernameFromToken, removeToken } from "../../service/cookieService";
+import { getUsernameFromToken } from "../../service/cookieService";
+import { logoutUser } from "../../service/authService";
 
 export default function LogisticMenu() {
   const router = useRouter();
@@ -13,11 +14,6 @@ export default function LogisticMenu() {
     setUsername(name || "");
   }, []);
 
-  const handleLogout = () => {
-    removeToken();
-    setUsername("");
-    window.location.replace("/");
-  };
 
   return (
     <div className="min-h-screen w-screen bg-[#e3f3ff] flex flex-col items-center relative">
@@ -35,7 +31,7 @@ export default function LogisticMenu() {
           </span>
 
           <button
-            onClick={handleLogout}
+            onClick={logoutUser}
             className="bg-red-500 text-white px-4 py-1.5 rounded-md hover:bg-red-600 transition font-medium shadow"
           >
             Logout

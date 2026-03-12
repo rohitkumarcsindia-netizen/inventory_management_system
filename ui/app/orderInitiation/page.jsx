@@ -3,7 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import httpService from "../service/httpService";
 import { motion } from "framer-motion";
-import { removeToken, getUsernameFromToken } from "../service/cookieService";
+import { getUsernameFromToken } from "../service/cookieService";
+import { logoutUser } from "../service/authService";
 import AlertPopup from "../../components/layout/AlertPopup";
 
 
@@ -188,14 +189,6 @@ useEffect(() => {
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-  
-
-  // LOGOUT
-  const handleLogout = () => {
-    removeToken();
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen bg-[#e3f3ff] flex justify-center items-center p-4 relative overflow-hidden">
       {/* 🔹 SAME USERNAME + LOGOUT WHITE BOX (GLOBAL STYLE) */}
@@ -205,7 +198,7 @@ useEffect(() => {
         </span>
 
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md hover:bg-red-600 transition font-medium shadow"
         >
           Logout

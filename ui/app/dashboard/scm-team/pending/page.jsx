@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import ScmTable from "../../../service/scmTable";
 import httpService from "../../../service/httpService";
 import { useRouter } from "next/navigation";
-import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import { getUsernameFromToken } from "../../../service/cookieService";
 import AlertPopup from "../../../../components/layout/AlertPopup";
+import { logoutUser } from "../../../service/authService";
 
 export default function ScmTeamPage() {
   const [orders, setOrders] = useState([]);
@@ -313,14 +314,6 @@ const notifyLogistic = async (orderId) => {
   }
 };
 
- 
-
-
-  const handleLogout = () => {
-    removeToken();
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
 
@@ -331,7 +324,7 @@ const notifyLogistic = async (orderId) => {
         </span>
 
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md hover:bg-red-600 transition font-medium shadow"
         >
           Logout

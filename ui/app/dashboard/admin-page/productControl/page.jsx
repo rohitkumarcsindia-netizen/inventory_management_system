@@ -4,10 +4,8 @@ import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
 import ProductControlTable from "../../../service/productControlTable";
 import { Cpu } from "lucide-react";
-import {
-  getUsernameFromToken,
-  removeToken,
-} from "../../../service/cookieService";
+import { getUsernameFromToken } from "../../../service/cookieService";
+import { logoutUser } from "../../../service/authService";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import AlertPopup from "../../../../components/layout/AlertPopup";
@@ -40,11 +38,6 @@ export default function ProjectAndProductControl() {
     setUsername(name || "");
     fetchData();
   }, []);
-
-  const handleLogout = () => {
-    removeToken();
-    window.location.replace("/");
-  };
 
   /* ---------------- FORM (POPUP) ---------------- */
   const {
@@ -89,7 +82,7 @@ export default function ProjectAndProductControl() {
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-5 py-2 rounded-lg">
         <span className="text-black font-semibold">👤 {username}</span>
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md"
         >
           Logout

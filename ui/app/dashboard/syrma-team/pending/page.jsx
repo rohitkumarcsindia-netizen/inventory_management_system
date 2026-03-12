@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
 import SyrmaTable from "../../../service/syrmaTable";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "../../../service/authService";
 
 export default function SyrmaTeamPage() {
   const [orders, setOrders] = useState([]);
@@ -190,13 +191,6 @@ export default function SyrmaTeamPage() {
     }
   }, [searchText]);
 
-   // LOGOUT
-  const handleLogout = () => {
-    removeToken();
-    setUsername("");
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
 
@@ -205,7 +199,7 @@ export default function SyrmaTeamPage() {
         <span className="text-black font-semibold">👤 {username}</span>
 
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md"
         >
           Logout
