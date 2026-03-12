@@ -2,7 +2,7 @@
 
 import DataTable from "react-data-table-component";
 
-export default function CloudCompleteOrderTable({
+export default function SyrmaCompleteOrderTable({
   orders,
   totalOrders,
   currentPage,
@@ -161,9 +161,9 @@ const formatOrderDateTime = (dateString) => {
           onChange={(e) => { setCurrentPage(1); applyStatusFilter(e.target.value); }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
-          <option value="SYRMA PENDING">SYRMA PENDING</option>
-          <option value="REJECRMA > SYRMA RE WORK PENDINGTED">RMA {'>'} SYRMA RE WORK PENDING</option>
+          <option value="">STATUS</option>
+          <option value="COMPLETED">COMPLETED</option>
+          <option value="RE-PROD/TEST-Completed">RE-PROD/TEST-Completed</option>
         </select>
 
         <div className="relative">

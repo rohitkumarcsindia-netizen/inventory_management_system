@@ -794,7 +794,7 @@ const handleCancelEdit = () => {
           }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
+          <option value="">STATUS</option>
           <option value="PROJECT TEAM PENDING">PROJECT TEAM PENDING</option>
           <option value="PROJECT TEAM > FINANCE PRE APPROVAL PENDING">PROJECT TEAM {'>'} FINANCE PRE APPROVAL PENDING</option>
           <option value="PROJECT TEAM > SCM PENDING">PROJECT TEAM {'>'} SCM PENDING</option>

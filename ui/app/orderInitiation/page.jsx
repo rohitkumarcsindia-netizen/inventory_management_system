@@ -48,6 +48,9 @@ const [alertPopup, setAlertPopup] = useState({
 
   //  -----SUBMIT-----
  const handleOnSubmit = async (order) => {
+  if (selectedProducts.some(p => !p.quantity || Number(p.quantity) <= 0)) {
+  return;
+}
   setLoading(true);
 
  const payload = {
@@ -87,6 +90,9 @@ const [alertPopup, setAlertPopup] = useState({
 
   //  -----SAVE-----
   const handleOnSave = async (order) => {
+     if (selectedProducts.some(p => !p.quantity || Number(p.quantity) <= 0)) {
+    return;
+  }
   setLoading(true);
 
  const payload = {

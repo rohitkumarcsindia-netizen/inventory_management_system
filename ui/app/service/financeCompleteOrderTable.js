@@ -158,9 +158,9 @@ const formatOrderDateTime = (dateString) => {
           onChange={(e) => { setCurrentPage(1); applyStatusFilter(e.target.value); }}
           className="px-3 py-2 border rounded-md shadow-sm"
         >
-          <option value="">Status</option>
-          <option value="APPROVED">Approved</option>
-          <option value="REJECTED">Rejected</option>
+          <option value="">STATUS</option>
+          <option value="APPROVED">APPROVED</option>
+          <option value="REJECTED">REJECTED</option>
         </select>
 
       {/* {SEARCH} */}

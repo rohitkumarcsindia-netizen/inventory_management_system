@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getToken } from "./cookieService";
+import config from "../config";
 
-const baseUrl = "http://localhost:5828";
+const baseUrl = config.BASE_URL;
 
 
 
