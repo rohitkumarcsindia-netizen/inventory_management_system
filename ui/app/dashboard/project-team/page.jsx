@@ -5,8 +5,9 @@ import httpService from "../../service/httpService";
 import OrdersTable from "../../service/ordersTable";
 import { useRouter } from "next/navigation";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../service/cookieService";
+import { getUsernameFromToken } from "../../service/cookieService";
 import AlertPopup from "../../../components/layout/AlertPopup";
+import { logoutUser } from "../../service/authService";
 
 export default function GetOrders() {
   const [orders, setOrders] = useState([]);
@@ -221,12 +222,6 @@ setAlertPopup({
   }
 };
 
-  // LOGOUT
-  const handleLogout = () => {
-    removeToken();
-    setUsername("");
-    window.location.replace("/");
-  };
 
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
@@ -235,7 +230,7 @@ setAlertPopup({
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-4 py-2 rounded-lg">
         <span className="text-lg font-semibold text-[#003b66]">👤 {username || "User"}</span>
         <button
-          onClick={handleLogout}
+          onClick={logoutUser}
           className="bg-red-500 text-white px-4 py-1.5 rounded-md"
         >
           Logout

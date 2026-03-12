@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import httpService from "../../service/httpService";
 import AuditorTable from "../../service/auditorTable";
+import { logoutUser } from "../../service/authService";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../service/cookieService";
+import { getUsernameFromToken } from "../../service/cookieService";
 import { useRouter } from "next/navigation";
 
-// 🔥 Universal normalizer (flat + nested response support)
+// Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
   const o = rec.order || rec;
 
@@ -59,7 +60,7 @@ export default function AuditorOrders() {
   const router = useRouter();
   const [username, setUsername] = useState("");
 
-  // 🔹 FETCH DEFAULT DATA
+  // FETCH DEFAULT DATA
   const fetchOrders = async () => {
     try {
       const offset = (currentPage - 1) * ordersPerPage;
@@ -99,7 +100,7 @@ export default function AuditorOrders() {
     fetchOrders();
   }, [currentPage, ordersPerPage]);
 
-  // 🔹 STATUS FILTER
+  // STATUS FILTER
   const applyStatusFilter = async (value) => {
     setStatusFilter(value);
 
@@ -129,7 +130,7 @@ export default function AuditorOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 DATE FILTER
+  // DATE FILTER
   const applyDateFilter = async () => {
     if (!startDate || !endDate) return alert("Select both dates");
 
@@ -156,7 +157,7 @@ export default function AuditorOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 SEARCH FILTER
+  // SEARCH FILTER
   const applySearchFilter = async (text) => {
     setSearchText(text);
 
@@ -192,18 +193,12 @@ export default function AuditorOrders() {
     }
   }, [searchText]);
 
-  const handleLogout = () => {
-    removeToken();
-    setUsername("");
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
 
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-5 py-2 rounded-lg border">
         <span className="text-lg font-semibold text-[#003b66]">👤 {username}</span>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-1.5 rounded-md">
+        <button onClick={logoutUser} className="bg-red-500 text-white px-4 py-1.5 rounded-md">
           Logout
         </button>
       </div>

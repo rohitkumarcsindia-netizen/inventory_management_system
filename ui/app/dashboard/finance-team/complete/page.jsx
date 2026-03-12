@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
 import FinanceCompleteOrderTable from "../../../service/financeCompleteOrderTable";
 import { Cpu } from "lucide-react";
-import { getUsernameFromToken, removeToken } from "../../../service/cookieService";
+import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
+import { logoutUser } from "../../../service/authService";
 
 // Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
@@ -190,18 +191,12 @@ export default function FinanceCompleteOrders() {
     }
   }, [searchText]);
 
-  const handleLogout = () => {
-    removeToken();
-    setUsername("");
-    window.location.replace("/");
-  };
-
   return (
     <div className="min-h-screen w-full bg-[#e3f3ff] flex flex-col items-center py-10 relative">
 
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-5 py-2 rounded-lg border">
         <span className="text-lg font-semibold text-[#003b66]">👤 {username}</span>
-        <button onClick={handleLogout} className="bg-red-500 text-white px-4 py-1.5 rounded-md">
+        <button onClick={logoutUser} className="bg-red-500 text-white px-4 py-1.5 rounded-md">
           Logout
         </button>
       </div>
