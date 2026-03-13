@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import CloudCompleteOrderTable from "../../../service/cloudCompleteOrderTable";
+import CloudCompleteOrderTable from "../../../teamsTable/cloudCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { logoutUser } from "../../../service/authService";

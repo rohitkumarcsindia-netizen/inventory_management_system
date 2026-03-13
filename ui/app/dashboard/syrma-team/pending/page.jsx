@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import SyrmaTable from "../../../service/syrmaTable";
+import SyrmaTable from "../../../teamsTable/syrmaTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";

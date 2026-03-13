@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useForm } from "react-hook-form";
-import httpService from "./httpService";
+import httpService from "../service/httpService";
 import AlertPopup from "../../components/layout/AlertPopup";
 
 export default function UserControlTable({ 

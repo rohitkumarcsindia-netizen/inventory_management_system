@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import RmaCompleteOrderTable from "../../../service/rmaCompleteOrderTable";
+import RmaCompleteOrderTable from "../../../teamsTable/rmaCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";

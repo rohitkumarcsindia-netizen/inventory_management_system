@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import ScmTable from "../../../service/scmTable";
+import ScmTable from "../../../teamsTable/scmTable";
 import httpService from "../../../service/httpService";
 import { useRouter } from "next/navigation";
 import { getUsernameFromToken } from "../../../service/cookieService";

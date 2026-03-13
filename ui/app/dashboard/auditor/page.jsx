@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../service/httpService";
-import AuditorTable from "../../service/auditorTable";
+import AuditorTable from "../../teamsTable/auditorTable";
 import { logoutUser } from "../../service/authService";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../service/cookieService";
