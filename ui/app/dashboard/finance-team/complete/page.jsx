@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import FinanceCompleteOrderTable from "../../../teamsTable/financeCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 // Universal normalizer (flat + nested response support)
@@ -54,11 +53,9 @@ export default function FinanceCompleteOrders() {
   const [isDateApplied, setIsDateApplied] = useState(false);
   const [isStatusApplied, setIsStatusApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
-
-  const router = useRouter();
   const [username, setUsername] = useState("");
 
-  // 🔹 FETCH DEFAULT DATA
+  // FETCH DEFAULT DATA
   const fetchOrders = async () => {
     try {
       const offset = (currentPage - 1) * ordersPerPage;
@@ -91,14 +88,21 @@ export default function FinanceCompleteOrders() {
   useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) return applySearchFilter(searchText);
-    if (isStatusApplied) return applyStatusFilter(statusFilter);
-    if (isDateApplied) return applyDateFilter();
-
+    if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
-  // 🔹 STATUS FILTER
+  // STATUS FILTER
   const applyStatusFilter = async (value) => {
     setStatusFilter(value);
 
@@ -128,7 +132,7 @@ export default function FinanceCompleteOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 DATE FILTER
+  // DATE FILTER
   const applyDateFilter = async () => {
     if (!startDate || !endDate) return alert("Select both dates");
 
@@ -155,7 +159,7 @@ export default function FinanceCompleteOrders() {
     setIsSearchApplied(false);
   };
 
-  // 🔹 SEARCH FILTER
+  // SEARCH FILTER
   const applySearchFilter = async (text) => {
     setSearchText(text);
 

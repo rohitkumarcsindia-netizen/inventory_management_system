@@ -68,22 +68,18 @@ export default function GetOrders() {
   useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) {
-      applySearchFilter(searchText);
-      return;
-    }
-
-    if (isStatusApplied) {
-      applyStatusFilter(statusFilter);
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
+     if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // DATE FILTER API
@@ -199,7 +195,7 @@ const notifyLocScm = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/project/notify-scm-location-details/${orderId}`,
-      {}   // ❗ no body required
+      {}   // no body required
     );
 
     

@@ -183,8 +183,6 @@ export default function ProjectControlTable({
                   )}
                 </div>
 
-                
-
                 {/* ACTION BUTTONS */}
                 <div className="flex justify-end gap-3 pt-4">
                   {!isEditMode ? (

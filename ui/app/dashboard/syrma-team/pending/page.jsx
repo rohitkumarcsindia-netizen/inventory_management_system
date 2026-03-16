@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import SyrmaTable from "../../../teamsTable/syrmaTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 export default function SyrmaTeamPage() {
@@ -17,7 +16,7 @@ export default function SyrmaTeamPage() {
   const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
   const [isStatusApplied, setIsStatusApplied] = useState(false);
 
@@ -34,7 +33,6 @@ export default function SyrmaTeamPage() {
   const [noDataFound, setNoDataFound] = useState(false);
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
   // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -66,22 +64,18 @@ export default function SyrmaTeamPage() {
       useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) {
-      applySearchFilter(searchText);
-      return;
-    }
-
-    if (isStatusApplied) {
-      // applyStatusFilter(statusFilter);
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
+     if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // DATE FILTER API
@@ -106,7 +100,7 @@ export default function SyrmaTeamPage() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 

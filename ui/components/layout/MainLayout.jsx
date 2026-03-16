@@ -50,7 +50,7 @@ export default function MainLayout({ children }) {
       }
     }
 
-    // Example auth guard logic
+    // auth guard logic
     if (!isLoginPage && (!token || !isTokenValid(token))) {
       router.replace("/");
     }

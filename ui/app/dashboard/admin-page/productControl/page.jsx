@@ -6,7 +6,6 @@ import ProductControlTable from "../../../teamsTable/productControlTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { logoutUser } from "../../../service/authService";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import AlertPopup from "../../../../components/layout/AlertPopup";
 
@@ -20,8 +19,6 @@ export default function ProjectAndProductControl() {
   message: "",
   type: "success",
 });
-
-  const router = useRouter();
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {

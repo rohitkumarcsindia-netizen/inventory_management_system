@@ -81,7 +81,6 @@ const closureSchema = yup.object().shape({
   scmComments: yup.string().required("SCM Comments are required"),
 });
 
-  
   // REACT FORM NEW/OLD POPUP
   const {
   register,
@@ -161,7 +160,7 @@ const notifyAmisp = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/notify-amisp/${orderId}`,
-      {}   // ❗ no body required
+      {}   // no body required
     );
 
     setAlertPopup({
@@ -185,7 +184,7 @@ const financeApproval = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/approval-request/${orderId}`,
-      {}   // ❗ no body required
+      {}   // no body required
     );
 
      setAlertPopup({
@@ -193,7 +192,7 @@ const financeApproval = async (orderId) => {
   message: res || "Notification Sent for Finance Approval",
   type: "success",
 });
-    fetchOrders(); // UI refresh
+    fetchOrders();
   } catch (error) {
      setAlertPopup({
   show: true,
@@ -208,7 +207,7 @@ const financeApproval = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/completed/${orderId}`,
-      {}   // ❗ no body required
+      {}   // no body required
     );
 
      setAlertPopup({
@@ -327,12 +326,11 @@ const financeApproval = async (orderId) => {
         }
 
         //  Case 2: SYRMA PROD/TEST DONE > SCM ACTION PENDING 
-        //   || SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING → Show Notify Button
        if (row.status === "SYRMA PROD/TEST DONE > SCM ACTION PENDING" || 
         row.status === "SYRMA RE-PROD/TEST DONE > SCM ACTION PENDING") {
   return (
     <button
-      onClick={() => notifyRma(row.orderId)}   //  FUNCTION CALL
+      onClick={() => notifyRma(row.orderId)}
       className="px-5 py-2 bg-purple-600 text-white rounded-lg"
     >
       Notify To RMA
@@ -343,7 +341,7 @@ const financeApproval = async (orderId) => {
        if (row.status === "RMA QC PASS > SCM ORDER RELEASE PENDING") {
   return (
     <button
-      onClick={() => notifyPT(row.orderId)}   // FUNCTION CALL
+      onClick={() => notifyPT(row.orderId)}
       className="px-5 py-2 bg-blue-600 text-white rounded-lg"
     >
       Notify To Project Team
@@ -354,7 +352,7 @@ const financeApproval = async (orderId) => {
        if (row.status === "PROJECT TEAM > SCM READY FOR DISPATCH") {
   return (
     <button
-      onClick={() => notifyAmisp(row.orderId)}   //  FUNCTION CALL
+      onClick={() => notifyAmisp(row.orderId)}
       className="px-5 py-2 bg-green-600 text-white rounded-lg"
     >
       Notify To AMISP
@@ -365,7 +363,7 @@ const financeApproval = async (orderId) => {
        if (row.status === "PROJECT TEAM > NOTIFY SCM LOCATION DETAILS") {
   return (
     <button
-      onClick={() => financeApproval(row.orderId)}   //  FUNCTION CALL
+      onClick={() => financeApproval(row.orderId)} 
       className="px-5 py-2 bg-orange-600 text-white rounded-lg"
     >
       Sent For Finance Approval
@@ -373,11 +371,11 @@ const financeApproval = async (orderId) => {
   );
 }
 
-// //         //Case 6: FINANCE > SCM PLAN TO DISPATCH  → Show Notify Button
+        //Case 6: FINANCE > SCM PLAN TO DISPATCH  → Show Notify Button
        if (row.status === "FINANCE > SCM PLAN TO DISPATCH") {
   return (
     <button
-      onClick={() => notifyLogistic(row.orderId)}   //  FUNCTION CALL
+      onClick={() => notifyLogistic(row.orderId)}
       className="px-5 py-2 bg-blue-600 text-white rounded-lg"
     >
       Notify To Logistic Team
@@ -385,18 +383,17 @@ const financeApproval = async (orderId) => {
   );
 }
 
-// //         //Case 7: FINANCE CLOSURE DONE > SCM CLOSURE PENDING  → Show Notify Button
+//Case 7: FINANCE CLOSURE DONE > SCM CLOSURE PENDING  → Show Notify Button
        if (row.status === "FINANCE CLOSURE DONE > SCM CLOSURE PENDING") {
   return (
     <button
-      onClick={() => orderCompleted(row.orderId)}   //  FUNCTION CALL
+      onClick={() => orderCompleted(row.orderId)}
       className="px-5 py-2 bg-blue-600 text-white rounded-lg"
     >
       Final Closure
     </button>
   );
 }
-
 
         //  Default → Show New / Old Buttons
         return (
@@ -645,11 +642,11 @@ const financeApproval = async (orderId) => {
             <div className="flex justify-center gap-4 mt-5">
               <button
                onClick={() => {
-  reset();                          // first reset form
+  reset();                        
   setTimeout(() => {
-    setPopupOrderId(null);          // then close popup
+    setPopupOrderId(null);         
     setIsOld(false);
-  }, 0);                            // 0 ms delay ensures reset applies
+  }, 0);                      
 }}
                 className="px-6 py-2 bg-red-500 text-white rounded-lg"
               >
@@ -707,7 +704,7 @@ const financeApproval = async (orderId) => {
             <div className="flex justify-center gap-4 mt-5">
               <button
                 onClick={() => {
-  resetClosure();                   // reset closure form
+  resetClosure();
   setTimeout(() => {
     setClosurePopupId(null);        // close popup
   }, 0);

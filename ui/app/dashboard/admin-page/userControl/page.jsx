@@ -6,7 +6,6 @@ import UserControlTable from "../../../teamsTable/userControlTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { logoutUser } from "../../../service/authService";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import AlertPopup from "../../../../components/layout/AlertPopup";
 
@@ -21,8 +20,6 @@ const [alertPopup, setAlertPopup] = useState({
   message: "",
   type: "success",
 });
-
-  const router = useRouter();
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchData = async () => {
@@ -128,7 +125,7 @@ const [alertPopup, setAlertPopup] = useState({
   onClick={() => {
     setShowPopup(true);
     reset();
-    fetchDepartments(); // 👈 yahin call karo
+    fetchDepartments(); 
   }}
   className="fixed bottom-8 left-8 bg-[#02A3EE] text-white px-6 py-4 rounded-2xl shadow-xl"
 >

@@ -8,7 +8,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AlertPopup from "../../components/layout/AlertPopup";
 
-
 export default function SyrmaTable({
   orders,
   totalOrders,
@@ -32,8 +31,6 @@ export default function SyrmaTable({
   applyStatusFilter,
   refreshData
 }) {
-
-  
 
   // POPUP STATE
   const [popupOrderId, setPopupOrderId] = useState(null);
@@ -110,7 +107,7 @@ const {
   type: "success",
 });
 
-    reset();           // FORM RESET
+    reset();
     setPopupOrderId(null);
     setActionType("");
 
@@ -124,9 +121,6 @@ const {
 });
   }
 };
-
-
-
 
  // table data
   const displayedData =
@@ -221,7 +215,7 @@ const {
         <button
           onClick={() => {
             setPopupOrderId(row.orderId);
-            setActionType("RE_COMPLETE");   // ✅
+            setActionType("RE_COMPLETE"); 
           }}
           className="px-5 py-2 bg-yellow-600 text-white rounded-lg"
         >
@@ -234,7 +228,7 @@ const {
       <button
         onClick={() => {
           setPopupOrderId(row.orderId);
-          setActionType("COMPLETE");       // ✅
+          setActionType("COMPLETE"); 
         }}
         className="px-5 py-2 bg-green-600 text-white rounded-lg"
       >
@@ -432,12 +426,9 @@ const {
 
         </div>
       </form>
-      {/* FORM END */}
-
     </div>
   </div>
 )}
-
     </>
   );
 }

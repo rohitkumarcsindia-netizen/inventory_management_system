@@ -7,9 +7,6 @@ import { getUsernameFromToken } from "../service/cookieService";
 import { logoutUser } from "../service/authService";
 import AlertPopup from "../../components/layout/AlertPopup";
 
-
-import { useRouter } from "next/navigation";
-
 export default function OrderInitiation() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
@@ -30,8 +27,6 @@ const [alertPopup, setAlertPopup] = useState({
   message: "",
   type: "success",
 });
-
-  const router = useRouter();
 
   const {
     register,
@@ -191,7 +186,6 @@ useEffect(() => {
 
   return (
     <div className="min-h-screen bg-[#e3f3ff] flex justify-center items-center p-4 relative overflow-hidden">
-      {/* 🔹 SAME USERNAME + LOGOUT WHITE BOX (GLOBAL STYLE) */}
       <div className="absolute top-5 right-6 flex items-center gap-5 bg-white shadow-md px-4 py-2 rounded-lg border border-[#cce7ff] z-50">
         <span className="text-lg font-semibold text-[#003b66]">
           👤 {username || "User"}
@@ -265,8 +259,6 @@ useEffect(() => {
     </option>
   ))}
 </select>
-
-
 
               {errors.project && (
                 <p className="text-red-500 text-sm mt-1">
@@ -371,8 +363,6 @@ className="relative sm:col-span-1">
   )}
 </div>
 
-
-
            {/* Selected Products with Quantity */}
 {selectedProducts.length > 0 && (
   <div className="sm:col-span-2 mt-4">
@@ -446,16 +436,11 @@ className="relative sm:col-span-1">
     </div>
   </div>
 </div>
-
-
         );
       })}
     </div>
   </div>
 )}
-
-
-
             {/* Reason */}
             <div className="sm:col-span-2">
               <label className="block text-sm text-gray-600 mb-1">
@@ -478,9 +463,7 @@ className="relative sm:col-span-1">
                   {errors.reasonForBuildRequest.message}
                 </p>
               )}
-            </div>
-
-            
+            </div>   
 
             {/* PMS Remarks */}
             <div className="sm:col-span-2">

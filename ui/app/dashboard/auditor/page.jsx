@@ -6,7 +6,6 @@ import AuditorTable from "../../teamsTable/auditorTable";
 import { logoutUser } from "../../service/authService";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../service/cookieService";
-import { useRouter } from "next/navigation";
 
 // Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
@@ -57,7 +56,6 @@ export default function AuditorOrders() {
   const [isStatusApplied, setIsStatusApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
 
-  const router = useRouter();
   const [username, setUsername] = useState("");
 
   // FETCH DEFAULT DATA
@@ -93,11 +91,18 @@ export default function AuditorOrders() {
   useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) return applySearchFilter(searchText);
-    if (isStatusApplied) return applyStatusFilter(statusFilter);
-    if (isDateApplied) return applyDateFilter();
-
+ if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // STATUS FILTER

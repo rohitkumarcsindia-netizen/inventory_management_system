@@ -8,8 +8,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AlertPopup from "../../components/layout/AlertPopup";
 
-
-
 export default function OrdersTable({
   orders,
   filteredData,
@@ -33,7 +31,6 @@ export default function OrdersTable({
   fetchOrders
 }) {
 
-  
 const [editPopup, setEditPopup] = useState(false);
 const [selectedOrder, setSelectedOrder] = useState(null);
 const [editForm, setEditForm] = useState(null);
@@ -46,8 +43,7 @@ const [showPostPopup, setShowPostPopup] = useState(false);
 
   //Notify to AMISP POPUP
   const [popupOrderId, setPopupOrderId] = useState(null);
-
-  
+ 
 //Send Location ProjectTeam to Scm Team
 const [locationPopupOrderId, setLocationPopupOrderId] = useState(null);
 
@@ -62,7 +58,6 @@ const [locationPopupOrderId, setLocationPopupOrderId] = useState(null);
   message: "",
   type: "success",
 });
-
 
 const highlightText = (text) => {
   if (!searchText || text === null || text === undefined) return text;
@@ -165,8 +160,6 @@ const {
   resolver: yupResolver(pdiPassFailSchema),
 });
 
-
-
    //------POST/PRE PDI SUBMIT---------
   const handlePostSubmit = async (data) => {
   try {
@@ -198,7 +191,6 @@ const {
   }
 };
 
-
     // -----DELETE SAVE DATA--------
 const handleDeleteOrder = async () => {
 
@@ -216,9 +208,7 @@ const handleDeleteOrder = async () => {
     // popup close + data clear
     setEditPopup(false);
     setSelectedOrder(null);
-
-    // table refresh (agar parent se function aa raha ho)
-    setCurrentPage(1); // optional
+    setCurrentPage(1);
     fetchOrders(); 
 
   } catch (error) {
@@ -238,7 +228,7 @@ const handleDeleteOrder = async () => {
 
   try {
     const res = await httpService.updateWithAuth(
-      `/api/v1/orders/project/submit/${selectedOrder.orderId}`,editForm   //  popup ka poora data body me
+      `/api/v1/orders/project/submit/${selectedOrder.orderId}`,editForm
     );
 
        setAlertPopup({
@@ -247,7 +237,6 @@ const handleDeleteOrder = async () => {
   type: "success",
 });
     
-
     // popup close + reset
     setEditPopup(false);
     setSelectedOrder(null);
@@ -300,7 +289,6 @@ const handleDeleteOrder = async () => {
   }
 };
 
-
       //  NOTIFY AMISP API CALL
 const notifyAmisp = async (data) => {
   try {
@@ -337,7 +325,7 @@ const notifyScm = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/project/notify-scm/${orderId}`,
-      {}   // ❗ no body required
+      {}   // no body required
     );
 
      setAlertPopup({
@@ -386,8 +374,6 @@ const notifyScm = async (orderId) => {
   }
 };
 
-
-
 // ---------- NEW: Submit PDI API ----------
   const submitPDI = async (data) => {
   try {
@@ -420,8 +406,6 @@ const notifyScm = async (orderId) => {
 });
   }
 };
-
-
 
   const finalData =
     searchFilteredData.length > 0
@@ -493,7 +477,7 @@ const formatOrderDateTime = (dateString) => {
     />
   ),
            },
-          // { name: "INITIATOR", selector: (row) => row.users?.username || row.initiator, grow: 0.7 },
+          
           { name: "PRODUCT TYPE", selector: (row) => row.productType, grow: 1.1,
              cell: (row) => (
     <span
@@ -699,8 +683,6 @@ const Field = ({ label, value, type = "text" }) => {
   );
 };
 
-
-
   return (
     <div className="p-5 bg-gray-50 rounded-lg border border-gray-200">
       <div className="grid grid-cols-2 gap-4">
@@ -744,10 +726,9 @@ const Field = ({ label, value, type = "text" }) => {
 const handleCancelEdit = () => {
   setEditPopup(false);
   setSelectedOrder(null);
-  setEditForm(null);     // ✅ ADD THIS
-  setIsEditMode(false); // ✅ ADD THIS
+  setEditForm(null);  
+  setIsEditMode(false); 
 };
-
 
   return (
     <div className="w-full">
@@ -1101,7 +1082,6 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
   </div>
 )}
 
-
    {/* POST / PRE PDI POPUP */}
 {showPostPopup && (
   <div className="fixed inset-0 flex items-center justify-center backdrop-blur-md bg-white/10 z-50">
@@ -1167,7 +1147,6 @@ SCM JIRA TICKET CLOSURE {'>'} SYRMA PENDING</option>
     </div>
   </div>
 )}
-
 
      {/* SEND LOCATION TO SCM POPUP */}
 {locationPopupOrderId && (
