@@ -57,8 +57,8 @@ export default function ScmCompleteOrders() {
     productType: o.productType,
     proposedBuildPlanQty: o.proposedBuildPlanQty,
     scmAction: rec.scmAction || o.scmAction,
-    scmActionTime: rec.actionTime || o.scmActionTime,
-    jiraSummary: rec.jiraSummary || o.jiraSummary,
+    scmActionTime: rec.actionTime  || o.scmActionTime,
+    jiraSummary: rec.jiraSummary || rec.ticketSummary || o.jiraSummary,
     approvedByUserId: approvedUserId,
     users: o.users
   };
