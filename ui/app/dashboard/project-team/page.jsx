@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../service/httpService";
-import OrdersTable from "../../service/ordersTable";
+import OrdersTable from "../../teamsTable/ordersTable";
 import { useRouter } from "next/navigation";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../service/cookieService";

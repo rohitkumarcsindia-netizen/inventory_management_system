@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import ScmCompleteOrderTable from "../../../service/scmCompleteOrderTable";
+import ScmCompleteOrderTable from "../../../teamsTable/scmCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";
@@ -57,8 +57,8 @@ export default function ScmCompleteOrders() {
     productType: o.productType,
     proposedBuildPlanQty: o.proposedBuildPlanQty,
     scmAction: rec.scmAction || o.scmAction,
-    scmActionTime: rec.actionTime || o.scmActionTime,
-    jiraSummary: rec.jiraSummary || o.jiraSummary,
+    scmActionTime: rec.actionTime  || o.scmActionTime,
+    jiraSummary: rec.jiraSummary || rec.ticketSummary || o.jiraSummary,
     approvedByUserId: approvedUserId,
     users: o.users
   };

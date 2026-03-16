@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import FinanceTable from "../../../service/financeTable";
+import FinanceTable from "../../../teamsTable/financeTable";
 import httpService from "../../../service/httpService";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";

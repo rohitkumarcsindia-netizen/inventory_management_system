@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import httpService from "../../../service/httpService";
-import FinanceCompleteOrderTable from "../../../service/financeCompleteOrderTable";
+import FinanceCompleteOrderTable from "../../../teamsTable/financeCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { useRouter } from "next/navigation";

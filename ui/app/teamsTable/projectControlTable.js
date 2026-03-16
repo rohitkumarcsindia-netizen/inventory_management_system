@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { useForm } from "react-hook-form";
-import httpService from "./httpService";
+import httpService from "../service/httpService";
 import AlertPopup from "../../components/layout/AlertPopup";
 
-export default function ProductControlTable({ 
+export default function ProjectControlTable({ 
   orders,
   fetchData,
-}) {
+ }) {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -33,6 +33,7 @@ export default function ProductControlTable({
     setSelectedRow(row);
     setIsEditMode(false);
     reset({
+      projectType: row.projectType,
       productType: row.productType,
     });
     setShowPopup(true);
@@ -42,13 +43,13 @@ export default function ProductControlTable({
   const onUpdate = async (data) => {
     try {
       const res = await httpService.updateWithAuth(
-        `/api/v1/admin/product-types/${selectedRow.id}`,
+        `/api/v1/admin/project-types/${selectedRow.id}`,
         data
       );
 
       setAlertPopup({
   show: true,
-  message: res || "Update successfully!",
+  message: res || "Product Updated",
   type: "success",
 });
       setShowPopup(false);
@@ -57,7 +58,7 @@ export default function ProductControlTable({
       console.error(err);
       setAlertPopup({
   show: true,
-  message: "Update failed",
+  message: "Update Failed",
   type: "success",
 });
     }
@@ -68,21 +69,21 @@ export default function ProductControlTable({
     try {
 
       const res = await httpService.deleteWithAuth(
-        `/api/v1/admin/product-types/${selectedRow.id}`
+        `/api/v1/admin/project-types/${selectedRow.id}`
       );
 
       setAlertPopup({
   show: true,
-  message: res || "Delete successfully!",
+  message: res || "Product Deleted",
   type: "success",
 });
       setShowPopup(false);
-     fetchData();
+      fetchData();
     } catch (err) {
       console.error(err);
       setAlertPopup({
   show: true,
-  message: "Delete fail",
+  message: "Delete failed",
   type: "success",
 });
     }
@@ -96,8 +97,8 @@ export default function ProductControlTable({
       cell: (row) => <b>{row.id}</b>,
     },
     {
-      name: "PRODUCT",
-      selector: (row) => row.productType,
+      name: "PROJECT",
+      selector: (row) => row.projectType,
     },
     {
       name: "CREATED BY",
@@ -155,7 +156,7 @@ export default function ProductControlTable({
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="bg-white w-[420px] rounded-xl shadow-2xl p-6">
               <h2 className="text-xl font-bold text-center text-[#02A3EE] mb-5">
-             Product Type
+                Project & Product Type
               </h2>
 
               <p className="text-gray-600 text-center mb-4">
@@ -166,16 +167,16 @@ export default function ProductControlTable({
                 {/* PROJECT */}
                 <div>
                   <label className="block text-black font-semibold mb-1">
-                    Product
+                    Project
                   </label>
                   <input
-                    {...register("productType", {
+                    {...register("projectType", {
                       required: "Project is required",
                     })}
                     disabled={!isEditMode}
                     className="w-full px-3 py-2 border text-black rounded-md disabled:bg-gray-100"
                   />
-                  {errors.productType && (
+                  {errors.projectType && (
                     <p className="text-red-500 text-xs">
                       {errors.projectType.message}
                     </p>
@@ -229,7 +230,7 @@ export default function ProductControlTable({
           </div>
         </>
       )}
-      <AlertPopup
+       <AlertPopup
       show={alertPopup.show}
       message={alertPopup.message}
       type={alertPopup.type}
