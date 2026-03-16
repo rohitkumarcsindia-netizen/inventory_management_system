@@ -2,10 +2,9 @@
 
 import { useState } from "react";
 import DataTable from "react-data-table-component";
-import httpService from "../service/httpService";   // <-- ADD THIS IMPORT
+import httpService from "../service/httpService";
 import { useForm } from "react-hook-form";
 import AlertPopup from "../../components/layout/AlertPopup";
-
 
 export default function CloudTable({
   orders,
@@ -25,10 +24,8 @@ export default function CloudTable({
   searchText,
   applySearchFilter,
   searchFilteredData,
-  refreshData        // <-- OPTIONAL: agar parent se refresh bhejna ho
+  refreshData        
 }) {
-
-  
 
   // POPUP STATES
   const [popupOrderId, setPopupOrderId] = useState(null);
@@ -55,7 +52,6 @@ const highlightText = (text) => {
 };
 
     // REACT HOOK FORM
-  // -------------------------
   const {
     register,
     handleSubmit,
@@ -69,13 +65,8 @@ const highlightText = (text) => {
       cloudComments: ""
     }
   });
-
   
-
-  // =============================
   //  POST API CALL ON SUBMIT
-  // =============================
-
    const submitTicket = async (data) => {
     try {
       if (!popupOrderId) return;
@@ -103,10 +94,6 @@ const highlightText = (text) => {
 });
     }
   };
-
-  // ===========================================
-  //                TABLE PART SAME
-  // ===========================================
 
    // table data
   const displayedData =

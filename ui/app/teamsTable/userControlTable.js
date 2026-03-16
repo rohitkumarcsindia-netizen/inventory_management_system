@@ -248,8 +248,6 @@ export default function UserControlTable({
                   )}
                 </div>
 
-                
-
                 {/* ACTION BUTTONS */}
                 <div className="flex justify-end gap-3 pt-4">
                   {!isEditMode ? (
@@ -295,8 +293,7 @@ export default function UserControlTable({
           </div>
         </>
       )}
-
-      
+    
  <AlertPopup
       show={alertPopup.show}
       message={alertPopup.message}

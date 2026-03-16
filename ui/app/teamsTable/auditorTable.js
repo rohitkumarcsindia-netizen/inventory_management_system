@@ -130,7 +130,7 @@ const formatOrderDateTime = (dateString) => {
 
   if (type === "date" && value) {
     const { date } = formatOrderDateTime(value);
-    formattedValue = date;   // ✅ 19-Dec-25
+    formattedValue = date;   //  19-Dec-25
   }
 
   return (

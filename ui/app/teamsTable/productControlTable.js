@@ -182,8 +182,6 @@ export default function ProductControlTable({
                   )}
                 </div>
 
-                
-
                 {/* ACTION BUTTONS */}
                 <div className="flex justify-end gap-3 pt-4">
                   {!isEditMode ? (

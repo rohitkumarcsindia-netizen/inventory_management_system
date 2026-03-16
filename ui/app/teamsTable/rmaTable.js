@@ -8,7 +8,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import AlertPopup from "../../components/layout/AlertPopup";
 
-
 export default function RmaTable({
   orders,
   totalOrders,
@@ -29,8 +28,6 @@ export default function RmaTable({
   searchFilteredData,
   refreshData
 }) {
-
- 
 
   // PASS popup
   const [popupOrderId, setPopupOrderId] = useState(null);
@@ -88,7 +85,6 @@ const {
   defaultValues: { rmaComment: "" }
 });
 
-
   // PASS API hit
  const submitPass = async (data) => {
   try {
@@ -105,7 +101,7 @@ const {
   type: "success",
 });
 
-    resetPass();         // form reset
+    resetPass(); 
     setPopupOrderId(null);
     if (refreshData) refreshData();
 
@@ -117,7 +113,6 @@ const {
 });
   }
 };
-
 
   // FAIL API hit
   const submitFail = async (data) => {
@@ -135,7 +130,7 @@ const {
   type: "success",
 });
 
-    resetFail();         // reset form
+    resetFail();
     setFailPopupOrderId(null);
     if (refreshData) refreshData();
 
@@ -146,8 +141,7 @@ const {
   type: "success",
 });
   }
-};
-
+}; 
 
   // table data
   const displayedData =
@@ -417,7 +411,6 @@ const {
   </div>
 )}
 
-
       {/* FAIL POPUP */}
      {failPopupOrderId && (
   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -472,8 +465,6 @@ const {
     </div>
   </div>
 )}
-
-
     </>
   );
 }

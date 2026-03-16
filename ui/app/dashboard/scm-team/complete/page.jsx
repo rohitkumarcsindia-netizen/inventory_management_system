@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import ScmCompleteOrderTable from "../../../teamsTable/scmCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 export default function ScmCompleteOrders() {
@@ -33,7 +32,6 @@ export default function ScmCompleteOrders() {
   const [isSearchApplied, setIsSearchApplied] = useState(false);
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
   const normalizeFinanceRecord = (rec) => {
   const o = rec.order || rec;
@@ -97,11 +95,18 @@ export default function ScmCompleteOrders() {
   useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) return applySearchFilter(searchText);
-    if (isStatusApplied) return applyStatusFilter(statusFilter);
-    if (isDateApplied) return applyDateFilter();
-
+   if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   //  STATUS FILTER

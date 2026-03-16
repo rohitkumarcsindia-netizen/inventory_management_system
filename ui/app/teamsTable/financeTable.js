@@ -28,7 +28,6 @@ export default function FinanceTable({
   applySearchFilter,
   searchFilteredData,
   statusFilter,
-
   applyStatusFilter,
 }) {
   const [showPopup, setShowPopup] = useState(false);
@@ -100,7 +99,6 @@ const {
   resolver: yupResolver(reasonSchema),
 });
 
-
 // FINAL REMARK VALIDATION
 const finalSchema = yup.object().shape({
   financeRemark: yup.string().required("Finance Remark is required"),
@@ -115,7 +113,6 @@ const {
 } = useForm({
   resolver: yupResolver(finalSchema),
 });
-
 
 // CLOSURE VALIDATION
 const closureSchema = yup.object().shape({
@@ -132,8 +129,6 @@ const {
   resolver: yupResolver(closureSchema),
 });
 
-
-
   // APPROVE/REJECT Submit
 const submitApproveReject = (data) => {
   if (actionType === "approve") {
@@ -145,7 +140,6 @@ const submitApproveReject = (data) => {
   resetReason();
   setShowPopup(false);
 };
-
 
   // APPROVE ORDER
     const approveOrder = async (orderId, reason) => {
@@ -187,7 +181,6 @@ const submitApproveReject = (data) => {
       }
     };
 
-
   // FINAL REJECT API
  const submitFinal = async (data) => {
   try {
@@ -227,7 +220,6 @@ const submitApproveReject = (data) => {
   }
 };
 
-
   // NEW — Closure API Call
   const submitClosureForm = async (data) => {
   try {
@@ -252,7 +244,6 @@ const submitApproveReject = (data) => {
 });
   }
 };
-
 
   // table data
   const displayedData =
@@ -285,7 +276,6 @@ const formatOrderDateTime = (dateString) => {
   };
 };
 
-
   const columns = [
     {
       name: "ORDER ID",
@@ -310,7 +300,6 @@ const formatOrderDateTime = (dateString) => {
     );
   },
 },
-
 
     { name: "PROJECT", selector: (row) => row.project,
           cell: (row) => (
@@ -484,9 +473,7 @@ const formatOrderDateTime = (dateString) => {
             </button>
           )}
         </div>
-      </div>
-
-      
+      </div>   
 
       {/* TABLE */}
       <DataTable
@@ -606,7 +593,6 @@ const formatOrderDateTime = (dateString) => {
   </div>
 )}
 
-
       {/* FINAL REMARK POPUP */}
     {showFinalPopup && (
   <div className="fixed inset-0 bg-black/40 flex justify-center items-center backdrop-blur-sm z-[9999]">
@@ -666,17 +652,11 @@ const formatOrderDateTime = (dateString) => {
           >
             Submit
           </button>
-
-       
         </div>
-
       </form>
-
     </div>
   </div>
 )}
-
-
 
       {/*NEW CLOSURE POPUP */}
       {showClosurePopup && (

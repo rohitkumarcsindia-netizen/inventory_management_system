@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import RmaTable from "../../../teamsTable/rmaTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 export default function RmaTeamPage() {
@@ -17,7 +16,7 @@ export default function RmaTeamPage() {
    const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
  
    const [searchText, setSearchText] = useState("");
@@ -29,8 +28,6 @@ export default function RmaTeamPage() {
   const [noDataFound, setNoDataFound] = useState(false);
   
   const [username, setUsername] = useState("");
-
-  const router = useRouter();
 
    // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -66,14 +63,14 @@ export default function RmaTeamPage() {
       applySearchFilter(searchText);
       return;
     }
-
-
-    if (isDateApplied) {
+    else if (isDateApplied) {
       applyDateFilter();
       return;
     }
-
+    else {
     fetchOrders();
+    }
+    
   }, [currentPage, ordersPerPage]);
 
     // DATE FILTER API
@@ -98,7 +95,7 @@ export default function RmaTeamPage() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     //  ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 

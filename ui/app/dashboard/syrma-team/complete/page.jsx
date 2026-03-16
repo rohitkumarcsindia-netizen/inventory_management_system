@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import SyrmaCompleteOrderTable from "../../../teamsTable/syrmaCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 //  Universal normalizer
@@ -63,7 +62,6 @@ export default function SyrmaCompleteOrders() {
   const [isSearchApplied, setIsSearchApplied] = useState(false);
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
   //  FETCH DEFAULT DATA
   const fetchOrders = async () => {
@@ -98,11 +96,18 @@ export default function SyrmaCompleteOrders() {
   useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) return applySearchFilter(searchText);
-    if (isStatusApplied) return applyStatusFilter(statusFilter);
-    if (isDateApplied) return applyDateFilter();
-
+     if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // STATUS FILTER

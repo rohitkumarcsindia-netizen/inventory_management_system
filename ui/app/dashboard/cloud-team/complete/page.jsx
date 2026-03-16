@@ -6,7 +6,6 @@ import CloudCompleteOrderTable from "../../../teamsTable/cloudCompleteOrderTable
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import { logoutUser } from "../../../service/authService";
-import { useRouter } from "next/navigation";
 
 // Universal normalizer (flat + nested response support)
 const normalizeFinanceRecord = (rec) => {
@@ -48,7 +47,7 @@ export default function CloudCompleteOrders() {
  const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
  
    const [searchText, setSearchText] = useState("");
@@ -60,7 +59,6 @@ export default function CloudCompleteOrders() {
   const [noDataFound, setNoDataFound] = useState(false);
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
 // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -104,13 +102,15 @@ export default function CloudCompleteOrders() {
       return;
     }
 
-
-    if (isDateApplied) {
+    else if (isDateApplied) {
       applyDateFilter();
       return;
     }
 
+    else {
     fetchOrders();
+    }
+
   }, [currentPage, ordersPerPage]);
 
     // DATE FILTER API
@@ -135,7 +135,7 @@ export default function CloudCompleteOrders() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 

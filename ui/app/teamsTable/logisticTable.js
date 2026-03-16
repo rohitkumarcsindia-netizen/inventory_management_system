@@ -32,7 +32,6 @@ export default function LogisticTable({
   applyStatusFilter,
 }) {
   
-
   // Shipping Popup State
   const [shippingPopupId, setShippingPopupId] = useState(null);
 
@@ -71,13 +70,6 @@ const highlightText = (text) => {
     `<span class="bg-yellow-300 text-black font-bold px-1 rounded">$1</span>`
   );
 };
-
-
-
-
-
-
-
 
 // SHIPPING VALIDATION 
 const shippingSchema = yup.object().shape({
@@ -128,8 +120,6 @@ const {
 } = useForm({
   resolver: yupResolver(deliveredSchema),
 });
-
-
 
   // Submit Shipping
   const submitShipping = async (data) => {
@@ -293,7 +283,6 @@ const {
             </button>
           );
         }
-
 
         return (
           <button
@@ -520,7 +509,6 @@ const {
   </div>
 )}
 
-
       {/* DELIVERED POPUP */}
      {deliveredPopupId && (
   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -621,7 +609,6 @@ const {
     </div>
   </div>
 )}
-
     </>
   );
 }

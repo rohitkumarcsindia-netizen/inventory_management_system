@@ -220,7 +220,7 @@ cell: (row) => {
        customStyles={{
   rows: {
     style: {
-      borderBottom: "1px solid #e5e7eb",   // light grey divider
+      borderBottom: "1px solid #e5e7eb",
       paddingTop: "12px",
       paddingBottom: "12px",
     },
@@ -230,7 +230,7 @@ cell: (row) => {
       backgroundColor: "#e8f3ff",
       fontWeight: "bold",
       fontSize: "16px",
-      borderBottom: "2px solid #c0d9ff",   // header bottom border
+      borderBottom: "2px solid #c0d9ff", 
     },
   },
   cells: {

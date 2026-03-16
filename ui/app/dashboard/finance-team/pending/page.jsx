@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import FinanceTable from "../../../teamsTable/financeTable";
 import httpService from "../../../service/httpService";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 export default function FinanceTeamPage() {
@@ -17,7 +16,7 @@ export default function FinanceTeamPage() {
   const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false); 
   const [isSearchApplied, setIsSearchApplied] = useState(false);
   const [isStatusApplied, setIsStatusApplied] = useState(false);
 
@@ -32,8 +31,6 @@ export default function FinanceTeamPage() {
 
 
   const [noDataFound, setNoDataFound] = useState(false);
-
-  const router = useRouter();
 
   // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -65,22 +62,18 @@ export default function FinanceTeamPage() {
       useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) {
-      applySearchFilter(searchText);
-      return;
-    }
-
-    if (isStatusApplied) {
-      applyStatusFilter(statusFilter);
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
+   if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // DATE FILTER API
@@ -105,7 +98,7 @@ export default function FinanceTeamPage() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 

@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import ScmTable from "../../../teamsTable/scmTable";
 import httpService from "../../../service/httpService";
-import { useRouter } from "next/navigation";
 import { getUsernameFromToken } from "../../../service/cookieService";
 import AlertPopup from "../../../../components/layout/AlertPopup";
 import { logoutUser } from "../../../service/authService";
@@ -16,7 +15,7 @@ export default function ScmTeamPage() {
    const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
   const [isStatusApplied, setIsStatusApplied] = useState(false);
 
@@ -39,7 +38,6 @@ const [alertPopup, setAlertPopup] = useState({
 });
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
    // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -72,21 +70,17 @@ const [alertPopup, setAlertPopup] = useState({
     setUsername(getUsernameFromToken() || "");
 
     if (isSearchApplied) {
-      applySearchFilter(searchText);
-      return;
-    }
-
-    if (isStatusApplied) {
-      applyStatusFilter(statusFilter);
-      return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   // DATE FILTER API
@@ -116,7 +110,7 @@ const [alertPopup, setAlertPopup] = useState({
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     //  ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 
@@ -257,7 +251,7 @@ const notifyRma = async (orderId) => {
   show: true,
   message: res || "Notification Sent for RMA!",
   type: "success",
-});  //  backend response text alert me show hoga
+});
     fetchOrders(); // UI refresh
   } catch (error) {
      setAlertPopup({
@@ -273,7 +267,7 @@ const notifyPT = async (orderId) => {
   try {
     const res = await httpService.updateWithAuth(
       `/api/v1/orders/scm/notify-project-team/${orderId}`,
-      {}   //  no body required
+      {}   // no body required
     );
 
      setAlertPopup({
@@ -281,7 +275,7 @@ const notifyPT = async (orderId) => {
   message: res || "Notification Sent for Project Team!",
   type: "success",
 });  
-    fetchOrders(); // UI refresh
+    fetchOrders();
   } catch (error) {
      setAlertPopup({
   show: true,
@@ -304,7 +298,7 @@ const notifyLogistic = async (orderId) => {
   message: res || "Notification Sent for Logisctic!",
   type: "success",
 });  
-    fetchOrders(); // UI refresh
+    fetchOrders();
   } catch (error) {
     setAlertPopup({
   show: true,

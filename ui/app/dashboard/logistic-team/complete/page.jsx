@@ -5,7 +5,6 @@ import httpService from "../../../service/httpService";
 import LogisticCompleteOrderTable from "../../../teamsTable/logisticCompleteOrderTable";
 import { Cpu } from "lucide-react";
 import { getUsernameFromToken } from "../../../service/cookieService";
-import { useRouter } from "next/navigation";
 import { logoutUser } from "../../../service/authService";
 
 // Universal normalizer (flat + nested response support)
@@ -48,7 +47,7 @@ export default function AmispCompleteOrders() {
  const [filteredData, setFilteredData] = useState([]);
   const [filteredCount, setFilteredCount] = useState(0);
 
-  const [isDateApplied, setIsDateApplied] = useState(false);  // NEW
+  const [isDateApplied, setIsDateApplied] = useState(false);
   const [isSearchApplied, setIsSearchApplied] = useState(false);
   const [isStatusApplied, setIsStatusApplied] = useState(false);
  
@@ -63,7 +62,6 @@ export default function AmispCompleteOrders() {
   const [noDataFound, setNoDataFound] = useState(false);
 
   const [username, setUsername] = useState("");
-  const router = useRouter();
 
 // FETCH ORIGINAL DATA
   const fetchOrders = async () => {
@@ -102,22 +100,18 @@ export default function AmispCompleteOrders() {
       useEffect(() => {
     setUsername(getUsernameFromToken() || "");
 
-    if (isSearchApplied) {
-      applySearchFilter(searchText);
-      return;
-    }
-    
-    if (isStatusApplied) {
-       applyStatusFilter(statusFilter);
-       return;
-    }
-
-    if (isDateApplied) {
-      applyDateFilter();
-      return;
-    }
-
+     if (isSearchApplied) {
+    applySearchFilter(searchText);
+  } 
+  else if (isStatusApplied) {
+    applyStatusFilter(statusFilter);
+  } 
+  else if (isDateApplied) {
+    applyDateFilter();
+  } 
+  else {
     fetchOrders();
+  }
   }, [currentPage, ordersPerPage]);
 
   
@@ -144,7 +138,7 @@ export default function AmispCompleteOrders() {
       setNoDataFound(false);
     }
 
-    setIsDateApplied(true);     // ordering set
+    setIsDateApplied(true);
     setIsSearchApplied(false);
   };
 
