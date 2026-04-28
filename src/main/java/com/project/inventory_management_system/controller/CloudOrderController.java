@@ -47,7 +47,7 @@ public class CloudOrderController
         return cloudOrderService.getOrderPendingForCloud(userDetails.getUsername(), offset, limit);
     }
 
-    @PostMapping("/update-jira-details/{orderId}")
+    @PostMapping("/update-ticket-details/{orderId}")
     public ResponseEntity<?> updateJiraDetails(HttpServletRequest request, @PathVariable Long orderId, @RequestBody CloudApproval jiraDetails)
     {
         UserDetails userDetails = (UserDetails) request.getAttribute("userDetails");

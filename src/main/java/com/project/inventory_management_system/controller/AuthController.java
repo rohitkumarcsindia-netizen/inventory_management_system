@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/auth/login")
+@RequestMapping("/api/v1/auth/login")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:4000")
 public class AuthController
